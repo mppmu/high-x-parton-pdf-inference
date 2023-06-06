@@ -379,35 +379,46 @@ prior = NamedTupleDist(
 );
 end
 
+function get_scaled_UD(UD_tmp::Vector{Float64}, intres::Integer, bspoly_params::Vector{Vector{Int64}}=[[0, 3], [0, 4], [1, 4], [0, 5]])
+
+    intres_tmp = 0
+
+    for (UD, params) in zip(UD_tmp, bspoly_params)
+        intres_tmp += UD / (params[2] + 1)
+    end
+
+    return UD_tmp * (intres / intres_tmp)
+
+end
 if parsed_args["parametrisation"] == "Bernstein"
 
-#prior = NamedTupleDist(
-#    θ = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
-#    initial_U = [Truncated(Normal(30., 15.), 0, 80)],
-#    initial_D = [Uniform(0., 20.)],
-#    U_weights = [Truncated(Normal(30., 15.), 0, 80)],
-#    D_weights = [Uniform(0., 20.)],
-
-#    λ_g1 = Uniform(1., 2.0),
-#    λ_g2 = Uniform(-0.5, -0.3),
-#    K_g =  Uniform(5.,9.),
-#    λ_q = Uniform(-0.5, -0.),
-#    K_q = Uniform(3., 7.),
-#    bspoly_params = [[0,3],[0,4],[1,4]],
-#    )
-
 prior = NamedTupleDist(
-    θ = Dirichlet([34.0, 17.0, 22.5, 17.0, 7.3, 1.4, 0.2, 10.e-5, 0.3]),
-    initial_U = Uniform(-10., 1.),
-    initial_D = Uniform(10., 30.),
-    λ_g1 = Uniform(3., 4.5),
-    λ_g2 = Uniform(-1, -0.5),
+    θ_tmp = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
+    initial_U = [Truncated(Normal(30., 15.), 0, 80)],
+    initial_D = [Uniform(0., 20.)],
+    U_weights = [Truncated(Normal(30., 15.), 0, 80)],
+    D_weights = [Uniform(0., 20.)],
+
+    λ_g1 = Uniform(1., 2.0),
+    λ_g2 = Uniform(-0.5, -0.3),
     K_g =  Uniform(5.,9.),
-    λ_q = Uniform(-1, -0.5),
+    λ_q = Uniform(-0.5, -0.),
     K_q = Uniform(3., 7.),
-    bspoly_params = [[0, 3], [0, 4], [1, 4], [0, 5]],
-    #    bspoly_params = [1,4,0,4,0,5],
+    bspoly_params=[0, 4, 1, 4, 0, 5],
     )
+
+#prior = NamedTupleDist(
+#    θ = Dirichlet([34.0, 17.0, 22.5, 17.0, 7.3, 1.4, 0.2, 10.e-5, 0.3]),
+#    initial_U = Uniform(-10., 1.),
+#    initial_D = Uniform(10., 30.),
+#    λ_g1 = Uniform(3., 4.5),
+#    λ_g2 = Uniform(-1, -0.5),
+#    K_g =  Uniform(5.,9.),
+#    λ_q = Uniform(-1, -0.5),
+#    K_q = Uniform(3., 7.),
+#    bspoly_params = [[0, 3], [0, 4], [1, 4], [0, 5]],
+#   #     bspoly_params = [1,4,0,4,0,5],
+#    )
 end
 
 
@@ -423,17 +434,16 @@ likelihood = let d = sim_data
     logfuncdensity(function (params)
 
        if parsed_args["parametrisation"] == "Bernstein"
-       pdf_params = BernsteinPDFParams(
+            U_list = get_scaled_UD(Vector(params.U_weights), 2)
+            D_list = get_scaled_UD(Vector(params.U_weights), 1)
 
-            initial_U=params.initial_U, 
-            initial_D=params.initial_D, 
-           # U_weights=params.U_weights,
-           # D_weights=params.D_weights, 
-            λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_g=params.K_g, λ_q=params.λ_q, 
-            K_q=params.K_q,
-             bspoly_params = params.bspoly_params,
-            
-             θ=params.θ)
+            θ = get_scaled_θ(U_list, D_list, Vector(params.θ_tmp))
+
+            pdf_params = BernsteinPDFParams(U_list=U_list, D_list=D_list,
+                λ_g1=params.λ_g1, λ_g2=params.λ_g2,
+                K_g=params.K_g, λ_q=params.λ_q, θ=θ, K_q=params.K_q,
+                bspoly_params=Vector(params.bspoly_params)
+            )
        end
 
 
