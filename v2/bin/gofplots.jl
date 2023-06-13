@@ -215,7 +215,7 @@ h2=histogram(prob_em_sim,bins=0:0.01:1,label=L"$e^-p$    Simulation",legend=:top
 
 plot(h1,h2,layout=(2,1))
 
-savefig("otherfigures/Scaled-Poisson-prob-42.pdf")
+#savefig("otherfigures/Scaled-Poisson-prob-42.pdf")
 
 testdist=zeros(2,101)
 bin_gen=0
