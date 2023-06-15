@@ -65,8 +65,10 @@ function main()
 
 
 Plots.gr(format="png")
-
-
+color_scheme = :viridis
+default(fontfamily = "Computer Modern")
+Plots.scalefontsizes()
+Plots.scalefontsizes(1.2);
 
 
 
@@ -157,16 +159,16 @@ p1=scatter!(counts_pred_ep_gen,
    markershape = :diamond,     markeralpha = 0.4,     markercolor = :green,  markersize = 2,
 #    st=:sticks,
     label=L"$e^+p$ Generated")
-p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:hexagon,label=L"$e^-p$ Simulated")
+p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:circle,label=L"$e^-p$ Simulated")
 p2=scatter!(counts_pred_em_gen,color="red",    
     markershape = :diamond,     markeralpha = 0.4,     markercolor = :green,  markersize = 2,
     label=L"$e^-p$ Generated",
     linewidth = 2)
-p3=scatter(prob_ep_gen,color="blue",yscale=:log10,markersize=2,markershape=:hexagon,label="",xlab="Bin",ylab="Scaled Probability")
-p4=scatter(prob_em_gen,color="red",yscale=:log10, markersize=2,markershape=:hexagon,label="",xlab="Bin")
+p3=scatter(prob_ep_gen,color="blue",yscale=:log10,markersize=2,markershape=:circle,label="",xlab="Bin",ylab="Scaled Probability")
+p4=scatter(prob_em_gen,color="red",yscale=:log10, markersize=2,markershape=:circle,label="",xlab="Bin")
 plot(p1,p2,p3,p4,layout=(2,2))
 
-p1=scatter(counts_obs_ep_sim,  markersize=2, markershape=:hexagon,label=L" $e^{+}p$ Observed",ylab="Counts"
+p1=scatter(counts_obs_ep_sim,  markersize=2, markershape=:circle,label=L" $e^{+}p$ Observed",ylab="Counts"
 ,ylims=(0, 1600), xlims=(-1,155)
     , size=(600, 500)
 )
@@ -176,7 +178,7 @@ p1=plot!(counts_pred_ep_sim,color="blue",    linealpha = 0.5,
         , legendfontsize=12
     , foreground_color_legend=false
 )
-p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:hexagon,label=L" $e^{-}p$ Observed"
+p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:circle,label=L" $e^{-}p$ Observed"
 ,ylims=(0, 1600), xlims=(-1,155)
         , legendfontsize=12
     , foreground_color_legend=false
@@ -187,13 +189,13 @@ p2=plot!(counts_pred_em_sim,color="red",    linealpha = 0.5,label=L" $e^{-}p$ Pr
         , legendfontsize=12
     , foreground_color_legend=false
 )
-p3=scatter(prob_ep_sim,color="blue",yscale=:log10,markersize=2,markershape=:hexagon,label="",xlab="Bin",
+p3=scatter(prob_ep_sim,color="blue",yscale=:log10,markersize=2,markershape=:circle,label="",xlab="Bin",
     ylab="Scaled probability"
 ,ylims=(0.003, 1.1), xlims=(-1,155)
         , legendfontsize=12
     , foreground_color_legend=false
 )
-p4=scatter(prob_em_sim,color="red",yscale=:log10, markersize=2,markershape=:hexagon,label="",xlab="Bin"
+p4=scatter(prob_em_sim,color="red",yscale=:log10, markersize=2,markershape=:circle,label="",xlab="Bin"
 ,ylims=(0.003, 1.1), xlims=(-1,155)
         , legendfontsize=12
     , foreground_color_legend=false

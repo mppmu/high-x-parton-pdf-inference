@@ -159,7 +159,7 @@ prior = NamedTupleDist(
 
 #    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
 #    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    θ = Dirichlet([40, 10, 10, 10, 5, 2.5, 1.5, 1.5, 0.5]),
+    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
     K_u = Truncated(Normal(4.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
@@ -184,7 +184,7 @@ prior = NamedTupleDist(
 
 #    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
 #    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-        θ = Dirichlet([20, 10, 30, 30, 5, 2.5, 1.5, 1.5, 0.5]),
+        θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
         K_u = Truncated(Normal(2.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
@@ -203,160 +203,6 @@ prior = NamedTupleDist(
     beta0_7=  Truncated(Normal(0, 1), -5, 5), 
     beta0_8=   Truncated(Normal(0, 1), -5, 5)
 );
-elseif (parsed_args["priorshift"]==3)
-    println("seting prior from Shifted Prior set ",seedtxt)
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-#    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    K_g =  Truncated(Normal(5., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-#    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==4)
-    println("seting prior from Shifted Prior set ",seedtxt)
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-#    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    K_g =  Truncated(Normal(5., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-#    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==5)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-#λ_g1 = Uniform(0., 1.),
-    λ_g1 = Uniform(-2.0, 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==6)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-#λ_g1 = Uniform(0., 1.),
-    λ_g1 = Uniform(-0.5, 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-#    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==7)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-#λ_g1 = Uniform(0., 1.),
-    λ_g1 = Uniform(-0.5, 1.),
-#λ_g2 = Uniform(-1.0, -0.1),
-    λ_g2 = Uniform(-1.0, 0.5),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-#    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);    
-    elseif (parsed_args["priorshift"]==8)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-#    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_u = Truncated(Normal(2.5, 0.5), 1., 5.),
-    K_d = Truncated(Normal(2.5, 0.5), 1., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(5., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);    
 end
 
 
@@ -365,6 +211,8 @@ end
 
 end
 if parsed_args["parametrisation"] == "Valence"
+##FIXME!!!
+weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
 prior = NamedTupleDist(
     θ_tmp=Dirichlet(weights),
     λ_u=Truncated(Normal(pdf_params.λ_u, 1), 0, 1),

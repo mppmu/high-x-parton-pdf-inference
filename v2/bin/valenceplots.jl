@@ -49,6 +49,8 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
+color_scheme = :viridis
+default(fontfamily = "Computer Modern")
 
 # Results
 seed=parsed_args["seed"]
@@ -98,7 +100,7 @@ forward_model_init(qcdnum_params, splint_params)
 
 # Use +2 to avoid lightest colors (not easy to see)
 color_scheme = :viridis
-font_family = "Computer Modern"
+
 c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
@@ -109,7 +111,91 @@ alpha = 0.6
 prior_alpha = 0.2;
 
 # Get some prior samples for plotting
-weights=[20., 10., 20., 20., 5.,2.5, 1.5, 1.5, 0.5]
+
+if parsed_args["parametrisation"] == "Dirichlet"
+prior = NamedTupleDist(
+    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
+    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
+    λ_g1 = Uniform(0., 1.),
+    λ_g2 = Uniform(-1.0, -0.1),
+    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
+    λ_q = Uniform(-1.0, -0.1),
+    K_q = Truncated(Normal(4., 1.5), 3., 10.),
+    Beta1 =  Truncated(Normal(0, 1), -5, 5),
+    Beta2 =  Truncated(Normal(0, 1), -5, 5),
+    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
+    beta0_3= Truncated(Normal(0, 1), -5, 5), 
+    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_8=   Truncated(Normal(0, 1), -5, 5)
+);
+
+if (parsed_args["priorshift"]==1)
+    println("seting prior from Shifted Prior set ",seedtxt)
+
+prior = NamedTupleDist(
+
+#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
+#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
+    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+    K_u = Truncated(Normal(4.5, 0.5), 2, 5),
+    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
+    λ_g1 = Uniform(0., 1.),
+    λ_g2 = Uniform(-1.0, -0.1),
+    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
+    λ_q = Uniform(-1.0, -0.1),
+    K_q = Truncated(Normal(4., 1.5), 3., 10.),
+    Beta1 =  Truncated(Normal(0, 1), -5, 5),
+    Beta2 =  Truncated(Normal(0, 1), -5, 5),
+    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
+    beta0_3= Truncated(Normal(0, 1), -5, 5), 
+    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_8=   Truncated(Normal(0, 1), -5, 5)
+);
+elseif (parsed_args["priorshift"]==2)
+    println("seting prior from Shifted Prior set ",seedtxt)
+prior = NamedTupleDist(
+
+#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
+#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
+
+        θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+        K_u = Truncated(Normal(2.5, 0.5), 2, 5),
+    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
+    λ_g1 = Uniform(0., 1.),
+    λ_g2 = Uniform(-1.0, -0.1),
+    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
+    λ_q = Uniform(-1.0, -0.1),
+    K_q = Truncated(Normal(4., 1.5), 3., 10.),
+    Beta1 =  Truncated(Normal(0, 1), -5, 5),
+    Beta2 =  Truncated(Normal(0, 1), -5, 5),
+    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
+    beta0_3= Truncated(Normal(0, 1), -5, 5), 
+    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_8=   Truncated(Normal(0, 1), -5, 5)
+);
+end
+
+
+
+
+
+end
+if parsed_args["parametrisation"] == "Valence"
+##FIXME!!!
+weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
 prior = NamedTupleDist(
     θ_tmp=Dirichlet(weights),
     λ_u=Truncated(Normal(pdf_params.λ_u, 1), 0, 1),
@@ -120,8 +206,61 @@ prior = NamedTupleDist(
     λ_g2=Truncated(Normal(pdf_params.λ_g2, 1), -1, 0),
     K_g=Truncated(Normal(pdf_params.K_g, 1), 2, 10),
     λ_q=Truncated(Normal(pdf_params.λ_q, 0.1), -1, 0),
-    K_q=Truncated(Normal(pdf_params.K_q, 0.5), 3, 7)
+    K_q=Truncated(Normal(pdf_params.K_q, 0.5), 3, 7),
+    Beta1 =  Truncated(Normal(0, 1), -5, 5),
+    Beta2 =  Truncated(Normal(0, 1), -5, 5),
+    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
+    beta0_3= Truncated(Normal(0, 1), -5, 5), 
+    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_8=   Truncated(Normal(0, 1), -5, 5)    
 );
+end
+
+if parsed_args["parametrisation"] == "Bernstein"
+
+#prior = NamedTupleDist(
+#    θ = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
+#    initial_U = [Truncated(Normal(30., 15.), 0, 80)],
+#    initial_D = [Uniform(0., 20.)],
+#    U_weights = [Truncated(Normal(30., 15.), 0, 80)],
+#    D_weights = [Uniform(0., 20.)],
+
+#    λ_g1 = Uniform(1., 2.0),
+#    λ_g2 = Uniform(-0.5, -0.3),
+#    K_g =  Uniform(5.,9.),
+#    λ_q = Uniform(-0.5, -0.),
+#    K_q = Uniform(3., 7.),
+#    bspoly_params = [[0,3],[0,4],[1,4]],
+#    )
+
+prior = NamedTupleDist(
+    θ = Dirichlet([34.0, 17.0, 22.5, 17.0, 7.3, 1.4, 0.2, 10.e-5, 0.3]),
+    initial_U = Uniform(-10., 1.),
+    initial_D = Uniform(10., 30.),
+    λ_g1 = Uniform(3., 4.5),
+    λ_g2 = Uniform(-1, -0.5),
+    K_g =  Uniform(5.,9.),
+    λ_q = Uniform(-1, -0.5),
+    K_q = Uniform(3., 7.),
+    bspoly_params = [[0, 3], [0, 4], [1, 4], [0, 5]],
+    #    bspoly_params = [1,4,0,4,0,5],
+        Beta1 =  Truncated(Normal(0, 1), -5, 5),
+    Beta2 =  Truncated(Normal(0, 1), -5, 5),
+    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
+    beta0_3= Truncated(Normal(0, 1), -5, 5), 
+    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_8=   Truncated(Normal(0, 1), -5, 5)
+    )
+end
+
 prior_samples=bat_sample(prior).result;
 
 xlims_K_u = (2.0, 7.0) # (3.2, 4.4)
@@ -134,22 +273,40 @@ prior_labels = [L"~~\mathrm{Prior}~68~\%", L"~~\mathrm{Prior}~95~\%"]
 colors = [c3, c1]
 prior_colors = [:grey40, :grey50]
 
+if parsed_args["parametrisation"] == "Valence"
+weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
+λ_u_true = 0.64;
+K_u_true = 3.38;
+λ_d_true = 0.67;
+K_d_true = 4.73;
+
+#FIXME!!!
 θ_true=[0.22, 0.10, 0.24, 0.24, 0.10,0.05, 0.01, 0.005, 0.0005]
 θ_sum=sum(θ_true[1:9])
 θ_true=θ_true/θ_sum
-println(θ_true)
-K_u_true=3.7
-K_d_true=3.7
-λ_g1_true=0.5
-λ_g2_true=-0.5
-K_g_true=5.0
-λ_q_true=-0.5
-K_q_true=6.0
+
+end
+
+
+#θ_true=[0.22, 0.10, 0.24, 0.24, 0.10,0.05, 0.01, 0.005, 0.0005]
+#θ_sum=sum(θ_true[1:9])
+#θ_true=θ_true/θ_sum
+#println(θ_true)
+#K_u_true=3.7
+#K_d_true=3.7
+#λ_g1_true=0.5
+#λ_g2_true=-0.5
+#K_g_true=5.0
+#λ_q_true=-0.5
+#K_q_true=6.0
+
+
+
 
 
 #θ=θ_tmp
 
-plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
+plot(framestyle=:axes, size=(500, 400), 
     layout=@layout([a b; c{0.55w, 0.6h} d]), grid=false
     , right_margin=0mm
     , left_margin=0mm
