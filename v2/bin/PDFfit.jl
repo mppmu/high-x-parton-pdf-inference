@@ -74,9 +74,9 @@ seedtxt=string(seed)
 rng = MersenneTwister(seed)
 
 if parsed_args["parametrisation"] == "Dirichlet"
-weights = [30.0, 15.0, 12.0, 6.0, 3.6, 0.85, 0.85, 0.85, 0.85]
+weights = [20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]
 θ = rand(rng, Dirichlet(weights))
-pdf_params = DirichletPDFParams(K_u=4.0, K_d=4.0, λ_g1=1.5, λ_g2=-0.4, K_g=6.0, λ_q=-0.25, K_q=5.0, θ=θ);
+pdf_params = DirichletPDFParams(K_u=3.5, K_d=4.0, λ_g1=1.5, λ_g2=-0.4, K_g=6.0, λ_q=-0.25, K_q=5.0, θ=θ);
 # replace weights with θ to specify the momentum fractions directly
 @info "Valence λ:" pdf_params.λ_u pdf_params.λ_d
 @info "Momenta:" pdf_params.θ[1],pdf_params.θ[2],pdf_params.θ[3],pdf_params.θ[4]
@@ -132,14 +132,14 @@ somepdf_params, sim_data = pd_read_sim(string("pseudodata/",parsed_args["pseudod
 
 if parsed_args["parametrisation"] == "Dirichlet"
 prior = NamedTupleDist(
-    θ = Dirichlet([20.,10.,22.,22.,2,2,1,1,0.5]),
+    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
     K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 2.),
+    λ_g1 = Uniform(0., 1.),
     λ_g2 = Uniform(-1.0, -0.1),
     K_g =  Truncated(Normal(4., 1.5), 2., 7.),
     λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(5., 1.5), 3., 10.),
+    K_q = Truncated(Normal(4., 1.5), 3., 10.),
     Beta1 =  Truncated(Normal(0, 1), -5, 5),
     Beta2 =  Truncated(Normal(0, 1), -5, 5),
     beta0_1=  Truncated(Normal(0, 1), -5, 5), 
@@ -159,8 +159,8 @@ prior = NamedTupleDist(
 
 #    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
 #    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    θ = Dirichlet([40., 10., 10., 10., 5.,2.5, 1.5, 1.5, 0.5]),
-    K_u = Truncated(Normal(4.5, 0.5), 2, 6),
+    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+    K_u = Truncated(Normal(4.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
     λ_g2 = Uniform(-1.0, -0.1),
@@ -184,7 +184,7 @@ prior = NamedTupleDist(
 
 #    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
 #    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-        θ = Dirichlet([20., 10., 30., 30., 5.,2.5, 1.5, 1.5, 0.5]),
+        θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
         K_u = Truncated(Normal(2.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
@@ -203,160 +203,6 @@ prior = NamedTupleDist(
     beta0_7=  Truncated(Normal(0, 1), -5, 5), 
     beta0_8=   Truncated(Normal(0, 1), -5, 5)
 );
-elseif (parsed_args["priorshift"]==3)
-    println("seting prior from Shifted Prior set ",seedtxt)
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-#    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    K_g =  Truncated(Normal(5., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-#    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==4)
-    println("seting prior from Shifted Prior set ",seedtxt)
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-#    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    K_g =  Truncated(Normal(5., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-#    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==5)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-#λ_g1 = Uniform(0., 1.),
-    λ_g1 = Uniform(-2.0, 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==6)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-#λ_g1 = Uniform(0., 1.),
-    λ_g1 = Uniform(-0.5, 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-#    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==7)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-#λ_g1 = Uniform(0., 1.),
-    λ_g1 = Uniform(-0.5, 1.),
-#λ_g2 = Uniform(-1.0, -0.1),
-    λ_g2 = Uniform(-1.0, 0.5),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-#    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);    
-    elseif (parsed_args["priorshift"]==8)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-
-    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-#    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_u = Truncated(Normal(2.5, 0.5), 1., 5.),
-    K_d = Truncated(Normal(2.5, 0.5), 1., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(5., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(6., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);    
 end
 
 
@@ -365,6 +211,8 @@ end
 
 end
 if parsed_args["parametrisation"] == "Valence"
+##FIXME!!!
+weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
 prior = NamedTupleDist(
     θ_tmp=Dirichlet(weights),
     λ_u=Truncated(Normal(pdf_params.λ_u, 1), 0, 1),
@@ -375,7 +223,17 @@ prior = NamedTupleDist(
     λ_g2=Truncated(Normal(pdf_params.λ_g2, 1), -1, 0),
     K_g=Truncated(Normal(pdf_params.K_g, 1), 2, 10),
     λ_q=Truncated(Normal(pdf_params.λ_q, 0.1), -1, 0),
-    K_q=Truncated(Normal(pdf_params.K_q, 0.5), 3, 7)
+    K_q=Truncated(Normal(pdf_params.K_q, 0.5), 3, 7),
+    Beta1 =  Truncated(Normal(0, 1), -5, 5),
+    Beta2 =  Truncated(Normal(0, 1), -5, 5),
+    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
+    beta0_3= Truncated(Normal(0, 1), -5, 5), 
+    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_8=   Truncated(Normal(0, 1), -5, 5)    
 );
 end
 
@@ -407,6 +265,16 @@ prior = NamedTupleDist(
     K_q = Uniform(3., 7.),
     bspoly_params = [[0, 3], [0, 4], [1, 4], [0, 5]],
     #    bspoly_params = [1,4,0,4,0,5],
+        Beta1 =  Truncated(Normal(0, 1), -5, 5),
+    Beta2 =  Truncated(Normal(0, 1), -5, 5),
+    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
+    beta0_3= Truncated(Normal(0, 1), -5, 5), 
+    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
+    beta0_8=   Truncated(Normal(0, 1), -5, 5)
     )
 end
 
@@ -446,17 +314,17 @@ likelihood = let d = sim_data
          pdf_params = ValencePDFParams(λ_u=params.λ_u, K_u=params.K_u, λ_d=params.λ_d, K_d=params.K_d, λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_g=params.K_g, λ_q=params.λ_q, K_q=params.K_q, 
          θ=θ)
         end
-         if parsed_args["parametrisation"] == "Dirichlet"
+        # if parsed_args["parametrisation"] == "Dirichlet"
             #Ensure u-valence weight > d-valence weight
-            if params.θ[2] > params.θ[1]
-                return -Inf
-            end
-            end
+        #    if params.θ[2] > params.θ[1]
+         #       return -Inf
+          #  end
+          #  end
           
-            #ParErrs = [params.beta0_1,params.beta0_2,params.beta0_3,params.beta0_4, params.beta0_5,params.beta0_6,params.beta0_7,params.beta0_8]
+            ParErrs = [params.beta0_1,params.beta0_2,params.beta0_3,params.beta0_4, params.beta0_5,params.beta0_6,params.beta0_7,params.beta0_8]
             
             counts_pred_ep, counts_pred_em = @critical  forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs
-            #,ParErrs 
+            ,ParErrs 
             );
 
             ll_value = 0.0
@@ -471,10 +339,10 @@ likelihood = let d = sim_data
                    @debug "counts_pred_em[i] < 0, setting to 0" i counts_pred_em[i]
                    counts_pred_em[i] = 0
                 end
-                         if parsed_args["parametrisation"] == "Dirichlet"
+               # if parsed_args["parametrisation"] == "Dirichlet"
                 counts_pred_ep[i] =counts_pred_ep[i]*(1+0.018*params.Beta1)
                 counts_pred_em[i] =counts_pred_em[i]*(1+0.018*params.Beta2)                
-                end
+               # end
 #                counts_pred_ep[i] =counts_pred_ep[i]*(1+0.018*params.Beta1)
 #                counts_pred_em[i] =counts_pred_em[i]*(1+0.018*params.Beta2)                
 

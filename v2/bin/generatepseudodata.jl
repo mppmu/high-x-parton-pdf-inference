@@ -39,9 +39,10 @@ Random.MersenneTwister(seed)
 
 if parsed_args["parametrisation"] == "Dirichlet"
 
-weights = [30.0, 15.0, 12.0, 6.0, 3.6, 0.85, 0.85, 0.85, 0.85]
-θ = rand(rng, Dirichlet(weights))
-pdf_params = DirichletPDFParams(K_u=4.0, K_d=4.0, λ_g1=1.5, λ_g2=-0.4, K_g=6.0,λ_q=-0.25, K_q=5.0, θ=θ);
+#weights = [30.0, 15.0, 12.0, 6.0, 3.6, 0.85, 0.85, 0.85, 0.85]
+#θ = rand(rng, Dirichlet(weights))
+θ = [ 0.228, 0.104, 0.249, 0.249, 0.104, 0.052, 0.010, 0.005, 0.0005]
+pdf_params = DirichletPDFParams(K_u=3.7, K_d=3.7, λ_g1=0.5, λ_g2=-0.5, K_g=5.0,λ_q=-0.5, K_q=6.0, θ=θ);
 
 end
 if parsed_args["parametrisation"] == "Valence"
