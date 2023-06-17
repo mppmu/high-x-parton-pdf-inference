@@ -89,7 +89,6 @@ mode_pars_data = mode(samples_data)
 
 
 # As in PDF-fit-dirichlet.ipynb
-# As in PDF-fit-dirichlet.ipynb
 qcdnum_grid = QCDNUM.GridParams(x_min=[1.0e-3, 1.0e-1, 5.0e-1], x_weights=[1, 2, 2], nx=100,qq_bounds=[1.0e2, 3.0e4], qq_weights=[1.0, 1.0], nq=50, spline_interp=3)
 qcdnum_params = QCDNUM.EvolutionParams(order=2, α_S=0.118, q0=100.0, grid_params=qcdnum_grid,n_fixed_flav=5, iqc=1, iqb=1, iqt=1, weight_type=1);
 splint_params = QCDNUM.SPLINTParams();
@@ -198,7 +197,6 @@ chisqem_data=0.
                 get_bin_info(j) 
                 println(j," positron ",pred," ",counts_obs_ep_data[j]," ",(counts_obs_ep_data[j]-pred)^2/pred)
             end
-    
             pred=counts_pred_em_data[j]
             best=floor(counts_pred_em_data[j])
             prob_em_data[j] = pdf(Poisson(pred), counts_obs_em_data[j])/pdf(Poisson(pred), best)
@@ -206,11 +204,7 @@ chisqem_data=0.
             if ( (counts_obs_em_data[j]-pred)^2/pred>4) 
                 get_bin_info(j) 
                 println(j," electron ",pred," ",counts_obs_em_data[j]," ",(counts_obs_em_data[j]-pred)^2/pred)
-            end
-
-
-
-#           
+            end 
        end
 println(chisqep_data," ",chisqem_data)
 
@@ -231,17 +225,18 @@ pvem=string(float(countem)/ncounts)
 println(" p-value for ep fit: ",pvep," p-value for em fit: ",pvem," p-value for total fit: ",float(count_tot)/ncounts) 
 
 
-p1=histogram(chisqep,bins=100,xlabel=L"\chi^2_P", ylabel="Counts", fontfamily=font_family )
+p1=histogram(chisqep,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c3 , grid=false)
 p1=plot!([chisqep_data],seriestype = :vline,lw=5,legend=:none, fontfamily=font_family 
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         ,ylims=(0, 500), xlims=(50,260)
+        ,color=c3, grid=false
 )
-p2=histogram(chisqem,bins=50:2:250,legend=:false,xlabel=L"\chi^2_P", ylabel="Counts")
-#histogram!(chisqem,bins=100)
-#vline!(chisqem_data,color="red",mw=1)
+p2=histogram(chisqem,bins=50:2:250,legend=:false,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c3 , grid=false)
+
 p2=plot!([chisqem_data],seriestype = :vline,lw=5
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     ,ylims=(0, 500), xlims=(50,260)
+,color=c3, grid=false
 )
 annotate!(p1,220.0,350,text(L"$e^{+}p$",26))
 annotate!(p2,220.0,350,text(L"$e^{-}p$",26))
@@ -290,10 +285,7 @@ if (parsed_args["priorshift"]==1)
     println("seting prior from Shifted Prior set ",seedtxt)
 
 prior = NamedTupleDist(
-
-#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+    θ = Dirichlet([40, 10, 10, 10, 5, 2.5, 1.5, 1.5, 0.5]),
     K_u = Truncated(Normal(4.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
@@ -315,10 +307,7 @@ prior = NamedTupleDist(
 elseif (parsed_args["priorshift"]==2)
     println("seting prior from Shifted Prior set ",seedtxt)
 prior = NamedTupleDist(
-
-#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-        θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+        θ = Dirichlet([20, 10, 30, 30, 5, 2.5, 1.5, 1.5, 0.5]),
         K_u = Truncated(Normal(2.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
@@ -370,21 +359,6 @@ prior = NamedTupleDist(
 end
 
 if parsed_args["parametrisation"] == "Bernstein"
-
-#prior = NamedTupleDist(
-#    θ = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
-#    initial_U = [Truncated(Normal(30., 15.), 0, 80)],
-#    initial_D = [Uniform(0., 20.)],
-#    U_weights = [Truncated(Normal(30., 15.), 0, 80)],
-#    D_weights = [Uniform(0., 20.)],
-
-#    λ_g1 = Uniform(1., 2.0),
-#    λ_g2 = Uniform(-0.5, -0.3),
-#    K_g =  Uniform(5.,9.),
-#    λ_q = Uniform(-0.5, -0.),
-#    K_q = Uniform(3., 7.),
-#    bspoly_params = [[0,3],[0,4],[1,4]],
-#    )
 
 prior = NamedTupleDist(
     θ = Dirichlet([34.0, 17.0, 22.5, 17.0, 7.3, 1.4, 0.2, 10.e-5, 0.3]),
@@ -461,19 +435,6 @@ U_weights_true = [1.]
 D_weights_true = [1.]
 end
 
-#θ_true=[0.22, 0.10, 0.24, 0.24, 0.10,0.05, 0.01, 0.005, 0.0005]
-#θ_sum=sum(θ_true[1:9])
-#θ_true=θ_true/θ_sum
-#println(θ_true)
-#K_u_true=3.7
-#K_d_true=3.7
-#λ_g1_true=0.5
-#λ_g2_true=-0.5
-#K_g_true=5.0
-#λ_q_true=-0.5
-#K_q_true=6.0
-
-
 
 plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
     layout=@layout([a b; c{0.55w, 0.6h} d]), grid=false
@@ -507,7 +468,7 @@ plot!(samples_data, (:(K_u), :(θ[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , bottom_margin=-1mm
 
 )
-p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=2
+p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=1
 , foreground_color_legend=false)
 
 
@@ -533,7 +494,7 @@ plot!(samples_data, :K_u, legend=false, xlabel="", ylabel=L"P(K_u)", subplot=1,
     , bottom_margin=-1mm
 
 )
-vline!([K_u_true], color="red", label=" Truth", lw=2)
+vline!([K_u_true], color="red", label=" Truth", lw=1)
 
 # Delta_u marginal
 plot!(prior_samples, :(θ[1]), legend=false, marginalmode=false, 
@@ -626,7 +587,7 @@ plot!(samples_data, (:(K_d), :(θ[2])), xlabel=L"K_d", ylabel=L"\Delta_d",
     , top_margin=0mm
     , bottom_margin=-1mm
 )
-p = plot!([K_d_true],[θ_true[2]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=2
+p = plot!([K_d_true],[θ_true[2]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=1
 , foreground_color_legend=false
 )
 
@@ -650,7 +611,7 @@ plot!(samples_data, :K_d, legend=false, xlabel="", ylabel=L"P(K_d)", subplot=1,
     , top_margin=0mm
     , bottom_margin=-1mm
 )
-vline!([K_d_true], color="red", label=" Truth", lw=2)
+vline!([K_d_true], color="red", label=" Truth", lw=1)
 
 # Delta_u marginal
 plot!(prior_samples, :(θ[2]), legend=false, marginalmode=false, 
@@ -674,7 +635,7 @@ plot!(samples_data, :(θ[2]), legend=false, ylabel="", xlabel=L"P(\Delta_d)",
     , top_margin=0mm
     , bottom_margin=-1mm
 )
-hline!([θ_true[2]], color="red", label=" Truth", subplot=4, lw=2)
+hline!([θ_true[2]], color="red", label=" Truth", subplot=4, lw=1)
 
 # Legend
 plot!(prior_samples, (:(K_d), :(θ[2])), xlabel=L"K_d", ylabel=L"\Delta_d",
@@ -750,7 +711,7 @@ plot!(prior_samples, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylab
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14   
     
 )
-plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=2
+plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=1
 , foreground_color_legend=false
 )
 
@@ -1156,11 +1117,12 @@ p
 filename = string("figures/fig2-corner-",parsed_args["fitresults"],"_v3.pdf")
 savefig(filename)
 
-plot(framestyle=:axes, size=(1200, 500), fontfamily=font_family, 
+plot(framestyle=:axes, size=(1000, 400), fontfamily=font_family, 
     leftmargin=6Plots.mm, bottommargin=5Plots.mm, rightmargin=5Plots.mm,
     layout=@layout([a b c{0.15w}]),
 
  xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18
+ , grid=false
 )
 
 plot!(inset=(1, bbox(0.23, 0.75, 0.55, 0.25, :bottom)))

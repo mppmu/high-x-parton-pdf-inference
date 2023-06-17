@@ -112,22 +112,18 @@ alpha = 0.6
 prior_alpha = 0.2;
 
 # Get some prior samples for plotting
-
-if parsed_args["parametrisation"] == "Valence"
-##FIXME!!!
-weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
+if parsed_args["parametrisation"] == "Bernstein"
 prior = NamedTupleDist(
-    θ_tmp=Dirichlet(weights),
-    λ_u=Truncated(Normal(pdf_params.λ_u, 1), 0, 1),
-    K_u=Truncated(Normal(pdf_params.K_u, 1), 2, 10),
-    λ_d=Truncated(Normal(pdf_params.λ_d, 1), 0, 1),
-    K_d=Truncated(Normal(pdf_params.K_d, 1), 2, 10),
-    λ_g1=Truncated(Normal(pdf_params.λ_g1, 1), -1, 0),
-    λ_g2=Truncated(Normal(pdf_params.λ_g2, 1), -1, 0),
-    K_g=Truncated(Normal(pdf_params.K_g, 1), 2, 10),
-    λ_q=Truncated(Normal(pdf_params.λ_q, 0.1), -1, 0),
-    K_q=Truncated(Normal(pdf_params.K_q, 0.5), 3, 7),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
+    θ = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
+    initial_U = [Truncated(Normal(30., 15.), 0, 80)],
+    initial_D = [Uniform(0., 20.)],
+    λ_g1 = Uniform(1., 2.0),
+    λ_g2 = Uniform(-0.5, -0.3),
+    K_g =  Uniform(5.,9.),
+    λ_q = Uniform(-0.5, -0.),
+    K_q = Uniform(3., 7.),
+    bspoly_params = [0,5,1,5,0,6],
+        Beta1 =  Truncated(Normal(0, 1), -5, 5),
     Beta2 =  Truncated(Normal(0, 1), -5, 5),
     beta0_1=  Truncated(Normal(0, 1), -5, 5), 
     beta0_2=   Truncated(Normal(0, 1), -5, 5),    
@@ -136,35 +132,29 @@ prior = NamedTupleDist(
     beta0_5=  Truncated(Normal(0, 1), -5, 5), 
     beta0_6=  Truncated(Normal(0, 1), -5, 5), 
     beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)    
-   )
+    beta0_8=   Truncated(Normal(0, 1), -5, 5)
+    )
 end
 
 
 prior_samples=bat_sample(prior).result;
 
-xlims_K_u = (2.0, 7.0) # (3.2, 4.4)
-xlims_D_u = (0., 0.5) # (0.29, 0.37)
-xlims_K_d = (2.0, 7.0) # (3.2, 4.4)
-xlims_D_d = (0., 0.5) # (0.29, 0.37)
+xlims_initial_U = (-20, 80) # initial_U
+xlims_D_u = (0.1, 0.5) # (0.29, 0.37)
 intervals = [0.68, 0.95]
 labels = [L"~~\mathrm{Posterior}~68~\%", L"~~\mathrm{Posterior}~95~\%"]
 prior_labels = [L"~~\mathrm{Prior}~68~\%", L"~~\mathrm{Prior}~95~\%"]
 colors = [c3, c1]
 prior_colors = [:grey40, :grey50]
 
-if parsed_args["parametrisation"] == "Valence"
-weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
-λ_u_true = 0.64;
-K_u_true = 3.38;
-λ_d_true = 0.67;
-K_d_true = 4.73;
-
-#FIXME!!!
-θ_true=[0.22, 0.10, 0.24, 0.24, 0.10,0.05, 0.01, 0.005, 0.0005]
-θ_sum=sum(θ_true[1:9])
-θ_true=θ_true/θ_sum
-
+if parsed_args["parametrisation"] == "Bernstein"
+θ_true=[.33, .13, .27, .17, .073, 0.014, 0.002, 0.000001, .003]
+bspoly_params_true = [[0,3],[0,4],[1,4]]
+λ_g1_true=1.5;
+λ_g2_true=-0.4;
+K_g_true=6.0;
+λ_q_true=-0.25;
+K_q_true=5.0;
 end
 
 plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
@@ -176,7 +166,7 @@ plot(framestyle=:axes, size=(500, 400), fontfamily=font_family,
 )
 
 # Joint posterior
-plot!(prior_samples, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
+plot!(prior_samples, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
     seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha,
@@ -186,26 +176,27 @@ plot!(prior_samples, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
+#, xticks=(0:0.05:0.1,["0","0.05","0.1"])
 
 )
-plot!(samples_data, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
+plot!(samples_data, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
     seriestype=:smallest_intervals_contourf, smoothing=2, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, alpha=alpha,
-    subplot=3, xlims=xlims_K_u, ylims=xlims_D_u
- , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    subplot=3, xlims=xlims_initial_U, ylims=xlims_D_u
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
 
 )
-p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=1
+plot!([K_u_true],[θ_true[1]], seriestype = "scatter", subplot = 3, color = "red", label = " Truth", legend = :topright,lw=1
 , foreground_color_legend=false)
 
 
 
-# K_u marginal
-plot!(prior_samples, :K_u, legend=false, marginalmode=false, 
+# initial_U marginal
+plot!(prior_samples, :initial_U, legend=false, marginalmode=false, 
     seriestype=:smallest_intervals, intervals=intervals, 
     colors=prior_colors, subplot=1, alpha=prior_alpha
  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
@@ -215,8 +206,8 @@ plot!(prior_samples, :K_u, legend=false, marginalmode=false,
     , bottom_margin=-1mm
 
 )
-plot!(samples_data, :K_u, legend=false, xlabel="", ylabel=L"P(K_u)", subplot=1, 
-    xlims=xlims_K_u, ylims=(0, 4), seriestype=:smallest_intervals, 
+plot!(samples_data, :initial_U, legend=false, xlabel="", ylabel=L"P(A_3)", subplot=1, 
+    xlims=xlims_initial_U, ylims=(0, 0.1), seriestype=:smallest_intervals, 
     marginalmode=false, intervals=intervals, colors=colors, alpha=alpha
  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
@@ -228,7 +219,7 @@ plot!(samples_data, :K_u, legend=false, xlabel="", ylabel=L"P(K_u)", subplot=1,
 vline!([K_u_true], color="red", label=" Truth", lw=1)
 
 # Delta_u marginal
-plot!(prior_samples, :(θ_tmp[1]), legend=false, marginalmode=false, 
+plot!(prior_samples, :(θ[1]), legend=false, marginalmode=false, 
     seriestype=:smallest_intervals, intervals=intervals,
     colors=prior_colors, subplot=4, alpha=prior_alpha, 
     orientation=:horizontal
@@ -239,7 +230,7 @@ plot!(prior_samples, :(θ_tmp[1]), legend=false, marginalmode=false,
     , bottom_margin=-1mm
 
 )
-plot!(samples_data, :(θ_tmp[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)", 
+plot!(samples_data, :(θ[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)", 
     subplot=4, ylims=xlims_D_u, xlims=(0, 55), 
     seriestype=:smallest_intervals, intervals=intervals, marginalmode=false, 
     colors=colors, alpha=alpha, orientation=:horizontal
@@ -254,7 +245,7 @@ plot!(samples_data, :(θ_tmp[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)"
 hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=1)
 
 # Legend
-plot!(prior_samples, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
+plot!(prior_samples, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, interval_labels=prior_labels, 
     colors=reverse(prior_colors), linewidth=0, 
@@ -267,12 +258,12 @@ plot!(prior_samples, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , bottom_margin=-1mm
 
 )
-p = plot!(samples_data, (:(K_u), :(θ_tmp[1])),
+p = plot!(samples_data, (:(initial_U), :(θ[1])),
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, colors=reverse(colors), 
     interval_labels=labels,
     linewidth=0, alpha=alpha+0.2, legend=:bottomleft, foreground_color_legend=false,
-    framestyle=:none, subplot=2, xlims=(0, 1.), ylims=(0, 0.1)
+    framestyle=:none, subplot=2, xlims=(0, 1), ylims=(0, 0.1)
  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=16
     , right_margin=7mm
     , left_margin=0mm
