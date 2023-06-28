@@ -73,28 +73,6 @@ println(seed)
 seedtxt=string(seed)
 rng = MersenneTwister(seed)
 
-if parsed_args["parametrisation"] == "Dirichlet"
-weights = [20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]
-θ = rand(rng, Dirichlet(weights))
-pdf_params = DirichletPDFParams(K_u=3.5, K_d=4.0, λ_g1=1.5, λ_g2=-0.4, K_g=6.0, λ_q=-0.25, K_q=5.0, θ=θ);
-# replace weights with θ to specify the momentum fractions directly
-@info "Valence λ:" pdf_params.λ_u pdf_params.λ_d
-@info "Momenta:" pdf_params.θ[1],pdf_params.θ[2],pdf_params.θ[3],pdf_params.θ[4]
-plot_input_pdfs(pdf_params)
-end
-if parsed_args["parametrisation"] == "Valence"
-weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
-λ_u = 0.64;
-K_u = 3.38;
-λ_d = 0.67;
-K_d = 4.73;
-θ = get_θ_val(rng, λ_u, K_u, λ_d, K_d, weights)
-pdf_params = ValencePDFParams(λ_u=λ_u, K_u=K_u, λ_d=λ_d, K_d=K_d, λ_g1=0.50, λ_g2=-0.63, K_g=4.23, λ_q=-0.23, K_q=5.0, θ=θ);
-# replace weights with θ to specify the momentum fractions directly
-@info "Valence λ:" pdf_params.λ_u pdf_params.λ_d
-@info "Momenta:" pdf_params.θ[1],pdf_params.θ[2],pdf_params.θ[3],pdf_params.θ[4]
-plot_input_pdfs(pdf_params)
-end
 
 
 # ### Go from PDFs to counts in ZEUS detector bins
@@ -131,6 +109,9 @@ somepdf_params, sim_data = pd_read_sim(string("pseudodata/",parsed_args["pseudod
 
 
 if parsed_args["parametrisation"] == "Dirichlet"
+if (parsed_args["priorshift"]==0)
+    println("seting prior from Shifted Prior set ",seedtxt)
+
 prior = NamedTupleDist(
     θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
     K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
@@ -151,15 +132,12 @@ prior = NamedTupleDist(
     beta0_7=  Truncated(Normal(0, 1), -5, 5), 
     beta0_8=   Truncated(Normal(0, 1), -5, 5)
 );
-
+end
 if (parsed_args["priorshift"]==1)
     println("seting prior from Shifted Prior set ",seedtxt)
 
 prior = NamedTupleDist(
-
-#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+    θ = Dirichlet([40, 10, 10, 10, 5, 2.5, 1.5, 1.5, 0.5]),
     K_u = Truncated(Normal(4.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
@@ -181,10 +159,7 @@ prior = NamedTupleDist(
 elseif (parsed_args["priorshift"]==2)
     println("seting prior from Shifted Prior set ",seedtxt)
 prior = NamedTupleDist(
-
-#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-        θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+        θ = Dirichlet([20, 10, 30, 30, 5, 2.5, 1.5, 1.5, 0.5]),
         K_u = Truncated(Normal(2.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
@@ -263,8 +238,8 @@ prior = NamedTupleDist(
     K_g =  Uniform(5.,9.),
     λ_q = Uniform(-1, -0.5),
     K_q = Uniform(3., 7.),
-    bspoly_params = [[0, 3], [0, 4], [1, 4], [0, 5]],
-    #    bspoly_params = [1,4,0,4,0,5],
+    #bspoly_params = [[0, 3], [0, 4], [1, 4], [0, 5]],
+        bspoly_params = [1,4,0,4,0,5],
         Beta1 =  Truncated(Normal(0, 1), -5, 5),
     Beta2 =  Truncated(Normal(0, 1), -5, 5),
     beta0_1=  Truncated(Normal(0, 1), -5, 5), 
@@ -291,7 +266,7 @@ likelihood = let d = sim_data
     logfuncdensity(function (params)
 
        if parsed_args["parametrisation"] == "Bernstein"
-       pdf_params = BernsteinPDFParams(
+       pdf_params = BernsteinDirichletPDFParams(
 
             initial_U=params.initial_U, 
             initial_D=params.initial_D, 
@@ -306,22 +281,16 @@ likelihood = let d = sim_data
 
 
        if parsed_args["parametrisation"] == "Dirichlet"
-       pdf_params = DirichletPDFParams(K_u=params.K_u, K_d=params.K_d, λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_g=params.K_g, λ_q=params.λ_q, K_q=params.K_q, θ=params.θ)
+         pdf_params = DirichletPDFParams(K_u=params.K_u, K_d=params.K_d, λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_g=params.K_g, λ_q=params.λ_q, K_q=params.K_q, θ=params.θ)
        end
 
        if parsed_args["parametrisation"] == "Valence"
          θ = get_scaled_θ(params.λ_u, params.K_u, params.λ_d,params.K_d, Vector(params.θ_tmp))
          pdf_params = ValencePDFParams(λ_u=params.λ_u, K_u=params.K_u, λ_d=params.λ_d, K_d=params.K_d, λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_g=params.K_g, λ_q=params.λ_q, K_q=params.K_q, 
          θ=θ)
-        end
-        # if parsed_args["parametrisation"] == "Dirichlet"
-            #Ensure u-valence weight > d-valence weight
-        #    if params.θ[2] > params.θ[1]
-         #       return -Inf
-          #  end
-          #  end
+       end
           
-            ParErrs = [params.beta0_1,params.beta0_2,params.beta0_3,params.beta0_4, params.beta0_5,params.beta0_6,params.beta0_7,params.beta0_8]
+       ParErrs = [params.beta0_1,params.beta0_2,params.beta0_3,params.beta0_4, params.beta0_5,params.beta0_6,params.beta0_7,params.beta0_8]
             
             counts_pred_ep, counts_pred_em = @critical  forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs
             ,ParErrs 
@@ -339,12 +308,8 @@ likelihood = let d = sim_data
                    @debug "counts_pred_em[i] < 0, setting to 0" i counts_pred_em[i]
                    counts_pred_em[i] = 0
                 end
-               # if parsed_args["parametrisation"] == "Dirichlet"
                 counts_pred_ep[i] =counts_pred_ep[i]*(1+0.018*params.Beta1)
                 counts_pred_em[i] =counts_pred_em[i]*(1+0.018*params.Beta2)                
-               # end
-#                counts_pred_ep[i] =counts_pred_ep[i]*(1+0.018*params.Beta1)
-#                counts_pred_em[i] =counts_pred_em[i]*(1+0.018*params.Beta2)                
 
                 ll_value += logpdf(Poisson(counts_pred_ep[i]), counts_obs_ep[i])
                 ll_value += logpdf(Poisson(counts_pred_em[i]), counts_obs_em[i])

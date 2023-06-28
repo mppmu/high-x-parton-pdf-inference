@@ -17,6 +17,9 @@ using Measures
 using ArgParse
 import HDF5
 
+
+
+
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -53,6 +56,10 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
+c1 = :teal
+c2 = :royalblue4
+c3 = :midnightblue
+c4 = :grey
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
@@ -88,7 +95,6 @@ prob_em_data = zeros(nbins)
 mode_pars_data = mode(samples_data)
 
 
-# As in PDF-fit-dirichlet.ipynb
 # As in PDF-fit-dirichlet.ipynb
 qcdnum_grid = QCDNUM.GridParams(x_min=[1.0e-3, 1.0e-1, 5.0e-1], x_weights=[1, 2, 2], nx=100,qq_bounds=[1.0e2, 3.0e4], qq_weights=[1.0, 1.0], nq=50, spline_interp=3)
 qcdnum_params = QCDNUM.EvolutionParams(order=2, α_S=0.118, q0=100.0, grid_params=qcdnum_grid,n_fixed_flav=5, iqc=1, iqb=1, iqt=1, weight_type=1);
@@ -198,7 +204,6 @@ chisqem_data=0.
                 get_bin_info(j) 
                 println(j," positron ",pred," ",counts_obs_ep_data[j]," ",(counts_obs_ep_data[j]-pred)^2/pred)
             end
-    
             pred=counts_pred_em_data[j]
             best=floor(counts_pred_em_data[j])
             prob_em_data[j] = pdf(Poisson(pred), counts_obs_em_data[j])/pdf(Poisson(pred), best)
@@ -206,11 +211,7 @@ chisqem_data=0.
             if ( (counts_obs_em_data[j]-pred)^2/pred>4) 
                 get_bin_info(j) 
                 println(j," electron ",pred," ",counts_obs_em_data[j]," ",(counts_obs_em_data[j]-pred)^2/pred)
-            end
-
-
-
-#           
+            end 
        end
 println(chisqep_data," ",chisqem_data)
 
@@ -231,17 +232,18 @@ pvem=string(float(countem)/ncounts)
 println(" p-value for ep fit: ",pvep," p-value for em fit: ",pvem," p-value for total fit: ",float(count_tot)/ncounts) 
 
 
-p1=histogram(chisqep,bins=100,xlabel=L"\chi^2_P", ylabel="Counts", fontfamily=font_family )
+p1=histogram(chisqep,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1 , grid=false)
 p1=plot!([chisqep_data],seriestype = :vline,lw=5,legend=:none, fontfamily=font_family 
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         ,ylims=(0, 500), xlims=(50,260)
+        ,color=c3, grid=false
 )
-p2=histogram(chisqem,bins=50:2:250,legend=:false,xlabel=L"\chi^2_P", ylabel="Counts")
-#histogram!(chisqem,bins=100)
-#vline!(chisqem_data,color="red",mw=1)
+p2=histogram(chisqem,bins=50:2:250,legend=:false,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1 , grid=false)
+
 p2=plot!([chisqem_data],seriestype = :vline,lw=5
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     ,ylims=(0, 500), xlims=(50,260)
+,color=c3, grid=false
 )
 annotate!(p1,220.0,350,text(L"$e^{+}p$",26))
 annotate!(p2,220.0,350,text(L"$e^{-}p$",26))
@@ -265,6 +267,9 @@ prior_alpha = 0.2;
 # Get some prior samples for plotting
 
 if parsed_args["parametrisation"] == "Dirichlet"
+if (parsed_args["priorshift"]==0)
+    println("seting prior from Shifted Prior set ",seedtxt)
+
 prior = NamedTupleDist(
     θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
     K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
@@ -285,15 +290,13 @@ prior = NamedTupleDist(
     beta0_7=  Truncated(Normal(0, 1), -5, 5), 
     beta0_8=   Truncated(Normal(0, 1), -5, 5)
 );
+end
 
 if (parsed_args["priorshift"]==1)
     println("seting prior from Shifted Prior set ",seedtxt)
 
 prior = NamedTupleDist(
-
-#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+    θ = Dirichlet([40, 10, 10, 10, 5, 2.5, 1.5, 1.5, 0.5]),
     K_u = Truncated(Normal(4.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
@@ -315,10 +318,7 @@ prior = NamedTupleDist(
 elseif (parsed_args["priorshift"]==2)
     println("seting prior from Shifted Prior set ",seedtxt)
 prior = NamedTupleDist(
-
-#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-        θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
+        θ = Dirichlet([20, 10, 30, 30, 5, 2.5, 1.5, 1.5, 0.5]),
         K_u = Truncated(Normal(2.5, 0.5), 2, 5),
     K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
     λ_g1 = Uniform(0., 1.),
@@ -370,21 +370,6 @@ prior = NamedTupleDist(
 end
 
 if parsed_args["parametrisation"] == "Bernstein"
-
-#prior = NamedTupleDist(
-#    θ = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
-#    initial_U = [Truncated(Normal(30., 15.), 0, 80)],
-#    initial_D = [Uniform(0., 20.)],
-#    U_weights = [Truncated(Normal(30., 15.), 0, 80)],
-#    D_weights = [Uniform(0., 20.)],
-
-#    λ_g1 = Uniform(1., 2.0),
-#    λ_g2 = Uniform(-0.5, -0.3),
-#    K_g =  Uniform(5.,9.),
-#    λ_q = Uniform(-0.5, -0.),
-#    K_q = Uniform(3., 7.),
-#    bspoly_params = [[0,3],[0,4],[1,4]],
-#    )
 
 prior = NamedTupleDist(
     θ = Dirichlet([34.0, 17.0, 22.5, 17.0, 7.3, 1.4, 0.2, 10.e-5, 0.3]),
@@ -461,19 +446,6 @@ U_weights_true = [1.]
 D_weights_true = [1.]
 end
 
-#θ_true=[0.22, 0.10, 0.24, 0.24, 0.10,0.05, 0.01, 0.005, 0.0005]
-#θ_sum=sum(θ_true[1:9])
-#θ_true=θ_true/θ_sum
-#println(θ_true)
-#K_u_true=3.7
-#K_d_true=3.7
-#λ_g1_true=0.5
-#λ_g2_true=-0.5
-#K_g_true=5.0
-#λ_q_true=-0.5
-#K_q_true=6.0
-
-
 
 plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
     layout=@layout([a b; c{0.55w, 0.6h} d]), grid=false
@@ -507,8 +479,7 @@ plot!(samples_data, (:(K_u), :(θ[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , bottom_margin=-1mm
 
 )
-p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=2
-, foreground_color_legend=false)
+p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false, markersize=3, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 
 
@@ -533,7 +504,7 @@ plot!(samples_data, :K_u, legend=false, xlabel="", ylabel=L"P(K_u)", subplot=1,
     , bottom_margin=-1mm
 
 )
-vline!([K_u_true], color="red", label=" Truth", lw=2)
+vline!([K_u_true], color="red", label=" Truth", lw=0.5)
 
 # Delta_u marginal
 plot!(prior_samples, :(θ[1]), legend=false, marginalmode=false, 
@@ -559,7 +530,7 @@ plot!(samples_data, :(θ[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)",
     , bottom_margin=-1mm
 
 )
-hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=1)
+hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
 
 # Legend
 plot!(prior_samples, (:(K_u), :(θ[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
@@ -626,9 +597,7 @@ plot!(samples_data, (:(K_d), :(θ[2])), xlabel=L"K_d", ylabel=L"\Delta_d",
     , top_margin=0mm
     , bottom_margin=-1mm
 )
-p = plot!([K_d_true],[θ_true[2]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=2
-, foreground_color_legend=false
-)
+p = plot!([K_d_true],[θ_true[2]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false, markersize=3, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 
 # K_d marginal
@@ -650,7 +619,7 @@ plot!(samples_data, :K_d, legend=false, xlabel="", ylabel=L"P(K_d)", subplot=1,
     , top_margin=0mm
     , bottom_margin=-1mm
 )
-vline!([K_d_true], color="red", label=" Truth", lw=2)
+vline!([K_d_true], color="red", label=" Truth", lw=0.5)
 
 # Delta_u marginal
 plot!(prior_samples, :(θ[2]), legend=false, marginalmode=false, 
@@ -674,7 +643,7 @@ plot!(samples_data, :(θ[2]), legend=false, ylabel="", xlabel=L"P(\Delta_d)",
     , top_margin=0mm
     , bottom_margin=-1mm
 )
-hline!([θ_true[2]], color="red", label=" Truth", subplot=4, lw=2)
+hline!([θ_true[2]], color="red", label=" Truth", subplot=4, lw=0.5)
 
 # Legend
 plot!(prior_samples, (:(K_d), :(θ[2])), xlabel=L"K_d", ylabel=L"\Delta_d",
@@ -721,14 +690,6 @@ bins = 60
 comb_prior_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_sea = sum(v.θ[5:9])), prior_samples).result
 comb_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_sea = sum(v.θ[5:9])), samples_data).result;
 
-
-
-
-
-
-
-
-
 plot(framestyle=:axes, size=(700, 600), fontfamily=font_family, 
     layout=@layout([a b; c d]), grid=false)
 plot!(samples_data, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylabel=L"\Delta_{d}",
@@ -750,9 +711,7 @@ plot!(prior_samples, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylab
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14   
     
 )
-plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=2
-, foreground_color_legend=false
-)
+plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false, markersize=3, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 comb_prior_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_u = v.θ[1]), prior_samples).result
 comb_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_u = v.θ[1]), samples_data).result;
@@ -777,7 +736,7 @@ plot!(comb_prior_samples, (:(Δ_u), :(Δ_g)), subplot=2,xlabel=L"\Delta_{u}", yl
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
 )
 θ_g_true=θ_true[3]+θ_true[4]
-plot!([θ_true[1]],[θ_g_true], subplot=2,color="red",seriestype=:scatter, label=:none, lw=1)
+plot!([θ_true[1]],[θ_g_true], subplot=2,color="red",seriestype=:scatter, label=:none, lw=1, markerstrokecolor=:red, markersize=3)
 
 
 comb_prior_samples = bat_transform(v -> (Δ_sea = sum(v.θ[5:9]), Δ_u = v.θ[1]), prior_samples).result
@@ -802,7 +761,7 @@ plot!(comb_prior_samples, (:(Δ_u), :(Δ_sea)), subplot=3,xlabel=L"\Delta_{u}", 
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
 )
 θ_sea_true=sum(θ_true[5:9])
-plot!([θ_true[1]],[θ_sea_true], subplot=3,color="red",seriestype=:scatter, label=:none, lw=2)
+plot!([θ_true[1]],[θ_sea_true], subplot=3,color="red",seriestype=:scatter, label=:none, lw=2, markerstrokecolor=:red, markersize=3)
 
 
 comb_prior_samples = bat_transform(v -> (Δ_sea = sum(v.θ[5:9]), Δ_g = v.θ[3] + v.θ[4]), prior_samples).result
@@ -814,9 +773,8 @@ plot!(comb_samples, (:(Δ_g), :(Δ_sea)),subplot=4, xlabel=L"\Delta_{g}", ylabel
     alpha=prior_alpha
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
      ,ylims=(0,0.32),yticks=(0:0.1:0.3,["0","0.1","0.2","0.3"])
-       
     ,xlims=(0.25,0.72),xticks=(0.3:0.1:0.72,["0.3","0.4","0.5","0.6","0.7"])
-        , right_margin=-2mm
+    , right_margin=-2mm
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
@@ -830,89 +788,61 @@ plot!(comb_prior_samples, (:(Δ_g), :(Δ_sea)),subplot=4,xlabel=L"\Delta_{g}", y
 )
 Δ_sea_true = sum(θ_true[5:9])
 Δ_g_true = sum(θ_true[3:4])
-plot!([Δ_g_true],[Δ_sea_true], color="red",subplot=4,seriestype=:scatter, label=:none, lw=2)
+plot!([Δ_g_true],[Δ_sea_true], color="red",subplot=4,seriestype=:scatter, label=:none, lw=2, markerstrokecolor=:red, markersize=3)
 
 
 filename = string("figures/fig5-momentum-corr-", parsed_args["fitresults"], "_v2.pdf")
 savefig(filename)
 
-
-
-
 function x_uv_x(x::Real, λ_u::Real, K_u::Real)
-
     A_u = 2 / sf.beta(λ_u, K_u + 1)
-
     return A_u * x^λ_u * (1 - x)^K_u
-
 end
 
 function x_dv_x(x::Real, λ_d::Real, K_d::Real)
-
     A_d = 1 / sf.beta(λ_d, K_d + 1)
-
     return A_d * x^λ_d * (1 - x)^K_d
-
 end
 
 function x_g_x(x::Real, λ_g1::Real, λ_g2::Real, K_g::Real,
     K_q::Real, w1::Real, w2::Real)
-
     A_g1 = w1 / sf.beta(λ_g1 + 1, K_g + 1)
-
     x_g1_x = A_g1 * x^λ_g1 * (1 - x)^K_g
-
     A_g2 = w2 / sf.beta(λ_g2 + 1, K_q + 1)
-
     x_g2_x = A_g2 * x^λ_g2 * (1 - x)^K_q
-
     return x_g1_x + x_g2_x
-
 end
 
 function x_q_x(x::Real, λ_q::Real, K_q::Real, w::Real)
-
     A_q = (w / 2) / sf.beta(λ_q + 1, K_q + 1)
-
     return A_q * x^λ_q * (1 - x)^K_q
-
 end
 
 
 function wrap_xuval(p::NamedTuple, x::Real)
-    
-    pdf_p = DirichletPDFParams(K_u=p.K_u, K_d=p.K_d, λ_g1=p.λ_g1, K_q=p.K_q, 
-                                    λ_g2=p.λ_g2, K_g=p.K_g, λ_q=p.λ_q, θ=p.θ)
+    pdf_p = DirichletPDFParams(K_u=p.K_u, K_d=p.K_d, λ_g1=p.λ_g1, K_q=p.K_q,λ_g2=p.λ_g2, K_g=p.K_g, λ_q=p.λ_q, θ=p.θ)
     return PartonDensity.x_uv_x(x,pdf_p.λ_u, pdf_p.K_u)
 end
 
 function wrap_xdval(p::NamedTuple, x::Real)
-    
-    pdf_p = DirichletPDFParams(K_u=p.K_u, K_d=p.K_d, λ_g1=p.λ_g1, K_q=p.K_q, 
-                                    λ_g2=p.λ_g2, K_g=p.K_g, λ_q=p.λ_q, θ=p.θ)
+    pdf_p = DirichletPDFParams(K_u=p.K_u, K_d=p.K_d, λ_g1=p.λ_g1, K_q=p.K_q,λ_g2=p.λ_g2, K_g=p.K_g, λ_q=p.λ_q, θ=p.θ)
     return PartonDensity.x_dv_x(x,pdf_p.λ_d, pdf_p.K_d)
 end
 
 function wrap_xg(p::NamedTuple, x::Real)
-    
     scale = 0.1
-    pdf_p = DirichletPDFParams(K_u=p.K_u, K_d=p.K_d, λ_g1=p.λ_g1, K_q=p.K_q,
-                                    λ_g2=p.λ_g2, K_g=p.K_g, λ_q=p.λ_q, θ=p.θ)
+    pdf_p = DirichletPDFParams(K_u=p.K_u, K_d=p.K_d, λ_g1=p.λ_g1, K_q=p.K_q,λ_g2=p.λ_g2, K_g=p.K_g, λ_q=p.λ_q, θ=p.θ)
     return PartonDensity.x_g_x(x, pdf_p.λ_g1, pdf_p.λ_g2, pdf_p.K_g, pdf_p.K_q, pdf_p.θ[3], pdf_p.θ[4]) * scale
 end
 
 function wrap_xsea(p::NamedTuple, x::Real)
-    
     scale = 0.1
-    pdf_p = DirichletPDFParams(K_u=p.K_u, K_d=p.K_d, λ_g1=p.λ_g1, K_q=p.K_q,
-                                    λ_g2=p.λ_g2, K_g=p.K_g, λ_q=p.λ_q, θ=p.θ)
-
+    pdf_p = DirichletPDFParams(K_u=p.K_u, K_d=p.K_d, λ_g1=p.λ_g1, K_q=p.K_q,λ_g2=p.λ_g2, K_g=p.K_g, λ_q=p.λ_q, θ=p.θ)
     x_ubar_x = PartonDensity.x_q_x(x, pdf_p.λ_q, pdf_p.K_q, pdf_p.θ[5])
     x_dbar_x = PartonDensity.x_q_x(x, pdf_p.λ_q, pdf_p.K_q, pdf_p.θ[6])
     x_sbar_x = PartonDensity.x_q_x(x, pdf_p.λ_q, pdf_p.K_q, pdf_p.θ[7])
     x_cbar_x = PartonDensity.x_q_x(x, pdf_p.λ_q, pdf_p.K_q, pdf_p.θ[8])
     x_bbar_x = PartonDensity.x_q_x(x, pdf_p.λ_q, pdf_p.K_q, pdf_p.θ[9])
-
     return 2 * (x_ubar_x + x_dbar_x + x_sbar_x + x_cbar_x + x_bbar_x) * scale
 end
      
@@ -962,9 +892,21 @@ for s in eachindex(sub_samples)
 
 end
 
-    p = plot!(xlabel=L"x", ylabel=L"xu_v", subplot=1
+    p = plot!(xlabel=L"x", ylabel=L"xu_v", subplot=1)
 
 
+p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_v \; \mathrm{true}", lw=3, c=:red, 
+    subplot=1
+     , ylims=(0, 0.65), xlims=(0.00,1.0)
+    , foreground_color_legend=false
+    , right_margin=0mm
+    , left_margin=0mm
+    , top_margin=0mm
+    , bottom_margin=-1mm
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+        , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
+        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
+    
 )
 
 
@@ -998,15 +940,24 @@ for s in eachindex(sub_samples)
     
         λ_d= pdf_params_s.θ[2]*(1+pdf_params_s.K_d)/(1-pdf_params_s.θ[2])
 
-    plot!(x_grid, [x_dv_x(x, λ_d, pdf_params_s.K_d) for x in x_grid],ylims=(0, 0.65),
-        lw=0.5,alpha=0.3,label=:none, subplot=2)
+    plot!(x_grid, [x_dv_x(x, λ_d, pdf_params_s.K_d) for x in x_grid],ylims=(0, 0.65),lw=0.5,alpha=0.3,label=:none, subplot=2)
 
 end
 
-    p = plot!(xlabel=L"x", ylabel=L"xd_v", subplot=2
+    p = plot!(xlabel=L"x", ylabel=L"xd_v", subplot=2)
 
+p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_v \; \mathrm{true}",  lw=3, c=:red,
+    subplot=2
+    , ylims=(0, 0.65), xlims=(0.00,1.0)
+    , foreground_color_legend=false
+    , right_margin=1mm
+    , left_margin=0mm
+    , top_margin=0mm
+    , bottom_margin=-1mm
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+        , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
+        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
 )
-
 
 #
 
@@ -1039,9 +990,24 @@ for s in eachindex(sub_samples)
                        for x in x_grid], ylims=(0, 0.65),lw=0.5,alpha=0.3,label=:none,subplot=3)
 end
 
-    p = plot!(xlabel=L"x", ylabel=L"xg/10", subplot=3
+    p = plot!(xlabel=L"x", ylabel=L"xg/10", subplot=3)
 
+    p = plot!(x_grid, [0.1*x_g_x(x, pdf_params.λ_g1, pdf_params.λ_g2, pdf_params.K_g, pdf_params.K_q, pdf_params.θ[3], pdf_params.θ[4])
+                       for x in x_grid], label=L"~xg/10 \; \mathrm{true}",  lw=3, c=:red,
+    subplot=3
+     , ylims=(0, 0.65), xlims=(0.0,1.0)
+    , foreground_color_legend=false
+    , right_margin=-2mm
+    , left_margin=0mm
+    , top_margin=0mm
+    , bottom_margin=-1mm
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+        , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
+        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
 )
+
+
+
 
 #
     p = plot!(x_grid, [x_q_x(x, pdf_params.λ_q, pdf_params.K_q, pdf_params.θ[5]) for x in x_grid],
@@ -1075,92 +1041,37 @@ for s in eachindex(sub_samples)
 
 end
 
-    p = plot!(xlabel=L"x", ylabel=L"x\bar{u}", subplot=4
-)
+    p = plot!(xlabel=L"x", ylabel=L"x\bar{u}", subplot=4)
 
- #   p = plot!(x_grid, [x_g_x(x, mode_pars_data.λ_g1, mode_pars_data.λ_g2, mode_pars_data.K_g, mode_pars_data.K_q, mode_pars_data.θ_tmp[1], mode_pars_data.θ_tmp[2])
- #                      for x in x_grid], label="x g(x)", lw=3, subplot=3)
+
+    p = plot!(x_grid, [x_q_x(x, pdf_params.λ_q, pdf_params.K_q, pdf_params.θ[5]) for x in x_grid],
+    ylims=(0, 0.65), xlims=(0.0,1.0), label=L"~x\bar{u} \; \mathrm{true}",  lw=3, c=:red,
+    subplot=4
+
+    , foreground_color_legend=false
+    , right_margin=1mm
+    , left_margin=0mm
+    , top_margin=0mm
+    , bottom_margin=-1mm
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
+        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
+)
 
 filename = string("figures/fig6-parton-xf(x)-", parsed_args["fitresults"], "_v2.pdf")
 savefig(filename)
 
-   
-
-l = @layout [
-    [grid(4,4)
-              ]
-]
-
-#pgfplotsx()
-l = @layout [
-    [a1{0.28w} b1{0.24w} c1{0.24w} d1{0.24w} ]
-        [a2{0.28w} b2{0.24w} c2{0.24w} d2{0.24w} ]
-        [a3{0.28w} b3{0.24w} c3{0.24w} d3{0.24w} ]
-        [a4{0.28w} b4{0.24w} c4{0.24w} d4{0.24w} ]
-]
-p=plot(size=(1000,800),samples_data,vsel=[:K_u,:K_d, :K_q, :K_g], 
-    frame=:box,
-   # layout=l,
-    #margins=-10*Plots.mm,
-    legend = :none, framestyle = :box,
-   # margin=0.1*Plots.mm,
-    ylims=(1.9, 10.1),xlims=(1.9, 10.1), 
-  # xlabel=:none,
-    plot_titlevspan=0.001,
-     xlabel=["" "" "" "" "" "" "" "" "" "" "" "" L"p(K_{u})" L"K_{d}" L"K_{q}" L"K_{g}"],
-    ylabel=[L"p(K_{u})" "" "" "" L"K_{d}" "" "" "" L"K_{q}" "" "" "" L"K_{g}" "" "" ""],
-    xticks=(0:2:12,["","","","","","",""]),    
-    yticks=(0:2:12,["","","","","","",""])  ,
-    top_margin=-3mm,
-    bottom_margin=-4.5mm,
-    right_margin=-4mm,
-    left_margin=-4mm,
-    xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16
-    , fontfamily=font_family
-
-)
-
-for i in 0:3
-plot!(p[4*i+1],xlims=(1.5,6.5))#1.5,10.5
-plot!(p[4*i+2],xlims=(1.5,6.5))#1.5,10.5
-plot!(p[4*i+3],xlims=(1.5,10.5))
-plot!(p[4*i+4],xlims=(1.5,10.5))
-end
-for i in 1:4
-plot!(p[0+i],ylims=(1.5,10.5))
-plot!(p[4+i],ylims=(1.5,10.5))
-plot!(p[8+i],ylims=(1.5,10.5))
-plot!(p[12+i],ylims=(1.5,8.5))
-end
 
 
-plot!(p[13],xticks=(2:2:6,["2","4","6"]),bottom_margin=3mm)
-plot!(p[14],xticks=(2:2:6,["2","4","6"]),bottom_margin=3mm)
-plot!(p[15],xticks=(2:2:10,["2","4","6","8","10"]),bottom_margin=3mm)
-plot!(p[16],xticks=(2:2:10,["2","4","6","8","10"]),bottom_margin=3mm)
-plot!(p[1],yticks=(2:2:10,["","4","6","8","10"]),left_margin=3mm)
-plot!(p[5],yticks=(2:2:10,["2","4","6","8","10"]),left_margin=3mm)
-plot!(p[9],yticks=(2:2:10,["2","4","6","8","10"]),left_margin=3mm)
-plot!(p[13],yticks=(2:2:8,["2","4","6","8"]),left_margin=3mm)
-plot!(p[1],ylims=(0.0,2.5))
-annotate!(p[1],5.0,0.7*2.5,text("Counts",14))
-plot!(p[6],ylims=(0.0,1))
-annotate!(p[6],5.0,0.7*1.0,text("Counts",14))
-plot!(p[11],ylims=(0.0,0.5))
-annotate!(p[11],8.0,0.7*0.5,text("Counts",14))
-plot!(p[16],ylims=(0.0,0.5))
-annotate!(p[16],8.0,0.7*0.5,text("Counts",14))
 
-p
 
-filename = string("figures/fig2-corner-",parsed_args["fitresults"],"_v3.pdf")
-savefig(filename)
+
 
 plot(framestyle=:axes, size=(1200, 500), fontfamily=font_family, 
     leftmargin=6Plots.mm, bottommargin=5Plots.mm, rightmargin=5Plots.mm,
     layout=@layout([a b c{0.15w}]),
-
- xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18
+    xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18
+   , grid=false
 )
 
 plot!(inset=(1, bbox(0.23, 0.75, 0.55, 0.25, :bottom)))
@@ -1182,23 +1093,14 @@ end
 
 # Data
 for i in 1:n_q2_bins
-
     label = @sprintf "  \$%g - %g\$" q2_edges_unique[i][1] q2_edges_unique[i][2]
-
     # Main plots and inset plots
-    scatter!(x_values[i], counts_em_qsel[i], label="", color=cmap[i], 
-        markerstrokewidth=0, subplot=1)
-    scatter!(x_values[i], counts_ep_qsel[i], label="", color=cmap[i], 
-        markerstrokewidth=0, subplot=2)
-    scatter!(x_values[i], counts_em_qsel[i], label="", color=cmap[i], 
-        markerstrokewidth=0, subplot=4)
-    scatter!(x_values[i], counts_ep_qsel[i], label="", color=cmap[i], 
-        markerstrokewidth=0, subplot=5)
-    
+    scatter!(x_values[i], counts_em_qsel[i], label="", color=cmap[i], markerstrokewidth=0, subplot=1)
+    scatter!(x_values[i], counts_ep_qsel[i], label="", color=cmap[i], markerstrokewidth=0, subplot=2)
+    scatter!(x_values[i], counts_em_qsel[i], label="", color=cmap[i], markerstrokewidth=0, subplot=4)
+    scatter!(x_values[i], counts_ep_qsel[i], label="", color=cmap[i], markerstrokewidth=0, subplot=5)
     # For legend (invisible, trick to create space)
-    scatter!(x_values[i], counts_em_qsel[i], label=label, color=cmap[i], 
-        markerstrokewidth=0, subplot=3)
-
+    scatter!(x_values[i], counts_em_qsel[i], label=label, color=cmap[i], markerstrokewidth=0, subplot=3)
 end
 
 # Samples
@@ -1211,32 +1113,22 @@ for s in eachindex(sub_samples)
         push!(counts_em_s, counts_em_sampled[s, bin_sel])
         push!(counts_ep_s, counts_ep_sampled[s, bin_sel])
     end
-    
+
     for i in 1:n_q2_bins
-        
-        scatter!(x_values[i], counts_em_s[i], color=cmap[i], markerstrokewidth=0, 
-            alpha=0.01, label="", subplot=1)
-        scatter!(x_values[i], counts_ep_s[i], color=cmap[i], markerstrokewidth=0, 
-            alpha=0.01, label="", subplot=2)
-        scatter!(x_values[i], counts_em_s[i], color=cmap[i], markerstrokewidth=0, 
-            alpha=0.01, label="", subplot=4)
-        scatter!(x_values[i], counts_ep_s[i], color=cmap[i], markerstrokewidth=0, 
-            alpha=0.01, label="", subplot=5)
-        
+        scatter!(x_values[i], counts_em_s[i], color=cmap[i], markerstrokewidth=0, alpha=0.01, label="", subplot=1)
+        scatter!(x_values[i], counts_ep_s[i], color=cmap[i], markerstrokewidth=0, alpha=0.01, label="", subplot=2)
+        scatter!(x_values[i], counts_em_s[i], color=cmap[i], markerstrokewidth=0, alpha=0.01, label="", subplot=4)
+        scatter!(x_values[i], counts_ep_s[i], color=cmap[i], markerstrokewidth=0, alpha=0.01, label="", subplot=5)
     end
-    
+
 end
 
 # Draw box around zoomed region and connecting line
 for sp in [1, 2]
-    plot!([0.5, 0.5], [0, 50], color="red", linewidth=2, linestyle=:solid, 
-        subplot=sp)
-    plot!([1.0, 1.0], [0, 50], color="red", linewidth=2, linestyle=:solid, 
-        subplot=sp)
-    plot!([0.5, 1.0], [50, 50], color="red", linewidth=2, linestyle=:solid, 
-        subplot=sp)
-    plot!([0.5, 1.0], [0, 0], color="red", linewidth=2, linestyle=:solid, 
-        subplot=sp)
+    plot!([0.5, 0.5], [0, 50], color="red", linewidth=2, linestyle=:solid, subplot=sp)
+    plot!([1.0, 1.0], [0, 50], color="red", linewidth=2, linestyle=:solid, subplot=sp)
+    plot!([0.5, 1.0], [50, 50], color="red", linewidth=2, linestyle=:solid, subplot=sp)
+    plot!([0.5, 1.0], [0, 0], color="red", linewidth=2, linestyle=:solid, subplot=sp)
 end
 
 plot!(legend=:left, foreground_color_legend=nothing, framestyle=:none,
@@ -1249,7 +1141,7 @@ p
 
 filename = string("figures/fig7-",parsed_args["fitresults"],"_v2.pdf")
 savefig(filename)
-
+println("Done")
 end
 
 main()
