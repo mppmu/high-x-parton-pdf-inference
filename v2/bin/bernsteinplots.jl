@@ -123,7 +123,7 @@ prior = NamedTupleDist(
     λ_q = Uniform(-0.5, -0.),
     K_q = Uniform(3., 7.),
     bspoly_params = [0,5,1,5,0,6],
-        Beta1 =  Truncated(Normal(0, 1), -5, 5),
+    Beta1 =  Truncated(Normal(0, 1), -5, 5),
     Beta2 =  Truncated(Normal(0, 1), -5, 5),
     beta0_1=  Truncated(Normal(0, 1), -5, 5), 
     beta0_2=   Truncated(Normal(0, 1), -5, 5),    
@@ -155,6 +155,8 @@ bspoly_params_true = [[0,3],[0,4],[1,4]]
 K_g_true=6.0;
 λ_q_true=-0.25;
 K_q_true=5.0;
+initial_U_true = [1.];
+ initial_D_true = [1.]
 end
 
 plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
@@ -190,8 +192,7 @@ plot!(samples_data, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
     , bottom_margin=-1mm
 
 )
-plot!([K_u_true],[θ_true[1]], seriestype = "scatter", subplot = 3, color = "red", label = " Truth", legend = :topright,lw=1
-, foreground_color_legend=false)
+plot!([initial_U_true[1]],[θ_true[1]], seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, foreground_color_legend=false, markersize=2, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 
 
@@ -213,10 +214,11 @@ plot!(samples_data, :initial_U, legend=false, xlabel="", ylabel=L"P(A_3)", subpl
     , right_margin=-2mm
     , left_margin=0mm
     , top_margin=0mm
-    , bottom_margin=-1mm
+    , bottom_margin=-1mm   
+     , yticks=(0.0:0.1:0.1,["0","0.1"])
 
 )
-vline!([K_u_true], color="red", label=" Truth", lw=1)
+vline!([initial_U_true[1]], color="red", label=" Truth", lw=0.5)
 
 # Delta_u marginal
 plot!(prior_samples, :(θ[1]), legend=false, marginalmode=false, 
@@ -242,7 +244,7 @@ plot!(samples_data, :(θ[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)",
     , bottom_margin=-1mm
 
 )
-hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=1)
+hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
 
 # Legend
 plot!(prior_samples, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
@@ -269,16 +271,11 @@ p = plot!(samples_data, (:(initial_U), :(θ[1])),
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-
-
 )
 
 filename = string("figures/fig4-",parsed_args["fitresults"], "_v2.pdf")
 savefig(p, filename)
-
-
-
-
+println("Done")
 end
 
 main()

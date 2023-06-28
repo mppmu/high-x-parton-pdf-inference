@@ -84,7 +84,6 @@ mode_pars_data = mode(samples_data)
 
 
 # As in PDF-fit-dirichlet.ipynb
-# As in PDF-fit-dirichlet.ipynb
 qcdnum_grid = QCDNUM.GridParams(x_min=[1.0e-3, 1.0e-1, 5.0e-1], x_weights=[1, 2, 2], nx=100,qq_bounds=[1.0e2, 3.0e4], qq_weights=[1.0, 1.0], nq=50, spline_interp=3)
 qcdnum_params = QCDNUM.EvolutionParams(order=2, α_S=0.118, q0=100.0, grid_params=qcdnum_grid,n_fixed_flav=5, iqc=1, iqb=1, iqt=1, weight_type=1);
 splint_params = QCDNUM.SPLINTParams();
@@ -199,8 +198,7 @@ plot!(samples_data, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , bottom_margin=-1mm
 
 )
-p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=1
-, foreground_color_legend=false)
+p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false, markersize=2, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 
 
@@ -225,7 +223,7 @@ plot!(samples_data, :K_u, legend=false, xlabel="", ylabel=L"P(K_u)", subplot=1,
     , bottom_margin=-1mm
 
 )
-vline!([K_u_true], color="red", label=" Truth", lw=1)
+vline!([K_u_true], color="red", label=" Truth", lw=0.5)
 
 # Delta_u marginal
 plot!(prior_samples, :(θ_tmp[1]), legend=false, marginalmode=false, 
@@ -251,7 +249,7 @@ plot!(samples_data, :(θ_tmp[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)"
     , bottom_margin=-1mm
 
 )
-hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=1)
+hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
 
 # Legend
 plot!(prior_samples, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",

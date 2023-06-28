@@ -73,28 +73,6 @@ println(seed)
 seedtxt=string(seed)
 rng = MersenneTwister(seed)
 
-if parsed_args["parametrisation"] == "Dirichlet"
-weights = [20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]
-θ = rand(rng, Dirichlet(weights))
-pdf_params = DirichletPDFParams(K_u=3.5, K_d=4.0, λ_g1=1.5, λ_g2=-0.4, K_g=6.0, λ_q=-0.25, K_q=5.0, θ=θ);
-# replace weights with θ to specify the momentum fractions directly
-@info "Valence λ:" pdf_params.λ_u pdf_params.λ_d
-@info "Momenta:" pdf_params.θ[1],pdf_params.θ[2],pdf_params.θ[3],pdf_params.θ[4]
-plot_input_pdfs(pdf_params)
-end
-if parsed_args["parametrisation"] == "Valence"
-weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
-λ_u = 0.64;
-K_u = 3.38;
-λ_d = 0.67;
-K_d = 4.73;
-θ = get_θ_val(rng, λ_u, K_u, λ_d, K_d, weights)
-pdf_params = ValencePDFParams(λ_u=λ_u, K_u=K_u, λ_d=λ_d, K_d=K_d, λ_g1=0.50, λ_g2=-0.63, K_g=4.23, λ_q=-0.23, K_q=5.0, θ=θ);
-# replace weights with θ to specify the momentum fractions directly
-@info "Valence λ:" pdf_params.λ_u pdf_params.λ_d
-@info "Momenta:" pdf_params.θ[1],pdf_params.θ[2],pdf_params.θ[3],pdf_params.θ[4]
-plot_input_pdfs(pdf_params)
-end
 
 
 # ### Go from PDFs to counts in ZEUS detector bins
@@ -131,6 +109,9 @@ somepdf_params, sim_data = pd_read_sim(string("pseudodata/",parsed_args["pseudod
 
 
 if parsed_args["parametrisation"] == "Dirichlet"
+if (parsed_args["priorshift"]==0)
+    println("seting prior from Shifted Prior set ",seedtxt)
+
 prior = NamedTupleDist(
     θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
     K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
@@ -151,7 +132,7 @@ prior = NamedTupleDist(
     beta0_7=  Truncated(Normal(0, 1), -5, 5), 
     beta0_8=   Truncated(Normal(0, 1), -5, 5)
 );
-
+end
 if (parsed_args["priorshift"]==1)
     println("seting prior from Shifted Prior set ",seedtxt)
 
