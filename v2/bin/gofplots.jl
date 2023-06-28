@@ -154,48 +154,49 @@ counts_pred_ep_sim, counts_pred_em_sim = forward_model(pdf_params, qcdnum_params
 #           
        end
 
-p1=scatter(counts_obs_ep_sim,  markersize=3, markershape=:circle,label=L"$e^+$p Simulated",ylab="Counts")
+p1=scatter(counts_obs_ep_sim,  markersize=3, markershape=:circle,label=L"$e^+$p Simulated",ylab="Counts", grid=false)
 p1=scatter!(counts_pred_ep_gen, 
    markershape = :diamond,     markeralpha = 0.4,     markercolor = :green,  markersize = 2,
 #    st=:sticks,
-    label=L"$e^+p$ Generated")
-p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:circle,label=L"$e^-p$ Simulated")
+    label=L"$e^+p$ Generated", grid=false)
+p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:circle,label=L"$e^-p$ Simulated", grid=false,markerstrokecolor=:red)
 p2=scatter!(counts_pred_em_gen,color="red",    
     markershape = :diamond,     markeralpha = 0.4,     markercolor = :green,  markersize = 2,
     label=L"$e^-p$ Generated",
-    linewidth = 2)
-p3=scatter(prob_ep_gen,color="blue",yscale=:log10,markersize=2,markershape=:circle,label="",xlab="Bin",ylab="Scaled Probability")
-p4=scatter(prob_em_gen,color="red",yscale=:log10, markersize=2,markershape=:circle,label="",xlab="Bin")
+    linewidth = 2,markerstrokecolor=:red)
+p3=scatter(prob_ep_gen,color="blue",yscale=:log10,markersize=2,markershape=:circle,label="",xlab="Bin",ylab="Scaled Probability", grid=false,markerstrokecolor=:blue)
+p4=scatter(prob_em_gen,color="red",yscale=:log10, markersize=2,markershape=:circle,label="",xlab="Bin", grid=false,markerstrokecolor=:red)
 plot(p1,p2,p3,p4,layout=(2,2))
 
-p1=scatter(counts_obs_ep_sim,  markersize=2, markershape=:circle,label=L" $e^{+}p$ Observed",ylab="Counts"
+p1=scatter(counts_obs_ep_sim, color="blue",  markersize=2, markershape=:circle,label=L" $e^{+}p$ Observed",ylab="Counts", grid=false,markerstrokecolor=:blue
 ,ylims=(0, 1600), xlims=(-1,155)
     , size=(600, 500)
 )
 p1=plot!(counts_pred_ep_sim,color="blue",    linealpha = 0.5,
-    linewidth = 2,label=L" $e^{+}p$ Predicted"
+    linewidth = 2,label=L" $e^{+}p$ Predicted", grid=false,markerstrokecolor=:blue
 ,ylims=(0, 1600), xlims=(-1,155)
         , legendfontsize=12
     , foreground_color_legend=false
 )
-p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:circle,label=L" $e^{-}p$ Observed"
+p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:circle,label=L" $e^{-}p$ Observed", grid=false,markerstrokecolor=:red
 ,ylims=(0, 1600), xlims=(-1,155)
         , legendfontsize=12
     , foreground_color_legend=false
 )
-p2=plot!(counts_pred_em_sim,color="red",    linealpha = 0.5,label=L" $e^{-}p$ Predicted",
-    linewidth = 2
+p2=plot!(counts_pred_em_sim,color="red",    linealpha = 0.5,label=L" $e^{-}p$ Predicted", grid=false,markerstrokecolor=:red
+,linewidth = 2
 ,ylims=(0, 1600), xlims=(-1,155)
         , legendfontsize=12
     , foreground_color_legend=false
 )
-p3=scatter(prob_ep_sim,color="blue",yscale=:log10,markersize=2,markershape=:circle,label="",xlab="Bin",
+p3=scatter(prob_ep_sim,color="blue",yscale=:log10,markersize=2,markershape=:circle,label="",xlab="Bin", grid=false,markerstrokecolor=:blue
+,
     ylab="Scaled probability"
 ,ylims=(0.003, 1.1), xlims=(-1,155)
         , legendfontsize=12
     , foreground_color_legend=false
 )
-p4=scatter(prob_em_sim,color="red",yscale=:log10, markersize=2,markershape=:circle,label="",xlab="Bin"
+p4=scatter(prob_em_sim,color="red",yscale=:log10, markersize=2,markershape=:circle,label="",xlab="Bin", grid=false,markerstrokecolor=:red
 ,ylims=(0.003, 1.1), xlims=(-1,155)
         , legendfontsize=12
     , foreground_color_legend=false

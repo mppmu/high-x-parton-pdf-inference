@@ -50,6 +50,7 @@ function main()
     end
 gr(fmt=:png);
 color_scheme = :viridis
+font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
 
 # Results
@@ -83,7 +84,6 @@ mode_pars_data = mode(samples_data)
 
 
 # As in PDF-fit-dirichlet.ipynb
-# As in PDF-fit-dirichlet.ipynb
 qcdnum_grid = QCDNUM.GridParams(x_min=[1.0e-3, 1.0e-1, 5.0e-1], x_weights=[1, 2, 2], nx=100,qq_bounds=[1.0e2, 3.0e4], qq_weights=[1.0, 1.0], nq=50, spline_interp=3)
 qcdnum_params = QCDNUM.EvolutionParams(order=2, α_S=0.118, q0=100.0, grid_params=qcdnum_grid,n_fixed_flav=5, iqc=1, iqb=1, iqt=1, weight_type=1);
 splint_params = QCDNUM.SPLINTParams();
@@ -112,87 +112,6 @@ prior_alpha = 0.2;
 
 # Get some prior samples for plotting
 
-if parsed_args["parametrisation"] == "Dirichlet"
-prior = NamedTupleDist(
-    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-
-if (parsed_args["priorshift"]==1)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-
-#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
-    K_u = Truncated(Normal(4.5, 0.5), 2, 5),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==2)
-    println("seting prior from Shifted Prior set ",seedtxt)
-prior = NamedTupleDist(
-
-#    θ = Dirichlet([20.,10.,20.,20.,5.,2.5,1.5,1.5,0.5]),
-#    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-
-        θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
-        K_u = Truncated(Normal(2.5, 0.5), 2, 5),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-end
-
-
-
-
-
-end
 if parsed_args["parametrisation"] == "Valence"
 ##FIXME!!!
 weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
@@ -217,49 +136,9 @@ prior = NamedTupleDist(
     beta0_6=  Truncated(Normal(0, 1), -5, 5), 
     beta0_7=  Truncated(Normal(0, 1), -5, 5), 
     beta0_8=   Truncated(Normal(0, 1), -5, 5)    
-);
+   )
 end
 
-if parsed_args["parametrisation"] == "Bernstein"
-
-#prior = NamedTupleDist(
-#    θ = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
-#    initial_U = [Truncated(Normal(30., 15.), 0, 80)],
-#    initial_D = [Uniform(0., 20.)],
-#    U_weights = [Truncated(Normal(30., 15.), 0, 80)],
-#    D_weights = [Uniform(0., 20.)],
-
-#    λ_g1 = Uniform(1., 2.0),
-#    λ_g2 = Uniform(-0.5, -0.3),
-#    K_g =  Uniform(5.,9.),
-#    λ_q = Uniform(-0.5, -0.),
-#    K_q = Uniform(3., 7.),
-#    bspoly_params = [[0,3],[0,4],[1,4]],
-#    )
-
-prior = NamedTupleDist(
-    θ = Dirichlet([34.0, 17.0, 22.5, 17.0, 7.3, 1.4, 0.2, 10.e-5, 0.3]),
-    initial_U = Uniform(-10., 1.),
-    initial_D = Uniform(10., 30.),
-    λ_g1 = Uniform(3., 4.5),
-    λ_g2 = Uniform(-1, -0.5),
-    K_g =  Uniform(5.,9.),
-    λ_q = Uniform(-1, -0.5),
-    K_q = Uniform(3., 7.),
-    bspoly_params = [[0, 3], [0, 4], [1, 4], [0, 5]],
-    #    bspoly_params = [1,4,0,4,0,5],
-        Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-    )
-end
 
 prior_samples=bat_sample(prior).result;
 
@@ -287,26 +166,7 @@ K_d_true = 4.73;
 
 end
 
-
-#θ_true=[0.22, 0.10, 0.24, 0.24, 0.10,0.05, 0.01, 0.005, 0.0005]
-#θ_sum=sum(θ_true[1:9])
-#θ_true=θ_true/θ_sum
-#println(θ_true)
-#K_u_true=3.7
-#K_d_true=3.7
-#λ_g1_true=0.5
-#λ_g2_true=-0.5
-#K_g_true=5.0
-#λ_q_true=-0.5
-#K_q_true=6.0
-
-
-
-
-
-#θ=θ_tmp
-
-plot(framestyle=:axes, size=(500, 400), 
+plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
     layout=@layout([a b; c{0.55w, 0.6h} d]), grid=false
     , right_margin=0mm
     , left_margin=0mm
@@ -338,8 +198,7 @@ plot!(samples_data, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , bottom_margin=-1mm
 
 )
-p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=2
-, foreground_color_legend=false)
+p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false, markersize=2, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 
 
@@ -364,7 +223,7 @@ plot!(samples_data, :K_u, legend=false, xlabel="", ylabel=L"P(K_u)", subplot=1,
     , bottom_margin=-1mm
 
 )
-vline!([K_u_true], color="red", label=" Truth", lw=2)
+vline!([K_u_true], color="red", label=" Truth", lw=0.5)
 
 # Delta_u marginal
 plot!(prior_samples, :(θ_tmp[1]), legend=false, marginalmode=false, 
@@ -390,7 +249,7 @@ plot!(samples_data, :(θ_tmp[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)"
     , bottom_margin=-1mm
 
 )
-hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=1)
+hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
 
 # Legend
 plot!(prior_samples, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",

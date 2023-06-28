@@ -65,10 +65,7 @@ bspoly_params = [[0,3],[0,4],[1,4]]
 K_g=6.0;
 λ_q=-0.25;
 K_q=5.0;
-U_weights = [1.]
-D_weights = [1.]
-pdf_params = BernsteinPDFParams(U_weights=U_weights,
-            D_weights=D_weights, λ_g1=λ_g2,
+pdf_params = BernsteinDirichletPDFParams( λ_g1=λ_g2,
             λ_g2=λ_g2, K_g=K_g, λ_q=λ_q, K_q=K_q, 
             bspoly_params = bspoly_params, θ=θ)
 #initial_U = [1.], initial_D = [1.], λ_g1=1.5, λ_g2=-0.4, K_g=6.0,
