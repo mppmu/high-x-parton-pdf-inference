@@ -138,119 +138,7 @@ chisqem = zeros( length(sub_samples))
 rng = MersenneTwister(seed);
 sys_err_params = rand(rng, MvNormal(zeros(PartonDensity.nsyst), zeros(PartonDensity.nsyst)))
 
-for s in eachindex(sub_samples)
 
-    pdf_params_s = DirichletPDFParams(K_u=sub_samples.v.K_u[s], K_d=sub_samples.v.K_d[s], K_q=sub_samples.v.K_q[s],
-                                      λ_g1=sub_samples.v.λ_g1[s], 
-                                      λ_g2=sub_samples.v.λ_g2[s],
-                                      K_g=sub_samples.v.K_g[s], 
-                                      λ_q=sub_samples.v.λ_q[s], 
-                                      θ=Vector(sub_samples.v.θ[s]))
-        
-    counts_ep_pred_s, counts_em_pred_s = forward_model(pdf_params_s,    
-                                                              qcdnum_params, 
-                                                              splint_params,
-                                                              quark_coeffs, 
-                                                              sys_err_params)
-    
-    for j in 1:nbins
-        
-        counts_ep_pred_s[j] *= 1 + 0.018 * sub_samples.v.Beta1[s]
-        counts_em_pred_s[j] *= 1 + 0.018 * sub_samples.v.Beta2[s]
-        
-        counts_em_sampled[s, j] = rand(Poisson(counts_em_pred_s[j]))
-        counts_ep_sampled[s, j] = rand(Poisson(counts_ep_pred_s[j]))
-
-        chisqep[s]+=(counts_ep_pred_s[j]-counts_ep_sampled[s, j])^2/counts_ep_pred_s[j]
-        chisqem[s]+=(counts_em_pred_s[j]-counts_em_sampled[s, j])^2/counts_em_pred_s[j]
-
-    end
-    
-end
-
-#
-# Chi squared for the actual data
-#
-pdfpars(params)=   DirichletPDFParams(
-    K_u=params.K_u, K_d=params.K_d, λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_q=params.K_q,
-    K_g=params.K_g, λ_q=params.λ_q, θ=Vector(params.θ))
-mode_pars_data = mode(samples_data)
-println(mode_pars_data)
-
-pdf_params = pdfpars(mode_pars_data)
-println(pdf_params)
-sys_err_params =[
-    mode_pars_data.beta0_1,mode_pars_data.beta0_2,mode_pars_data.beta0_3,mode_pars_data.beta0_4,
-    mode_pars_data.beta0_5,mode_pars_data.beta0_6,mode_pars_data.beta0_7,mode_pars_data.beta0_8]
-    counts_pred_ep_data, counts_pred_em_data = forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs, sys_err_params)
-
-for i in 1:nbins     
-    counts_pred_ep_data[i] =counts_pred_ep_data[i]*(1+0.018*mode_pars_data.Beta1)
-    counts_pred_em_data[i] =counts_pred_em_data[i]*(1+0.018*mode_pars_data.Beta2)
-end
-
-
-#
-# Calculate the Poisson probabilities for the different data results
-#
-chisqep_data=0.
-chisqem_data=0.
-        for j in 1:nbins
-            pred=counts_pred_ep_data[j]   
-            best=floor(counts_pred_ep_data[j])
-            prob_ep_data[j] = pdf(Poisson(pred), counts_obs_ep_data[j])/pdf(Poisson(pred), best)
-            chisqep_data+=(counts_obs_ep_data[j]-pred)^2/pred
-            if ( (counts_obs_ep_data[j]-pred)^2/pred>4) 
-                get_bin_info(j) 
-                println(j," positron ",pred," ",counts_obs_ep_data[j]," ",(counts_obs_ep_data[j]-pred)^2/pred)
-            end
-            pred=counts_pred_em_data[j]
-            best=floor(counts_pred_em_data[j])
-            prob_em_data[j] = pdf(Poisson(pred), counts_obs_em_data[j])/pdf(Poisson(pred), best)
-            chisqem_data+=(counts_obs_em_data[j]-pred)^2/pred
-            if ( (counts_obs_em_data[j]-pred)^2/pred>4) 
-                get_bin_info(j) 
-                println(j," electron ",pred," ",counts_obs_em_data[j]," ",(counts_obs_em_data[j]-pred)^2/pred)
-            end 
-       end
-println(chisqep_data," ",chisqem_data)
-
-countep=0
-countem=0
-count_tot=0
-ncounts=0
-
-for s in eachindex(sub_samples)
-    ncounts+=1
-    if (chisqep[s]>chisqep_data) countep+=1 end
-    if (chisqem[s]>chisqem_data) countem+=1 end
-    if (chisqem[s]+chisqep[s]>chisqem_data+chisqep_data) count_tot+=1 end
-
-end
-pvep=string(float(countep)/ncounts)
-pvem=string(float(countem)/ncounts)
-println(" p-value for ep fit: ",pvep," p-value for em fit: ",pvem," p-value for total fit: ",float(count_tot)/ncounts) 
-
-
-p1=histogram(chisqep,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1 , grid=false)
-p1=plot!([chisqep_data],seriestype = :vline,lw=5,legend=:none, fontfamily=font_family 
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-        ,ylims=(0, 500), xlims=(50,260)
-        ,color=c3, grid=false
-)
-p2=histogram(chisqem,bins=50:2:250,legend=:false,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1 , grid=false)
-
-p2=plot!([chisqem_data],seriestype = :vline,lw=5
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    ,ylims=(0, 500), xlims=(50,260)
-,color=c3, grid=false
-)
-annotate!(p1,220.0,350,text(L"$e^{+}p$",26))
-annotate!(p2,220.0,350,text(L"$e^{-}p$",26))
-plot(p1,p2,layout=(2,1))
-
-filename = string("figures/fig8-chisq-pvalue-",parsed_args["fitresults"],"_v2.pdf")
-savefig(filename)
 
 # Use +2 to avoid lightest colors (not easy to see)
 
@@ -496,7 +384,10 @@ layout=l,
 plot!(samples_data, :(K_u),subplot=1, xlabel="",ylabel=L"K_u",colors=[c1, c2, :red])
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=2)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=3)
-plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=4)
+#plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=4)
+
+
+
 plot!(samples_data, (:(K_u), :(K_d)),subplot=5, xlabel="",ylabel=L"K_d",colors=[c1, c2, :red])
 plot!(samples_data, :(K_d),subplot=6, xlabel="",ylabel="",colors=[c1, c2, :red])
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=7)
@@ -543,6 +434,31 @@ plot!(p[11],ylims=(0.0,0.5))
 annotate!(p[11],3.0+6.5*0.7,0.8*0.5,text("Counts",14))
 plot!(p[16],ylims=(0.0,0.5))
 annotate!(p[16],2.0+5.0*0.7,0.8*0.5,text("Counts",14))
+
+
+
+labels = [L"~~\mathrm{Posterior}~68~\%", L"~~\mathrm{Posterior}~95~\%",L"~~\mathrm{Posterior}~99~\%"]
+prior_labels = [L"~~\mathrm{Prior}~68~\%", L"~~\mathrm{Prior}~95~\%",L"~~\mathrm{Posterior}~99~\%"]
+colors = [c3, c1]
+prior_colors = [:grey40, :grey50]
+
+plot!(legend=false,label="xx",
+  #  seriestype=:smallest_intervals,
+    marginalmode=false,  interval_labels=prior_labels, 
+    colors=reverse([c1, c2, :red]), linewidth=0,
+    grid=false,foreground_color_subplot=:white,subplot=4
+    , legendfontsize=14   
+    , xlims=(0.0,1.0)
+    , ylims=(0.0,1.0)
+)
+#rectangle(w, h, x, y) = Shape(x .+ [0.0,w,w,0.0], y .+ [0.0,0.0,h,h])
+#plot!(rectangle(0.05,0.05,0.5,0.5),subplot=4)
+plot!(Shape([0.05,0.05,0.22,0.22],[0.85,0.95,0.95,0.85]),subplot=4,fillcolor=:red)
+plot!(Shape([0.05,0.05,0.22,0.22],[0.65,0.75,0.75,0.65]),subplot=4,fillcolor=c2)
+plot!(Shape([0.05,0.05,0.22,0.22],[0.45,0.55,0.55,0.45]),subplot=4,fillcolor=c1)
+annotate!(p[4],0.59,0.90,text(L"~~\mathrm{Posterior}~99~\%",18))
+annotate!(p[4],0.59,0.70,text(L"~~\mathrm{Posterior}~95~\%",18))
+annotate!(p[4],0.59,0.50,text(L"~~\mathrm{Posterior}~68~\%",18))
 
 
 plot(p)

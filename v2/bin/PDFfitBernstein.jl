@@ -116,7 +116,7 @@ prior = NamedTupleDist(
     bspoly_params = [1,4,0,4,0,5],
 )
 
-posterior = PosteriorDensity(get_likelihood(pdf_params, sim_data, qcdnum_params, splint_params, quark_coeffs, true), 
+posterior = PosteriorDensity(get_likelihood(pdf_params, sim_data, qcdnum_params, splint_params, quark_coeffs, false), 
                              prior);
 convergence = BrooksGelmanConvergence(threshold=1.3);
 burnin = MCMCMultiCycleBurnin(max_ncycles=100);

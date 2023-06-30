@@ -59,15 +59,47 @@ end
 if parsed_args["parametrisation"] == "Bernstein"
 
 θ=[.33, .13, .27, .17, .073, 0.014, 0.002, 0.000001, .003]
-bspoly_params = [[0,3],[0,4],[1,4]]
+#bspoly_params = [[0,3],[0,4],[1,4]]
+bspoly_params = [1,4,0,4,0,5];
 λ_g1=1.5;
 λ_g2=-0.4;
 K_g=6.0;
 λ_q=-0.25;
 K_q=5.0;
-pdf_params = BernsteinDirichletPDFParams( λ_g1=λ_g2,
-            λ_g2=λ_g2, K_g=K_g, λ_q=λ_q, K_q=K_q, 
-            bspoly_params = bspoly_params, θ=θ)
+initial_U = [-8.];
+initial_D = [15.0];
+ 
+# initial_U = [-8.], initial_D = [0.5], λ_g1=1.5, λ_g2=-0.4, K_g=5.0,
+#                                λ_q=-0.25, θ = [0.36, .17, .27, .17, .073, 0.014, 0.002, 0.000001, .003],
+#                                bspoly_params = [[1,4],[0,4],[0,5]], K_q = 5.
+                                
+                  vec_bspp = Vector(bspoly_params)
+            bspoly_params = [[vec_bspp[Int(2 * i - 1)], vec_bspp[Int(2 * i)]] for i in 1:length(vec_bspp)/2]
+
+            bspoly_params_d = 0
+
+            try
+                vec_bsppd = Vector(bspoly_params_d)
+                bspoly_params_d = [[vec_bsppd[Int(2 * i - 1)], vec_bsppd[Int(2 * i)]] for i in 1:length(vec_bsppd)/2]
+            catch err
+                bspoly_params_d = bspoly_params
+            end
+
+            initU = Vector(initial_U)
+            initD = Vector(initial_D)
+       
+                       pdf_params = BernsteinDirichletPDFParams(initial_U=initU,
+                    initial_D=initD,
+                    λ_g1=λ_g1, λ_g2=λ_g2,
+                    K_g=K_g, λ_q=λ_q, K_q=K_q,
+                    bspoly_params=bspoly_params,
+                    bspoly_params_d=bspoly_params_d,
+                    θ=Vector(θ)
+                    )
+
+#pdf_params = BernsteinDirichletPDFParams( λ_g1=λ_g2,
+#            λ_g2=λ_g2, K_g=K_g, λ_q=λ_q, K_q=K_q, 
+#            bspoly_params = bspoly_params, θ=θ)
 #initial_U = [1.], initial_D = [1.], λ_g1=1.5, λ_g2=-0.4, K_g=6.0,
 #                                λ_q=-0.25, θ = [.33, .13, .27, .17, .073, 0.014, 0.002, 0.000001, .003],
 #                                bspoly_params = [[0,3],[0,4],[1,4]]

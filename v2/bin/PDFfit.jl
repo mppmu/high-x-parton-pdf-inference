@@ -231,8 +231,10 @@ if parsed_args["parametrisation"] == "Bernstein"
 
 prior = NamedTupleDist(
     θ = Dirichlet([34.0, 17.0, 22.5, 17.0, 7.3, 1.4, 0.2, 10.e-5, 0.3]),
-    initial_U = Uniform(-10., 1.),
-    initial_D = Uniform(10., 30.),
+    #initial_U = Uniform(-10., 1.),
+   # initial_D = Uniform(10., 30.),
+    initial_U = [Uniform(-10., 1.)],
+    initial_D = [Uniform(10., 30.)],
     λ_g1 = Uniform(3., 4.5),
     λ_g2 = Uniform(-1, -0.5),
     K_g =  Uniform(5.,9.),
@@ -263,38 +265,58 @@ likelihood = let d = sim_data
     counts_obs_ep = d["counts_obs_ep"]
     counts_obs_em = d["counts_obs_em"]
     nbins = d["nbins"]
+    
+  # function get_likelihood(pdf_params::BernsteinDirichletPDFParams, sim_data::Dict{String,Any},
+  #  qcdnum_params::QCDNUM.EvolutionParams, splint_params::QCDNUM.SPLINTParams,
+  #  quark_coeffs::QuarkCoefficients, pos_init_u_only::Bool)
+ 
+    
     logfuncdensity(function (params)
 
        if parsed_args["parametrisation"] == "Bernstein"
-       pdf_params = BernsteinDirichletPDFParams(
+                  vec_bspp = Vector(params.bspoly_params)
+            bspoly_params = [[vec_bspp[Int(2 * i - 1)], vec_bspp[Int(2 * i)]] for i in 1:length(vec_bspp)/2]
 
-            initial_U=params.initial_U, 
-            initial_D=params.initial_D, 
-           # U_weights=params.U_weights,
-           # D_weights=params.D_weights, 
-            λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_g=params.K_g, λ_q=params.λ_q, 
-            K_q=params.K_q,
-             bspoly_params = params.bspoly_params,
-            
-             θ=params.θ)
+            bspoly_params_d = 0
+
+            try
+                vec_bsppd = Vector(params.bspoly_params_d)
+                bspoly_params_d = [[vec_bsppd[Int(2 * i - 1)], vec_bsppd[Int(2 * i)]] for i in 1:length(vec_bsppd)/2]
+            catch err
+                bspoly_params_d = bspoly_params
+            end
+
+            initU = Vector(params.initial_U)
+            initD = Vector(params.initial_D)
+       
+                       pdf_params = BernsteinDirichletPDFParams(initial_U=initU,
+                    initial_D=initD,
+                    λ_g1=params.λ_g1, λ_g2=params.λ_g2,
+                    K_g=params.K_g, λ_q=params.λ_q, K_q=params.K_q,
+                    bspoly_params=bspoly_params,
+                    bspoly_params_d=bspoly_params_d,
+                    θ=Vector(params.θ)
+                    )
+         ParErrs = [params.beta0_1,params.beta0_2,params.beta0_3,params.beta0_4, params.beta0_5,params.beta0_6,params.beta0_7,params.beta0_8]
+         counts_pred_ep, counts_pred_em = @critical  forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs,ParErrs );
+    #counts_pred_ep, counts_pred_em = @critical  bernstein_forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs,ParErrs );
        end
 
 
        if parsed_args["parametrisation"] == "Dirichlet"
          pdf_params = DirichletPDFParams(K_u=params.K_u, K_d=params.K_d, λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_g=params.K_g, λ_q=params.λ_q, K_q=params.K_q, θ=params.θ)
+         ParErrs = [params.beta0_1,params.beta0_2,params.beta0_3,params.beta0_4, params.beta0_5,params.beta0_6,params.beta0_7,params.beta0_8]
+         counts_pred_ep, counts_pred_em = @critical  forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs,ParErrs );
        end
 
        if parsed_args["parametrisation"] == "Valence"
          θ = get_scaled_θ(params.λ_u, params.K_u, params.λ_d,params.K_d, Vector(params.θ_tmp))
          pdf_params = ValencePDFParams(λ_u=params.λ_u, K_u=params.K_u, λ_d=params.λ_d, K_d=params.K_d, λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_g=params.K_g, λ_q=params.λ_q, K_q=params.K_q, 
          θ=θ)
+         ParErrs = [params.beta0_1,params.beta0_2,params.beta0_3,params.beta0_4, params.beta0_5,params.beta0_6,params.beta0_7,params.beta0_8]
+         counts_pred_ep, counts_pred_em = @critical  forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs,ParErrs );
        end
           
-       ParErrs = [params.beta0_1,params.beta0_2,params.beta0_3,params.beta0_4, params.beta0_5,params.beta0_6,params.beta0_7,params.beta0_8]
-            
-            counts_pred_ep, counts_pred_em = @critical  forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs
-            ,ParErrs 
-            );
 
             ll_value = 0.0
             for i in 1:nbins
