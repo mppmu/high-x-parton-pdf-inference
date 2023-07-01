@@ -115,8 +115,10 @@ prior_alpha = 0.2;
 if parsed_args["parametrisation"] == "Bernstein"
 prior = NamedTupleDist(
     θ = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
-    initial_U = [Truncated(Normal(30., 15.), 0, 80)],
-    initial_D = [Uniform(0., 20.)],
+#    initial_U = [Truncated(Normal(30., 15.), -20, 80)],
+#    initial_D = [Uniform(0., 20.)],
+    initial_U = [Uniform(-10., 1.)],
+    initial_D = [Uniform(10., 30.)],
     λ_g1 = Uniform(1., 2.0),
     λ_g2 = Uniform(-0.5, -0.3),
     K_g =  Uniform(5.,9.),
@@ -139,8 +141,9 @@ end
 
 prior_samples=bat_sample(prior).result;
 
-xlims_initial_U = (-20, 80) # initial_U
-xlims_D_u = (0.1, 0.5) # (0.29, 0.37)
+xlims_initial_U = (-15, 5) # initial_U
+#xlims_D_u = (-10.0, 20.0) # (0.29, 0.37)
+xlims_D_u =  (0.15, 0.45)
 intervals = [0.68, 0.95]
 labels = [L"~~\mathrm{Posterior}~68~\%", L"~~\mathrm{Posterior}~95~\%"]
 prior_labels = [L"~~\mathrm{Prior}~68~\%", L"~~\mathrm{Prior}~95~\%"]
@@ -149,14 +152,16 @@ prior_colors = [:grey40, :grey50]
 
 if parsed_args["parametrisation"] == "Bernstein"
 θ_true=[.33, .13, .27, .17, .073, 0.014, 0.002, 0.000001, .003]
-bspoly_params_true = [[0,3],[0,4],[1,4]]
+bspoly_params_true = [1,4,0,4,0,5]
 λ_g1_true=1.5;
 λ_g2_true=-0.4;
 K_g_true=6.0;
 λ_q_true=-0.25;
 K_q_true=5.0;
-initial_U_true = [1.];
- initial_D_true = [1.]
+initial_U_true = [-8.];
+initial_D_true = [15.0]
+
+
 end
 
 plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
@@ -178,6 +183,9 @@ plot!(prior_samples, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u"
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
+    
+        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+
 #, xticks=(0:0.05:0.1,["0","0.05","0.1"])
 
 )
@@ -190,9 +198,12 @@ plot!(samples_data, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
+    
+        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+
 
 )
-plot!([initial_U_true[1]],[θ_true[1]], seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, foreground_color_legend=false, markersize=2, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
+plot!([initial_U_true[1]],[θ_true[1]], seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 
 
@@ -208,14 +219,15 @@ plot!(prior_samples, :initial_U, legend=false, marginalmode=false,
 
 )
 plot!(samples_data, :initial_U, legend=false, xlabel="", ylabel=L"P(A_3)", subplot=1, 
-    xlims=xlims_initial_U, ylims=(0, 0.1), seriestype=:smallest_intervals, 
+    xlims=xlims_initial_U, ylims=(0, 0.2), seriestype=:smallest_intervals, 
     marginalmode=false, intervals=intervals, colors=colors, alpha=alpha
  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm   
-     , yticks=(0.0:0.1:0.1,["0","0.1"])
+     , yticks=(0.0:0.1:0.2,["0","0.1","0.2"])
+     
 
 )
 vline!([initial_U_true[1]], color="red", label=" Truth", lw=0.5)
@@ -233,15 +245,16 @@ plot!(prior_samples, :(θ[1]), legend=false, marginalmode=false,
 
 )
 plot!(samples_data, :(θ[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)", 
-    subplot=4, ylims=xlims_D_u, xlims=(0, 55), 
+    subplot=4, ylims=xlims_D_u, xlims=(0, 2*45), 
     seriestype=:smallest_intervals, intervals=intervals, marginalmode=false, 
     colors=colors, alpha=alpha, orientation=:horizontal
  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , xticks=(0:20:40,["0","20","40"])
+    , xticks=(0:20:80,["0","20","40","60","80"])
     , right_margin=-2mm
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
+        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 
 )
 hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
@@ -258,6 +271,7 @@ plot!(prior_samples, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u"
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
+        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 
 )
 p = plot!(samples_data, (:(initial_U), :(θ[1])),
@@ -271,6 +285,10 @@ p = plot!(samples_data, (:(initial_U), :(θ[1])),
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
+    
+
+        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+
 )
 
 filename = string("figures/fig4-",parsed_args["fitresults"], "_v2.pdf")

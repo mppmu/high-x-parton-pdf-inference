@@ -479,7 +479,7 @@ plot!(samples_data, (:(K_u), :(θ[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , bottom_margin=-1mm
 
 )
-p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false, markersize=3, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
+p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,   lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 
 
@@ -597,7 +597,7 @@ plot!(samples_data, (:(K_d), :(θ[2])), xlabel=L"K_d", ylabel=L"\Delta_d",
     , top_margin=0mm
     , bottom_margin=-1mm
 )
-p = plot!([K_d_true],[θ_true[2]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false, markersize=3, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
+p = plot!([K_d_true],[θ_true[2]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,   lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 
 # K_d marginal
@@ -711,7 +711,7 @@ plot!(prior_samples, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylab
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14   
     
 )
-plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false, markersize=3, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
+plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,   lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 comb_prior_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_u = v.θ[1]), prior_samples).result
 comb_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_u = v.θ[1]), samples_data).result;
@@ -736,7 +736,7 @@ plot!(comb_prior_samples, (:(Δ_u), :(Δ_g)), subplot=2,xlabel=L"\Delta_{u}", yl
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
 )
 θ_g_true=θ_true[3]+θ_true[4]
-plot!([θ_true[1]],[θ_g_true], subplot=2,color="red",seriestype=:scatter, label=:none, lw=1, markerstrokecolor=:red, markersize=3)
+plot!([θ_true[1]],[θ_g_true], subplot=2,color="red",seriestype=:scatter, label=:none, lw=1, markerstrokecolor=:red)
 
 
 comb_prior_samples = bat_transform(v -> (Δ_sea = sum(v.θ[5:9]), Δ_u = v.θ[1]), prior_samples).result
@@ -761,7 +761,7 @@ plot!(comb_prior_samples, (:(Δ_u), :(Δ_sea)), subplot=3,xlabel=L"\Delta_{u}", 
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
 )
 θ_sea_true=sum(θ_true[5:9])
-plot!([θ_true[1]],[θ_sea_true], subplot=3,color="red",seriestype=:scatter, label=:none, lw=2, markerstrokecolor=:red, markersize=3)
+plot!([θ_true[1]],[θ_sea_true], subplot=3,color="red",seriestype=:scatter, label=:none, lw=2, markerstrokecolor=:red)
 
 
 comb_prior_samples = bat_transform(v -> (Δ_sea = sum(v.θ[5:9]), Δ_g = v.θ[3] + v.θ[4]), prior_samples).result
@@ -788,7 +788,7 @@ plot!(comb_prior_samples, (:(Δ_g), :(Δ_sea)),subplot=4,xlabel=L"\Delta_{g}", y
 )
 Δ_sea_true = sum(θ_true[5:9])
 Δ_g_true = sum(θ_true[3:4])
-plot!([Δ_g_true],[Δ_sea_true], color="red",subplot=4,seriestype=:scatter, label=:none, lw=2, markerstrokecolor=:red, markersize=3)
+plot!([Δ_g_true],[Δ_sea_true], color="red",subplot=4,seriestype=:scatter, label=:none, lw=2, markerstrokecolor=:red)
 
 
 filename = string("figures/fig5-momentum-corr-", parsed_args["fitresults"], "_v2.pdf")
