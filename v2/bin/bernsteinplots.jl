@@ -203,7 +203,7 @@ plot!(samples_data, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
 
 
 )
-plot!([initial_U_true[1]],[θ_true[1]], seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, foreground_color_legend=false, markersize=2, thickness_scaling=1.0, lc=:red, markerstrokecolor=:red, legendfontsize=18)
+plot!([initial_U_true[1]],[θ_true[1]], seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=18)
 
 
 
