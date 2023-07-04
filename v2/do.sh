@@ -1,8 +1,12 @@
 #!/bin/bash
 set -x
-#bin/mysysimage.jl
-JULIA='julia --sysimage sys_forplots2.so'
-#exit
+#julia -e 'import Pkg; Pkg.add("PackageCompiler");Pkg.add("PartonDensity");Pkg.add("Plots");Pkg.add(url="https://github.com/cescalara/PartonDensity.jl.git")'
+#julia -e 'import Pkg; Pkg.add("PackageCompiler");Pkg.add("ArgParse");Pkg.add("LaTeXStrings");'
+
+
+bin/mysysimage.jl
+#JULIA='julia --sysimage sys_forplots2.so'
+exit
 
   $JULIA bin/generatepseudodata.jl -s 42 -p Dirichlet &
   $JULIA bin/generatepseudodata.jl -s 42 -p Valence &
