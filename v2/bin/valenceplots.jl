@@ -127,7 +127,7 @@ colors = [c3, c1]
 prior_colors = [:grey40, :grey50]
 
 if parsed_args["parametrisation"] == "Valence"
-weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
+#weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
 λ_u_true = 0.64;
 K_u_true = 3.38;
 λ_d_true = 0.67;
@@ -137,7 +137,6 @@ K_d_true = 4.73;
 θ_true=[0.22, 0.10, 0.24, 0.24, 0.10,0.05, 0.01, 0.005, 0.0005]
 θ_sum=sum(θ_true[1:9])
 θ_true=θ_true/θ_sum
-
 end
 
 plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 

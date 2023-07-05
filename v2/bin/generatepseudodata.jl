@@ -25,12 +25,11 @@ function parse_commandline()
 end
 
 function main()
-    parsed_args = parse_commandline()
-    println("Parsed args:")
-    for (arg,val) in parsed_args
-        println("  $arg  =>  $val")
-    end
-gr(fmt=:png);
+parsed_args = parse_commandline()
+println("Parsed args:")
+for (arg,val) in parsed_args
+  println("  $arg  =>  $val")
+end
 seed=parsed_args["seed"]
 println(seed)
 seedtxt=string(seed)
@@ -108,13 +107,6 @@ for i in 1:nbins
     counts_obs_ep[i] = rand(rng,Poisson(counts_pred_ep[i]))
     counts_obs_em[i] = rand(rng,Poisson(counts_pred_em[i]))
 end
-
-
-plot(1:nbins, counts_pred_ep, label="Expected counts (eP)", color="blue")
-plot!(1:nbins, counts_pred_em, label="Expected counts (eM)", color="red")
-scatter!(1:nbins, counts_obs_ep, label="Detected counts (eP)", color="blue")
-scatter!(1:nbins, counts_obs_em, label="Detected counts (eM)", color="red")
-plot!(xlabel="Bin number")
 
 sim_data = Dict{String,Any}()
 sim_data["nbins"] = nbins;

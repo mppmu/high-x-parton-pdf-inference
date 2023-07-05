@@ -128,6 +128,8 @@ prior_colors = [:grey40, :grey50]
 
 if parsed_args["parametrisation"] == "Bernstein"
 θ_true=[.33, .13, .27, .17, .073, 0.014, 0.002, 0.000001, .003]
+θ_sum=sum(θ_true[1:9])
+θ_true=θ_true/θ_sum
 bspoly_params_true = [1,4,0,4,0,5]
 λ_g1_true=1.5;
 λ_g2_true=-0.4;

@@ -5,9 +5,10 @@ using QCDNUM
 using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using DelimitedFiles
-
 using ArgParse
 import HDF5
+include("priors.jl")
+
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -80,30 +81,24 @@ prior=get_priors(parsed_args)
 
 
 likelihood = let d = sim_data
-    counts_obs_ep = d["counts_obs_ep"]
-    counts_obs_em = d["counts_obs_em"]
-    nbins = d["nbins"]
-    logfuncdensity(function (params)
+counts_obs_ep = d["counts_obs_ep"]
+counts_obs_em = d["counts_obs_em"]
+nbins = d["nbins"]
+logfuncdensity(function (params)
        if parsed_args["parametrisation"] == "Bernstein"
-            vec_bspp = Vector(params.bspoly_params)
-            bspoly_params = [[vec_bspp[Int(2 * i - 1)], vec_bspp[Int(2 * i)]] for i in 1:length(vec_bspp)/2]
-            bspoly_params_d = 0
-            try
-                vec_bsppd = Vector(params.bspoly_params_d)
-                bspoly_params_d = [[vec_bsppd[Int(2 * i - 1)], vec_bsppd[Int(2 * i)]] for i in 1:length(vec_bsppd)/2]
-            catch err
+         vec_bspp = Vector(params.bspoly_params)
+         bspoly_params = [[vec_bspp[Int(2 * i - 1)], vec_bspp[Int(2 * i)]] for i in 1:length(vec_bspp)/2]
+         bspoly_params_d = 0
+         try
+           vec_bsppd = Vector(params.bspoly_params_d)
+           bspoly_params_d = [[vec_bsppd[Int(2 * i - 1)], vec_bsppd[Int(2 * i)]] for i in 1:length(vec_bsppd)/2]
+         catch err
                 bspoly_params_d = bspoly_params
-            end
-            initU = Vector(params.initial_U)
-            initD = Vector(params.initial_D)
-            pdf_params = BernsteinDirichletPDFParams(initial_U=initU,
-                    initial_D=initD,
-                    λ_g1=params.λ_g1, λ_g2=params.λ_g2,
-                    K_g=params.K_g, λ_q=params.λ_q, K_q=params.K_q,
-                    bspoly_params=bspoly_params,
-                    bspoly_params_d=bspoly_params_d,
-                    θ=Vector(params.θ)
-                    )
+         end
+         initU = Vector(params.initial_U)
+         initD = Vector(params.initial_D)
+         pdf_params = BernsteinDirichletPDFParams(initial_U=initU,initial_D=initD, λ_g1=params.λ_g1, λ_g2=params.λ_g2,
+                    K_g=params.K_g, λ_q=params.λ_q, K_q=params.K_q,bspoly_params=bspoly_params,bspoly_params_d=bspoly_params_d,θ=Vector(params.θ))
          ParErrs = [params.beta0_1,params.beta0_2,params.beta0_3,params.beta0_4, params.beta0_5,params.beta0_6,params.beta0_7,params.beta0_8]
          counts_pred_ep, counts_pred_em = @critical  forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs,ParErrs );
        end

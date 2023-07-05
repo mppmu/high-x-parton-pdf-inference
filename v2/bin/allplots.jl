@@ -146,24 +146,14 @@ for s in eachindex(sub_samples)
                                       K_g=sub_samples.v.K_g[s], 
                                       λ_q=sub_samples.v.λ_q[s], 
                                       θ=Vector(sub_samples.v.θ[s]))
-        
-    counts_ep_pred_s, counts_em_pred_s = forward_model(pdf_params_s,    
-                                                              qcdnum_params, 
-                                                              splint_params,
-                                                              quark_coeffs, 
-                                                              sys_err_params)
-    
+    counts_ep_pred_s, counts_em_pred_s = forward_model(pdf_params_s,qcdnum_params, splint_params, quark_coeffs, sys_err_params)
     for j in 1:nbins
-        
         counts_ep_pred_s[j] *= 1 + 0.018 * sub_samples.v.Beta1[s]
         counts_em_pred_s[j] *= 1 + 0.018 * sub_samples.v.Beta2[s]
-        
         counts_em_sampled[s, j] = rand(Poisson(counts_em_pred_s[j]))
         counts_ep_sampled[s, j] = rand(Poisson(counts_ep_pred_s[j]))
-
         chisqep[s]+=(counts_ep_pred_s[j]-counts_ep_sampled[s, j])^2/counts_ep_pred_s[j]
         chisqem[s]+=(counts_em_pred_s[j]-counts_em_sampled[s, j])^2/counts_em_pred_s[j]
-
     end
     
 end
@@ -171,9 +161,8 @@ end
 #
 # Chi squared for the actual data
 #
-pdfpars(params)=   DirichletPDFParams(
-    K_u=params.K_u, K_d=params.K_d, λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_q=params.K_q,
-    K_g=params.K_g, λ_q=params.λ_q, θ=Vector(params.θ))
+pdfpars(params)=   DirichletPDFParams( K_u=params.K_u, K_d=params.K_d, λ_g1=params.λ_g1, λ_g2=params.λ_g2, K_q=params.K_q,
+                                       K_g=params.K_g, λ_q=params.λ_q, θ=Vector(params.θ))
 mode_pars_data = mode(samples_data)
 println(mode_pars_data)
 
@@ -195,7 +184,7 @@ end
 #
 chisqep_data=0.
 chisqem_data=0.
-        for j in 1:nbins
+for j in 1:nbins
             pred=counts_pred_ep_data[j]   
             best=floor(counts_pred_ep_data[j])
             prob_ep_data[j] = pdf(Poisson(pred), counts_obs_ep_data[j])/pdf(Poisson(pred), best)
@@ -212,7 +201,7 @@ chisqem_data=0.
                 get_bin_info(j) 
                 println(j," electron ",pred," ",counts_obs_em_data[j]," ",(counts_obs_em_data[j]-pred)^2/pred)
             end 
-       end
+end
 println(chisqep_data," ",chisqem_data)
 
 countep=0
@@ -294,7 +283,7 @@ K_g_true=5.0
 K_q_true=6.0
 end
 if parsed_args["parametrisation"] == "Valence"
-weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
+#weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
 λ_u_true = 0.64;
 K_u_true = 3.38;
 λ_d_true = 0.67;
@@ -303,10 +292,11 @@ K_d_true = 4.73;
 θ_true=[0.22, 0.10, 0.24, 0.24, 0.10,0.05, 0.01, 0.005, 0.0005]
 θ_sum=sum(θ_true[1:9])
 θ_true=θ_true/θ_sum
-
 end
 if parsed_args["parametrisation"] == "Bernstein"
 θ_true=[.33, .13, .27, .17, .073, 0.014, 0.002, 0.000001, .003]
+θ_sum=sum(θ_true[1:9])
+θ_true=θ_true/θ_sum
 bspoly_params = [[0,3],[0,4],[1,4]]
 λ_g1_true=1.5;
 λ_g2_true=-0.4;
