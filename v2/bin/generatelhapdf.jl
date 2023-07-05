@@ -120,7 +120,7 @@ for i in 1:6
   allalpha[i] =QCDNUM.asfunc(allq[i]*allq[i])[1]
 end
 
-open("CABCHSV.info", "w") do f
+open("CABCHSV/CABCHSV.info", "w") do f
   write(f,"
 SetDesc: \"CABCHSV PDF fixed 5-flavour fits\"
 SetIndex: 11082
@@ -163,7 +163,7 @@ end
 
     Ns = 50
     samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
-    sub_samples_all = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=50)).result;
+    sub_samples_all = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=100)).result;
     samples_mode2 = mode(sub_samples_all);
     sub_samples = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
     pdf_params_s = DirichletPDFParams(K_u=samples_mode2.K_u, K_d=samples_mode2.K_d, K_q=samples_mode2.K_q,
@@ -187,7 +187,7 @@ end
       global pdf_params=s
       println(pdf_params)
       QCDNUM.evolfg(itype, func_c, def, iq0)
-      open(string("CABCHSV_", lpad(string(NN),4,"0"),".dat"), "w") do f
+      open(string("CABCHSV/CABCHSV_", lpad(string(NN),4,"0"),".dat"), "w") do f
       if (NN==0)
         write(f,"PdfType: central\nFormat: lhagrid1\n---\n")
       else

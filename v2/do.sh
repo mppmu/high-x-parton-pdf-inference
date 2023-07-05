@@ -2,6 +2,9 @@
 set -x
 #bin/mysysimage.jl
 #JULIA='julia --sysimage sys_forplots2.so'
+
+mkdir -p CABCHSV
+
 JULIA='julia '
 #exit
 
