@@ -266,7 +266,7 @@ for s in eachindex(sub_samples)
     QCDNUM.evolfg(itype, func_c, def, iq0)
 
 
-open(string("CABCHSV_", lpad(string(NN),3,"0"),".dat"), "w") do f
+open(string("CABCHSV_", lpad(string(NN),4,"0"),".dat"), "w") do f
 write(f,"PdfType: error
 Format: lhagrid1
 ---")
