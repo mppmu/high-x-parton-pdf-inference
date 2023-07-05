@@ -766,11 +766,8 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_
     , bottom_margin=-1mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
-        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
-    
+        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"])
 )
-
-
 
 #
 λ_d_true = θ_true[2]*(1+K_d_true)/(1-θ_true[2])
