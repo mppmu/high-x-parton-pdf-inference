@@ -1,7 +1,5 @@
 #!/usr/bin/julia
 using BAT, DensityInterface
-#Pkg.add("QCDNUM")
-#Pkg.add(url="https://github.com/cescalara/PartonDensity.jl.git")
 using PartonDensity
 using QCDNUM
 using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
@@ -13,9 +11,10 @@ using LaTeXStrings
 using HypothesisTests
 using Statistics
 using Measures
-
 using ArgParse
 import HDF5
+include("priors.jl")
+
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -112,32 +111,7 @@ prior_alpha = 0.2;
 
 # Get some prior samples for plotting
 
-if parsed_args["parametrisation"] == "Valence"
-##FIXME!!!
-weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
-prior = NamedTupleDist(
-    θ_tmp=Dirichlet(weights),
-    λ_u=Truncated(Normal(pdf_params.λ_u, 1), 0, 1),
-    K_u=Truncated(Normal(pdf_params.K_u, 1), 2, 10),
-    λ_d=Truncated(Normal(pdf_params.λ_d, 1), 0, 1),
-    K_d=Truncated(Normal(pdf_params.K_d, 1), 2, 10),
-    λ_g1=Truncated(Normal(pdf_params.λ_g1, 1), -1, 0),
-    λ_g2=Truncated(Normal(pdf_params.λ_g2, 1), -1, 0),
-    K_g=Truncated(Normal(pdf_params.K_g, 1), 2, 10),
-    λ_q=Truncated(Normal(pdf_params.λ_q, 0.1), -1, 0),
-    K_q=Truncated(Normal(pdf_params.K_q, 0.5), 3, 7),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)    
-   )
-end
+prior=get_priors(parsed_args)
 
 
 prior_samples=bat_sample(prior).result;
@@ -198,7 +172,7 @@ plot!(samples_data, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , bottom_margin=-1mm
 
 )
-p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=18, legend=:right)
+p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=14, legend=:right)
 
 
 
@@ -276,15 +250,10 @@ p = plot!(samples_data, (:(K_u), :(θ_tmp[1])),
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-
-
 )
 
 filename = string("figures/fig4-",parsed_args["fitresults"], "_v2.pdf")
 savefig(p, filename)
-
-
-
 
 end
 

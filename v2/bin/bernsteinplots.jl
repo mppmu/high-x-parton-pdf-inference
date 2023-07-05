@@ -16,7 +16,7 @@ using Measures
 
 using ArgParse
 import HDF5
-
+include("priors.jl")
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -112,31 +112,7 @@ alpha = 0.6
 prior_alpha = 0.2;
 
 # Get some prior samples for plotting
-if parsed_args["parametrisation"] == "Bernstein"
-prior = NamedTupleDist(
-    θ = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
-#    initial_U = [Truncated(Normal(30., 15.), -20, 80)],
-#    initial_D = [Uniform(0., 20.)],
-    initial_U = [Uniform(-10., 1.)],
-    initial_D = [Uniform(10., 30.)],
-    λ_g1 = Uniform(1., 2.0),
-    λ_g2 = Uniform(-0.5, -0.3),
-    K_g =  Uniform(5.,9.),
-    λ_q = Uniform(-0.5, -0.),
-    K_q = Uniform(3., 7.),
-    bspoly_params = [0,5,1,5,0,6],
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-    )
-end
+prior=get_priors(parsed_args)
 
 
 prior_samples=bat_sample(prior).result;
@@ -160,8 +136,6 @@ K_g_true=6.0;
 K_q_true=5.0;
 initial_U_true = [-8.];
 initial_D_true = [15.0]
-
-
 end
 
 plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
@@ -183,11 +157,7 @@ plot!(prior_samples, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u"
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-    
-        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
-
-#, xticks=(0:0.05:0.1,["0","0.05","0.1"])
-
+    , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 )
 plot!(samples_data, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
     seriestype=:smallest_intervals_contourf, smoothing=2, 
@@ -198,12 +168,9 @@ plot!(samples_data, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-    
         , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
-
-
 )
-plot!([initial_U_true[1]],[θ_true[1]], seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=18)
+plot!([initial_U_true[1]],[θ_true[1]], seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=14)
 
 
 
@@ -216,7 +183,6 @@ plot!(prior_samples, :initial_U, legend=false, marginalmode=false,
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-
 )
 plot!(samples_data, :initial_U, legend=false, xlabel="", ylabel=L"P(A_3)", subplot=1, 
     xlims=xlims_initial_U, ylims=(0, 0.2), seriestype=:smallest_intervals, 
@@ -227,8 +193,6 @@ plot!(samples_data, :initial_U, legend=false, xlabel="", ylabel=L"P(A_3)", subpl
     , top_margin=0mm
     , bottom_margin=-1mm   
      , yticks=(0.0:0.1:0.2,["0","0.1","0.2"])
-     
-
 )
 vline!([initial_U_true[1]], color="red", label=" Truth", lw=0.5)
 
@@ -255,7 +219,6 @@ plot!(samples_data, :(θ[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)",
     , top_margin=0mm
     , bottom_margin=-1mm
         , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
-
 )
 hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
 
@@ -272,7 +235,6 @@ plot!(prior_samples, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u"
     , top_margin=0mm
     , bottom_margin=-1mm
         , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
-
 )
 p = plot!(samples_data, (:(initial_U), :(θ[1])),
     seriestype=:smallest_intervals,
@@ -280,15 +242,12 @@ p = plot!(samples_data, (:(initial_U), :(θ[1])),
     interval_labels=labels,
     linewidth=0, alpha=alpha+0.2, legend=:bottomleft, foreground_color_legend=false,
     framestyle=:none, subplot=2, xlims=(0, 1), ylims=(0, 0.1)
- , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=16
+ , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=7mm
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-    
-
         , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
-
 )
 
 filename = string("figures/fig4-",parsed_args["fitresults"], "_v2.pdf")

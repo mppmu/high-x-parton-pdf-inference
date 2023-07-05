@@ -1,7 +1,5 @@
 #!/usr/bin/julia
 using BAT, DensityInterface
-#Pkg.add("QCDNUM")
-#Pkg.add(url="https://github.com/cescalara/PartonDensity.jl.git")
 using PartonDensity
 using QCDNUM
 using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
@@ -16,7 +14,7 @@ using Measures
 
 using ArgParse
 import HDF5
-
+include("priors.jl")
 
 
 
@@ -153,135 +151,7 @@ alpha = 0.6
 prior_alpha = 0.2;
 
 # Get some prior samples for plotting
-
-if parsed_args["parametrisation"] == "Dirichlet"
-if (parsed_args["priorshift"]==0)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-    θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-end
-
-if (parsed_args["priorshift"]==1)
-    println("seting prior from Shifted Prior set ",seedtxt)
-
-prior = NamedTupleDist(
-    θ = Dirichlet([40, 10, 10, 10, 5, 2.5, 1.5, 1.5, 0.5]),
-    K_u = Truncated(Normal(4.5, 0.5), 2, 5),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-elseif (parsed_args["priorshift"]==2)
-    println("seting prior from Shifted Prior set ",seedtxt)
-prior = NamedTupleDist(
-        θ = Dirichlet([20, 10, 30, 30, 5, 2.5, 1.5, 1.5, 0.5]),
-        K_u = Truncated(Normal(2.5, 0.5), 2, 5),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
-    λ_g1 = Uniform(0., 1.),
-    λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
-    λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-);
-end
-
-end
-
-
-if parsed_args["parametrisation"] == "Valence"
-##FIXME!!!
-weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
-prior = NamedTupleDist(
-    θ_tmp=Dirichlet(weights),
-    λ_u=Truncated(Normal(pdf_params.λ_u, 1), 0, 1),
-    K_u=Truncated(Normal(pdf_params.K_u, 1), 2, 10),
-    λ_d=Truncated(Normal(pdf_params.λ_d, 1), 0, 1),
-    K_d=Truncated(Normal(pdf_params.K_d, 1), 2, 10),
-    λ_g1=Truncated(Normal(pdf_params.λ_g1, 1), -1, 0),
-    λ_g2=Truncated(Normal(pdf_params.λ_g2, 1), -1, 0),
-    K_g=Truncated(Normal(pdf_params.K_g, 1), 2, 10),
-    λ_q=Truncated(Normal(pdf_params.λ_q, 0.1), -1, 0),
-    K_q=Truncated(Normal(pdf_params.K_q, 0.5), 3, 7),
-    Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)    
-);
-end
-
-if parsed_args["parametrisation"] == "Bernstein"
-
-prior = NamedTupleDist(
-    θ = Dirichlet([34.0, 17.0, 22.5, 17.0, 7.3, 1.4, 0.2, 10.e-5, 0.3]),
-    initial_U = Uniform(-10., 1.),
-    initial_D = Uniform(10., 30.),
-    λ_g1 = Uniform(3., 4.5),
-    λ_g2 = Uniform(-1, -0.5),
-    K_g =  Uniform(5.,9.),
-    λ_q = Uniform(-1, -0.5),
-    K_q = Uniform(3., 7.),
-    bspoly_params = [[0, 3], [0, 4], [1, 4], [0, 5]],
-    #    bspoly_params = [1,4,0,4,0,5],
-        Beta1 =  Truncated(Normal(0, 1), -5, 5),
-    Beta2 =  Truncated(Normal(0, 1), -5, 5),
-    beta0_1=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_2=   Truncated(Normal(0, 1), -5, 5),    
-    beta0_3= Truncated(Normal(0, 1), -5, 5), 
-    beta0_4=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_5=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_6=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_7=  Truncated(Normal(0, 1), -5, 5), 
-    beta0_8=   Truncated(Normal(0, 1), -5, 5)
-    )
-end
+prior=get_priors(parsed_args)
 
 prior_samples=bat_sample(prior).result;
 
@@ -345,11 +215,6 @@ l0 = @layout [
         [a4{0.28w} b4{0.24w} c4{0.24w} d4{0.24w} ]
 ]
 l = @layout [
-    #[a1{0.28w}  _ _ _ ]
-      #  [a2{0.28w} b2{0.24w} _ _ ]
-      #  [a3{0.28w} b3{0.24w} c3{0.24w} _ ]
-      #  [a4{0.28w} b4{0.24w} c4{0.24w} d4{0.24w} ]
-
         [a1{0.28w}  b1{0.24w} c1{0.24w} d1{0.24w} ]
         [a2{0.28w} b2{0.24w} c2{0.24w} d2{0.24w} ]
         [a3{0.28w} b3{0.24w} c3{0.24w} d3{0.24w} ]
@@ -360,15 +225,14 @@ l = @layout [
 NNN=4
 p=plot(size=(1000,800),
 layout=l,
-#samples_data,vsel=[:K_u,:K_d, :K_q, :K_g], 
-    #cmap=:viridis,
     colors=[c1, c2, :red],
-  #  colors=[:chartreuse2, :yellow, :red]
     frame=:box,
-    legend = :none, framestyle = :box,
-    ylims=(1.9, 10.1),xlims=(1.9, 10.1), 
-    plot_titlevspan=0.001,
-     xlabel=["" "" "" "" "" "" "" "" "" "" "" "" L"p(K_{u})" L"K_{d}" L"K_{q}" L"K_{g}"],
+    legend = :none, 
+    framestyle = :box,
+    ylims=(1.9, 10.1),
+    xlims=(1.9, 10.1), 
+   # plot_titlevspan=0.001,
+    xlabel=["" "" "" "" "" "" "" "" "" "" "" "" L"p(K_{u})" L"K_{d}" L"K_{q}" L"K_{g}"],
     ylabel=[L"p(K_{u})" "" "" "" L"K_{d}" "" "" "" L"K_{q}" "" "" "" L"K_{g}" "" "" ""],
     xticks=(0:2:12,["","","","","","",""]),    
     yticks=(0:2:12,["","","","","","",""])  ,
@@ -376,10 +240,12 @@ layout=l,
     bottom_margin=-3.5mm,
     right_margin=-4mm,
     left_margin=-4mm,
-    xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16
-    , fontfamily=font_family
-    ,grid=false
-
+    xtickfontsize=14,
+    ytickfontsize=14,
+    yguidefontsize=16,
+    xguidefontsize=16,
+    fontfamily=font_family,
+    grid=false
 )
 plot!(samples_data, :(K_u),subplot=1, xlabel="",ylabel=L"K_u",colors=[c1, c2, :red])
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=2)
@@ -418,22 +284,23 @@ for i in 1:NNN*NNN
 plot!(p[0+i],right_margin=-3mm)
 end
 
-plot!(p[13],xticks=(3.0:0.5:4.0,["3","3.5","4"]),bottom_margin=3mm)
-plot!(p[14],xticks=(2:1:5,["","3", "4","5"]),bottom_margin=3mm)
-plot!(p[15],xticks=(4:2:9,["4","6","8"]),bottom_margin=3mm)
-plot!(p[16],xticks=(3:1:6,["3","4","5","6"]),bottom_margin=3mm)
-plot!(p[1],yticks=(2:2:10,["","4","6","8","10"]),left_margin=3mm)
-plot!(p[5],yticks=(2:2:6,["2","4","6"]),left_margin=3mm)
-plot!(p[9],yticks=(4:2:9,["4","6","8"]),left_margin=3mm)
-plot!(p[13],yticks=(2:2:7,["2","4","6"]),left_margin=3mm)
 plot!(p[1],ylims=(0.0,3.0))
-annotate!(p[1],2.75+1.75*0.7,0.8*3.0,text("Counts",14))
+plot!(p[13],xticks=(3.0:0.5:4.0,["3","3.5","4"]),bottom_margin=5.0mm)
+plot!(p[14],xticks=(2:1:5,["","3", "4","5"]),bottom_margin=5.0mm)
+plot!(p[15],xticks=(4:2:9,["4","6","8"]),bottom_margin=5.0mm)
+plot!(p[16],xticks=(3:1:6,["3","4","5","6"]),bottom_margin=5.0mm)
+plot!(p[1],yticks=(2:2:10,["","4","6","8","10"]),left_margin=5.0mm)
+plot!(p[5],yticks=(2:2:6,["2","4","6"]),left_margin=5.0mm)
+plot!(p[9],yticks=(4:2:9,["4","6","8"]),left_margin=5.0mm)
+plot!(p[13],yticks=(2:2:7,["2","4","6"]),left_margin=5.0mm)
+
+annotate!(p[1],2.75+1.75*0.8,0.8*3.0,text("Counts",14))
 plot!(p[6],ylims=(0.0,1))
-annotate!(p[6],2.0+3.5*0.7,0.8*1.0,text("Counts",14))
+annotate!(p[6],2.0+3.5*0.8,0.8*1.0,text("Counts",14))
 plot!(p[11],ylims=(0.0,0.5))
-annotate!(p[11],3.0+6.5*0.7,0.8*0.5,text("Counts",14))
+annotate!(p[11],3.0+6.5*0.8,0.8*0.5,text("Counts",14))
 plot!(p[16],ylims=(0.0,0.5))
-annotate!(p[16],2.0+5.0*0.7,0.8*0.5,text("Counts",14))
+annotate!(p[16],2.0+5.0*0.8,0.8*0.5,text("Counts",14))
 
 
 
@@ -443,7 +310,6 @@ colors = [c3, c1]
 prior_colors = [:grey40, :grey50]
 
 plot!(legend=false,label="xx",
-  #  seriestype=:smallest_intervals,
     marginalmode=false,  interval_labels=prior_labels, 
     colors=reverse([c1, c2, :red]), linewidth=0,
     grid=false,foreground_color_subplot=:white,subplot=4

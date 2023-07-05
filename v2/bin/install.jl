@@ -1,0 +1,27 @@
+#!/usr/bin/julia  
+import Pkg; 
+Pkg.add("SpecialFunctions");
+Pkg.add(url="https://github.com/bat/BAT.jl.git");
+Pkg.add(url="https://github.com/cescalara/PartonDensity.jl.git")
+Pkg.add("Plots");
+Pkg.add("HDF5");
+Pkg.add("PackageCompiler");
+Pkg.add("ArgParse");
+Pkg.add("LaTeXStrings");
+Pkg.add("DensityInterface");
+Pkg.add("QCDNUM");
+Pkg.add("Plots");
+Pkg.add("Random");
+Pkg.add("Distributions");
+Pkg.add("ValueShapes");
+Pkg.add("ParallelProcessingTools");
+Pkg.add("StatsBase");
+Pkg.add("LinearAlgebra");
+Pkg.add("SpecialFunctions");
+Pkg.add("Printf");
+Pkg.add("DelimitedFiles");
+Pkg.add("LaTeXStrings");
+Pkg.add("HypothesisTests");
+Pkg.add("Statistics");
+Pkg.add("Measures");
+Pkg.add("ArgParse");
