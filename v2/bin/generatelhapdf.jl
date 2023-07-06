@@ -116,8 +116,8 @@ QCDNUM.evolfg(itype, func_c, def, iq0)
 allx = Float64.([1.0e-3,2.0e-3,3.0e-3,1.0e-2,2.0e-2,1.0e-1,1.0])
 allq = Float64.([100.,200,300,400,500,1000])
 allalpha = Float64.([100.,200,300,400,500,1000])
-for i in 1:6
-  allalpha[i] =QCDNUM.asfunc(allq[i]*allq[i])[1]
+for (i, qq) in enumerate(allq)
+  allalpha[i] =QCDNUM.asfunc(qq*qq)[1]
 end
 
 open("CABCHSV/CABCHSV.info", "w") do f
@@ -200,11 +200,10 @@ end
       write(f,"\n")
       write(f,"-5 -4 -3 -2 -1 1 2 3 4 5 21")
       write(f,"\n")
-      for j in 1:7
-        for i in 1:6
-          pdf = QCDNUM.allfxq(itype, allx[j], allq[i], 0, 1)
-          write(f,["$v " for v in pdf]...) 
-          write(f,"\n")
+      for xx in allx
+        for qq in allq
+          pdf = QCDNUM.allfxq(itype, xx, qq, 0, 1)
+          @printf(f, "%8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f\n",pdf[1],pdf[2],pdf[3],pdf[4],pdf[5],pdf[6],pdf[7],pdf[8],pdf[9],pdf[10],pdf[11]) 
         end 
       end
     end
