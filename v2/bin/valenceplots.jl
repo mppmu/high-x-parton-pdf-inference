@@ -14,12 +14,14 @@ using Measures
 using ArgParse
 import HDF5
 include("priors.jl")
-
-
 function parse_commandline()
     s = ArgParseSettings()
 
     @add_arg_table s begin
+        "--priorshift"
+            help = "Shift (variation) of priors. Only for Dirichlet"
+            arg_type = Int
+            default = 0    
         "--seed", "-s"
             help = "Seed"
             arg_type = Int
@@ -48,10 +50,15 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
+c1 = :teal
+c2 = :royalblue4
+c3 = :midnightblue
+c4 = :grey
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-
+Plots.scalefontsizes()
+Plots.scalefontsizes(1.2);
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -81,8 +88,6 @@ prob_em_data = zeros(nbins)
 
 mode_pars_data = mode(samples_data)
 
-
-# As in PDF-fit-dirichlet.ipynb
 qcdnum_grid = QCDNUM.GridParams(x_min=[1.0e-3, 1.0e-1, 5.0e-1], x_weights=[1, 2, 2], nx=100,qq_bounds=[1.0e2, 3.0e4], qq_weights=[1.0, 1.0], nq=50, spline_interp=3)
 qcdnum_params = QCDNUM.EvolutionParams(order=2, α_S=0.118, q0=100.0, grid_params=qcdnum_grid,n_fixed_flav=5, iqc=1, iqb=1, iqt=1, weight_type=1);
 splint_params = QCDNUM.SPLINTParams();
@@ -110,10 +115,7 @@ alpha = 0.6
 prior_alpha = 0.2;
 
 # Get some prior samples for plotting
-
 prior=get_priors(parsed_args)
-
-
 prior_samples=bat_sample(prior).result;
 
 xlims_K_u = (2.0, 7.0) # (3.2, 4.4)
@@ -126,17 +128,44 @@ prior_labels = [L"~~\mathrm{Prior}~68~\%", L"~~\mathrm{Prior}~95~\%"]
 colors = [c3, c1]
 prior_colors = [:grey40, :grey50]
 
+
+if parsed_args["parametrisation"] == "Dirichlet"
+#weights = [30.0, 15.0, 12.0, 6.0, 3.6, 0.85, 0.85, 0.85, 0.85]
+#θ = rand(rng, Dirichlet(weights))
+θ_true = [ 0.228, 0.104, 0.249, 0.249, 0.104, 0.052, 0.010, 0.005, 0.0005]
+θ_sum=sum(θ_true[1:9])
+θ_true=θ_true/θ_sum
+K_u_true=3.7
+K_d_true=3.7
+λ_g1_true=0.5
+λ_g2_true=-0.5
+K_g_true=5.0
+λ_q_true=-0.5 
+K_q_true=6.0
+end
 if parsed_args["parametrisation"] == "Valence"
 #weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
 λ_u_true = 0.64;
 K_u_true = 3.38;
 λ_d_true = 0.67;
 K_d_true = 4.73;
-
 #FIXME!!!
 θ_true=[0.22, 0.10, 0.24, 0.24, 0.10,0.05, 0.01, 0.005, 0.0005]
 θ_sum=sum(θ_true[1:9])
 θ_true=θ_true/θ_sum
+end
+if parsed_args["parametrisation"] == "Bernstein"
+θ_true=[.33, .13, .27, .17, .073, 0.014, 0.002, 0.000001, .003]
+θ_sum=sum(θ_true[1:9])
+θ_true=θ_true/θ_sum
+bspoly_params_true = [1,4,0,4,0,5]
+λ_g1_true=1.5;
+λ_g2_true=-0.4;
+K_g_true=6.0;
+λ_q_true=-0.25;
+K_q_true=5.0;
+initial_U_true = [-8.];
+initial_D_true = [15.0]
 end
 
 plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
@@ -158,7 +187,6 @@ plot!(prior_samples, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-
 )
 plot!(samples_data, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     seriestype=:smallest_intervals_contourf, smoothing=2, 
@@ -169,7 +197,6 @@ plot!(samples_data, (:(K_u), :(θ_tmp[1])), xlabel=L"K_u", ylabel=L"\Delta_u",
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-
 )
 p = plot!([K_u_true],[θ_true[1]], color="red",subplot=3, seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=14, legend=:right)
 
@@ -220,7 +247,6 @@ plot!(samples_data, :(θ_tmp[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)"
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-
 )
 hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
 

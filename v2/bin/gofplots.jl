@@ -11,6 +11,7 @@ import HDF5
 using DelimitedFiles
 using LaTeXStrings
 using HypothesisTests
+using Measures
 
 using ArgParse
 import HDF5
@@ -117,56 +118,75 @@ counts_pred_ep_sim, counts_pred_em_sim = forward_model(pdf_params, qcdnum_params
 #           
        end
 
-p1=scatter(counts_obs_ep_sim,  markersize=3, markershape=:circle,label=L"$e^+$p Simulated",ylab="Counts", grid=false)
+p1=scatter(counts_obs_ep_sim,  markersize=3, markershape=:circle,label=L"$e^+$p Simulated",ylab="Counts", grid=false,
+   xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+)
 p1=scatter!(counts_pred_ep_gen, 
    markershape = :diamond,     markeralpha = 0.4,     markercolor = :green,  markersize = 2,
-#    st=:sticks,
-    label=L"$e^+p$ Generated", grid=false)
-p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:circle,label=L"$e^-p$ Simulated", grid=false,markerstrokecolor=:red)
+    label=L"$e^+p$ Generated", grid=false
+      , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    )
+p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:circle,label=L"$e^-p$ Simulated", grid=false,markerstrokecolor=:red
+  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+)
 p2=scatter!(counts_pred_em_gen,color="red",    
     markershape = :diamond,     markeralpha = 0.4,     markercolor = :green,  markersize = 2,
     label=L"$e^-p$ Generated",
-    linewidth = 2,markerstrokecolor=:red)
-p3=scatter(prob_ep_gen,color="blue",yscale=:log10,markersize=2,markershape=:circle,label="",xlab="Bin",ylab="Scaled Probability", grid=false,markerstrokecolor=:blue)
-p4=scatter(prob_em_gen,color="red",yscale=:log10, markersize=2,markershape=:circle,label="",xlab="Bin", grid=false,markerstrokecolor=:red)
+    linewidth = 2,markerstrokecolor=:red
+      , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    )
+p3=scatter(prob_ep_gen,color="blue",yscale=:log10,markersize=2,markershape=:circle,label="",xlab="Bin",ylab="Scaled Probability", grid=false,markerstrokecolor=:blue
+  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+)
+p4=scatter(prob_em_gen,color="red",yscale=:log10, markersize=2,markershape=:circle,label="",xlab="Bin", grid=false,markerstrokecolor=:red
+  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+)
 plot(p1,p2,p3,p4,layout=(2,2))
 
 p1=scatter(counts_obs_ep_sim, color="blue",  markersize=2, markershape=:circle,label=L" $e^{+}p$ Observed",ylab="Counts", grid=false,markerstrokecolor=:blue
-,ylims=(0, 1600), xlims=(-1,155)
+,ylims=(0, 900), xlims=(-1,155)
     , size=(600, 500)
+      , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+,left_margin=15.0mm,bottom_margin=0.0mm, yticks=(0:200:800,["0","200","400","600","800"]), xticks=(0:50:150,["","","",""])
 )
 p1=plot!(counts_pred_ep_sim,color="blue",    linealpha = 0.5,
     linewidth = 2,label=L" $e^{+}p$ Predicted", grid=false,markerstrokecolor=:blue
-,ylims=(0, 1600), xlims=(-1,155)
-        , legendfontsize=12
+,ylims=(0, 900), xlims=(-1,155)
+  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , foreground_color_legend=false
+,left_margin=15.0mm,bottom_margin=0.0mm, yticks=(0:200:800,["0","200","400","600","800"]),xticks=(0:50:150,["","","",""])
 )
 p2=scatter(counts_obs_em_sim,color="red", markersize=2,markershape=:circle,label=L" $e^{-}p$ Observed", grid=false,markerstrokecolor=:red
-,ylims=(0, 1600), xlims=(-1,155)
-        , legendfontsize=12
+,ylims=(0, 900), xlims=(-1,155)
+  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , foreground_color_legend=false
+,left_margin=0.0mm,bottom_margin=0.0mm, yticks=(0:200:800,["","","","",""]), xticks=(0:50:150,["","","",""])
 )
 p2=plot!(counts_pred_em_sim,color="red",    linealpha = 0.5,label=L" $e^{-}p$ Predicted", grid=false,markerstrokecolor=:red
 ,linewidth = 2
-,ylims=(0, 1600), xlims=(-1,155)
-        , legendfontsize=12
+,ylims=(0, 900), xlims=(-1,155)
+  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , foreground_color_legend=false
+,left_margin=0.0mm,bottom_margin=0.0mm, yticks=(0:200:800,["","","","",""]), xticks=(0:50:150,["","","",""])
 )
 p3=scatter(prob_ep_sim,color="blue",yscale=:log10,markersize=2,markershape=:circle,label="",xlab="Bin", grid=false,markerstrokecolor=:blue
 ,
     ylab="Scaled probability"
 ,ylims=(0.003, 1.1), xlims=(-1,155)
-        , legendfontsize=12
+  , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , foreground_color_legend=false
+,left_margin=15.0mm,bottom_margin=9.0mm, yticks=([0.01,0.1,1.0],["0.01","0.1","1.0"]), xticks=(0:50:150,["0","50","100","150"])
 )
 p4=scatter(prob_em_sim,color="red",yscale=:log10, markersize=2,markershape=:circle,label="",xlab="Bin", grid=false,markerstrokecolor=:red
 ,ylims=(0.003, 1.1), xlims=(-1,155)
-        , legendfontsize=12
+      , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , foreground_color_legend=false
+    ,left_margin=0.0mm,bottom_margin=9.0mm, yticks=([0.01,0.1,1.0],["","",""]), xticks=(0:50:150,["0","50","100","150"])
 )
-plot(p1,p2,p3,p4,layout=(2,2))
+
 
 plot(p1,p2,p3,p4,layout=(2,2))
+
 savefig(string("figures/fig9-Data-GoF-",parsed_args["fitresults"],".pdf"))
 end
 main()
