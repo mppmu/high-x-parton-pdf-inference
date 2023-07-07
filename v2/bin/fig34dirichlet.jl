@@ -203,11 +203,30 @@ plot!(samples_data, (:(K_u), :(θ[1])),
     , bottom_margin=5mm
 
 )
+
+if parsed_args["priorshift"] == 0
+
 p = plot!([K_u_true],[θ_true[1]],
     color="red",subplot=3, seriestype=:scatter, label=" Truth", 
     lw=0, foreground_color_legend=:transparent, background_color_legend=:transparent,   lc=:red, markerstrokecolor=:red, 
+    legend=:right,
     legendfontsize=14)
 
+#p = plot!([K_u_true],[θ_true[1]],
+#    color="red",subplot=3, seriestype=:scatter, label=" Truth", 
+#    lw=0, foreground_color_legend=:transparent, background_color_legend=:transparent,   lc=:red, markerstrokecolor=:transparent, 
+#    legend=:right,
+#    markersize=1.5,
+#    marker=:circle,
+#    legendfontsize=14)
+
+else
+p = plot!([K_u_true],[θ_true[1]],
+    color="red",subplot=3, seriestype=:scatter, label=" Truth", 
+    lw=0, foreground_color_legend=:transparent, background_color_legend=:transparent,   lc=:red, markerstrokecolor=:red, 
+    legend=:bottomright,
+    legendfontsize=14)
+end
 
 
 # K_u marginal

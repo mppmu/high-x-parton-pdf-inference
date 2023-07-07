@@ -189,6 +189,7 @@ plot!(prior_samples, (:(initial_U), :(θ[1])),
     , left_margin=6mm
     , top_margin=0mm
     , bottom_margin=5mm
+        , ylims=(0.18,0.45)
 )
 plot!(samples_data, (:(initial_U), :(θ[1])), 
     subplot=3,     
@@ -202,9 +203,10 @@ plot!(samples_data, (:(initial_U), :(θ[1])),
     , top_margin=0mm
     , bottom_margin=5mm
     , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+    , ylims=(0.18,0.45)
 )
 plot!([initial_U_true[1]],[θ_true[1]],
-    seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, 
+    seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topleft,lw=0, 
     foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, legendfontsize=14)
 
 
@@ -246,6 +248,7 @@ plot!(prior_samples, :(θ[1]),
     , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=5mm
+        , ylims=(0.18,0.45)
 )
 plot!(samples_data, :(θ[1]), 
     subplot=4,
@@ -260,6 +263,7 @@ plot!(samples_data, :(θ[1]),
     , top_margin=0mm
     , bottom_margin=5mm
     , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+        , ylims=(0.18,0.45)
 )
 hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
 

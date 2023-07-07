@@ -206,7 +206,7 @@ plot!(samples_data, (:(K_u), :(θ_tmp[1])),
 p = plot!([K_u_true],[θ_true[1]],
     color="red",subplot=3, seriestype=:scatter, label=" Truth", 
     lw=0, foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, 
-    legendfontsize=14, legend=:right)
+    legendfontsize=14, legend=:bottomright)
 
 
 

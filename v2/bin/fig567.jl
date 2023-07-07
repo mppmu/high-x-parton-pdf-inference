@@ -418,8 +418,9 @@ plot(framestyle=:axes, size=(600, 500), fontfamily=font_family,
 
 
 λ_u_true = θ_true[1]*(1+K_u_true)/(2-θ_true[1])
-p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_v \; \mathrm{true}", lw=3, c=:red, 
+p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid],  lw=3, c=:red, 
     subplot=1
+    , label=false
      , ylims=(0, 0.65), xlims=(0.00,1.0)
     , foreground_color_legend=false
     , right_margin=0mm
@@ -467,8 +468,9 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_
 #
 λ_d_true = θ_true[2]*(1+K_d_true)/(1-θ_true[2])
 
-p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_v \; \mathrm{true}",  lw=3, c=:red,
+p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid],   lw=3, c=:red,
     subplot=2
+        , label=false
     , ylims=(0, 0.65), xlims=(0.00,1.0)
     , foreground_color_legend=false
     , right_margin=1mm
@@ -516,8 +518,9 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
 
 
     p = plot!(x_grid, [0.1*x_g_x(x, pdf_params.λ_g1, pdf_params.λ_g2, pdf_params.K_g, pdf_params.K_q, pdf_params.θ[3], pdf_params.θ[4])
-                       for x in x_grid], label=L"~xg/10 \; \mathrm{true}",  lw=3, c=:red,
+                       for x in x_grid],   lw=3, c=:red,
     subplot=3
+        , label=false
      , ylims=(0, 0.65), xlims=(0.0,1.0)
     , foreground_color_legend=false
     , right_margin=-2mm
@@ -564,9 +567,9 @@ end
 
 #
     p = plot!(x_grid, [x_q_x(x, pdf_params.λ_q, pdf_params.K_q, pdf_params.θ[5]) for x in x_grid],
-    ylims=(0, 0.65), xlims=(0.0,1.0), label=L"~x\bar{u} \; \mathrm{true}",  lw=3, c=:red,
+    ylims=(0, 0.65), xlims=(0.0,1.0),   lw=3, c=:red,
     subplot=4
-
+    , label=false
     , foreground_color_legend=false
     , right_margin=1mm
     , left_margin=0mm
