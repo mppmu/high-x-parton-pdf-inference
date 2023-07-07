@@ -218,14 +218,14 @@ p1=histogram(chisqep,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=f
 p1=plot!([chisqep_data],seriestype = :vline,lw=5,legend=:none, fontfamily=font_family 
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         ,ylims=(0, 500), xlims=(50,260)
-        ,color=c3, grid=false,left_margin=5.5mm,bottom_margin=5.5mm
+        ,color=c3, grid=false,left_margin=14mm,bottom_margin=5.5mm
 )
 p2=histogram(chisqem,bins=50:2:250,legend=:false,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1 , grid=false)
 
 p2=plot!([chisqem_data],seriestype = :vline,lw=5
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     ,ylims=(0, 500), xlims=(50,260)
-,color=c3, grid=false,left_margin=5.5mm,bottom_margin=5.5mm
+,color=c3, grid=false,left_margin=14mm,bottom_margin=5.5mm
 )
 annotate!(p1,220.0,350,text(L"$e^{+}p$",26))
 annotate!(p2,220.0,350,text(L"$e^{-}p$",26))

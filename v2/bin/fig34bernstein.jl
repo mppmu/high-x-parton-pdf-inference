@@ -94,7 +94,7 @@ splint_params = QCDNUM.SPLINTParams();
 quark_coeffs = QuarkCoefficients()
 
 
-Ns = 10000 # Number of samples from posterior
+Ns = 100000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -109,6 +109,7 @@ c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
+
 Plots.scalefontsizes()
 Plots.scalefontsizes(1.2);
 alpha = 0.6
@@ -121,6 +122,7 @@ prior_samples=bat_sample(prior).result;
 xlims_initial_U = (-15, 5) # initial_U
 #xlims_D_u = (-10.0, 20.0) # (0.29, 0.37)
 xlims_D_u =  (0.15, 0.45)
+
 intervals = [0.68, 0.95]
 labels = [L"~~\mathrm{Posterior}~68~\%", L"~~\mathrm{Posterior}~95~\%"]
 prior_labels = [L"~~\mathrm{Prior}~68~\%", L"~~\mathrm{Prior}~95~\%"]
@@ -169,115 +171,126 @@ end
 
 plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
     layout=@layout([a b; c{0.55w, 0.6h} d]), grid=false
-    , right_margin=0mm
+    , right_margin=1mm
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=0mm
 )
 
 # Joint posterior
-plot!(prior_samples, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
+plot!(prior_samples, (:(initial_U), :(θ[1])),
+    subplot=3, 
+    xlabel=L"A_3", ylabel=L"\Delta_u",
     seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
-    alpha=prior_alpha,
-    subplot=3
-     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    alpha=prior_alpha
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
-    , left_margin=0mm
+    , left_margin=6mm
     , top_margin=0mm
-    , bottom_margin=-1mm
-    , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+    , bottom_margin=5mm
 )
-plot!(samples_data, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
+plot!(samples_data, (:(initial_U), :(θ[1])), 
+    subplot=3,     
+    xlabel=L"A_3", ylabel=L"\Delta_u",
     seriestype=:smallest_intervals_contourf, smoothing=2, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, alpha=alpha,
-    subplot=3, xlims=xlims_initial_U, ylims=xlims_D_u
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    xlims=xlims_initial_U, ylims=xlims_D_u
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
-    , left_margin=0mm
+    , left_margin=6mm
     , top_margin=0mm
-    , bottom_margin=-1mm
-        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+    , bottom_margin=5mm
+    , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 )
-plot!([initial_U_true[1]],[θ_true[1]], seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=14)
+plot!([initial_U_true[1]],[θ_true[1]],
+    seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topright,lw=0, 
+    foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, legendfontsize=14)
 
 
 
 # initial_U marginal
-plot!(prior_samples, :initial_U, legend=false, marginalmode=false, 
+plot!(prior_samples, :initial_U,
+    subplot=1, 
+    legend=false, marginalmode=false, 
     seriestype=:smallest_intervals, intervals=intervals, 
-    colors=prior_colors, subplot=1, alpha=prior_alpha
- , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    colors=prior_colors,alpha=prior_alpha
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
-    , left_margin=0mm
+    , left_margin=6mm
     , top_margin=0mm
-    , bottom_margin=-1mm
-
+    , bottom_margin=5mm
 )
-plot!(samples_data, :initial_U, legend=false, xlabel="", ylabel=L"P(A_3)", subplot=1, 
-    xlims=xlims_initial_U, ylims=(0, 0.2), seriestype=:smallest_intervals, 
+plot!(samples_data, :initial_U, 
+    legend=false, xlabel="", ylabel=L"P(A_3)", subplot=1, 
+    xlims=xlims_initial_U, ylims=(0, 0.4), seriestype=:smallest_intervals, 
     marginalmode=false, intervals=intervals, colors=colors, alpha=alpha
- , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
-    , left_margin=0mm
+    , left_margin=6mm
     , top_margin=0mm
-    , bottom_margin=-1mm   
-     , yticks=(0.0:0.1:0.2,["0","0.1","0.2"])
+    , bottom_margin=5mm
+    , yticks=(0.0:0.2:0.4,["0","0.2","0.4"])
 )
 vline!([initial_U_true[1]], color="red", label=" Truth", lw=0.5)
 
 # Delta_u marginal
-plot!(prior_samples, :(θ[1]), legend=false, marginalmode=false, 
+plot!(prior_samples, :(θ[1]),
+    subplot=4,
+    legend=false, marginalmode=false, 
     seriestype=:smallest_intervals, intervals=intervals,
-    colors=prior_colors, subplot=4, alpha=prior_alpha, 
+    colors=prior_colors, alpha=prior_alpha, 
     orientation=:horizontal
- , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , right_margin=-2mm
-    , left_margin=0mm
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , right_margin=1mm
+    , left_margin=5mm
     , top_margin=0mm
-    , bottom_margin=-1mm
-
+    , bottom_margin=5mm
 )
-plot!(samples_data, :(θ[1]), legend=false, ylabel="", xlabel=L"P(\Delta_u)", 
-    subplot=4, ylims=xlims_D_u, xlims=(0, 2*45), 
+plot!(samples_data, :(θ[1]), 
+    subplot=4,
+    legend=false, ylabel="", xlabel=L"P(\Delta_u)", 
+    ylims=xlims_D_u, xlims=(0, 2*45), 
     seriestype=:smallest_intervals, intervals=intervals, marginalmode=false, 
     colors=colors, alpha=alpha, orientation=:horizontal
- , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , xticks=(0:20:80,["0","20","40","60","80"])
-    , right_margin=-2mm
-    , left_margin=0mm
+    , right_margin=1mm
+    , left_margin=5mm
     , top_margin=0mm
-    , bottom_margin=-1mm
-        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+    , bottom_margin=5mm
+    , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 )
 hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
 
 # Legend
-plot!(prior_samples, (:(initial_U), :(θ[1])), xlabel=L"A_3", ylabel=L"\Delta_u",
+plot!(prior_samples, (:(initial_U), :(θ[1])), 
+    subplot=2,
+    xlabel=L"A_3", ylabel=L"\Delta_u",
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, interval_labels=prior_labels, 
     colors=reverse(prior_colors), linewidth=0, 
-    alpha=prior_alpha+0.2,
-    subplot=2
- , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , right_margin=-2mm
-    , left_margin=0mm
+    alpha=prior_alpha+0.2
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , right_margin=1mm
+    , left_margin=5mm
     , top_margin=0mm
-    , bottom_margin=-1mm
-        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+    , bottom_margin=5mm
+    , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 )
 p = plot!(samples_data, (:(initial_U), :(θ[1])),
+    subplot=2,
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, colors=reverse(colors), 
     interval_labels=labels,
-    linewidth=0, alpha=alpha+0.2, legend=:bottomleft, foreground_color_legend=false,
-    framestyle=:none, subplot=2, xlims=(0, 1), ylims=(0, 0.1)
- , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , right_margin=7mm
-    , left_margin=0mm
+    linewidth=0, alpha=alpha+0.2, legend=:bottomleft, foreground_color_legend=:transparent, background_color_legend=:transparent,
+    framestyle=:none, xlims=(0, 1.), ylims=(0, 0.1)
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=16
+    , right_margin=1mm
+    , left_margin=5mm
     , top_margin=0mm
-    , bottom_margin=-1mm
-        , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+    , bottom_margin=5mm
+    , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 )
 
 filename = string("figures/fig4-",parsed_args["fitresults"], "_v2.pdf")

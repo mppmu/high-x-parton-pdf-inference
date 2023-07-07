@@ -80,7 +80,7 @@ weights = [5.0, 5.0, 1.0, 1.0, 1.0, 0.5, 0.5]
 K_u = 3.38;
 λ_d = 0.67;
 K_d = 4.73;
-θ = get_θ_val(rng, λ_u, K_u, λ_d, K_d, weights)
+θ = get_θ_val( λ_u, K_u, λ_d, K_d, weights)
 pdf_params = ValencePDFParams(λ_u=λ_u, K_u=K_u, λ_d=λ_d, K_d=K_d, λ_g1=0.50, λ_g2=-0.63, K_g=4.23, λ_q=-0.23, K_q=5.0, θ=θ);
 prior = NamedTupleDist(
     θ_tmp=Dirichlet(weights),

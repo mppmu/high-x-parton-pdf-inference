@@ -456,7 +456,7 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_
      , ylims=(0, 0.65), xlims=(0.00,1.0)
     , foreground_color_legend=false
     , right_margin=0mm
-    , left_margin=0mm
+    , left_margin=7mm
     , top_margin=0mm
     , bottom_margin=-1mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
@@ -474,7 +474,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
     , right_margin=1mm
     , left_margin=0mm
     , top_margin=0mm
-    , bottom_margin=-1mm
+    , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
@@ -506,7 +506,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
     , right_margin=1mm
     , left_margin=0mm
     , top_margin=0mm
-    , bottom_margin=-1mm
+    , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
@@ -523,7 +523,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
     , right_margin=-2mm
     , left_margin=0mm
     , top_margin=0mm
-    , bottom_margin=-1mm
+    , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
@@ -551,9 +551,9 @@ end
      , ylims=(0, 0.65), xlims=(0.0,1.0)
     , foreground_color_legend=false
     , right_margin=-2mm
-    , left_margin=0mm
+    , left_margin=7mm
     , top_margin=0mm
-    , bottom_margin=-1mm
+    , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
@@ -571,7 +571,7 @@ end
     , right_margin=1mm
     , left_margin=0mm
     , top_margin=0mm
-    , bottom_margin=-1mm
+    , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
@@ -635,13 +635,13 @@ plot!(xlim=(5e-2, 1), ylim=(0, 900), xlabel="\$x\$", ylabel="Counts", xscale=:lo
     legendfontsize=10, thickness_scaling=1, 
     xticks=([0.1, 10^-0.5, 1.0],[L"$10^{-1}$",L"$10^{-0.5}$",L"$1$"]),
     subplot=1
-    ,left_margin=10mm,bottom_margin=8mm
+    ,left_margin=17mm,bottom_margin=8mm
     )
 plot!(xlim=(5e-2, 1), ylim=(0, 900), xlabel="\$x\$", ylabel="", xscale=:log, 
     grid=false, legend=false, 
     xticks=([0.1, 10^-0.5, 1.0],[L"$10^{-1}$",L"$10^{-0.5}$",L"$1$"]),
     subplot=2
-    ,left_margin=10mm,bottom_margin=8mm
+    ,left_margin=17mm,bottom_margin=8mm
     )
 
 for sp in [4, 5]
