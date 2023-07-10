@@ -94,7 +94,7 @@ splint_params = QCDNUM.SPLINTParams();
 quark_coeffs = QuarkCoefficients()
 
 
-Ns = 100000 # Number of samples from posterior
+Ns = 300000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -196,7 +196,7 @@ plot!(samples_data, (:(initial_U), :(θ[1])),
     xlabel=L"A_3", ylabel=L"\Delta_u",
     seriestype=:smallest_intervals_contourf, smoothing=2, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, alpha=alpha,
-    xlims=xlims_initial_U, ylims=xlims_D_u
+    xlims=xlims_initial_U  #, ylims=xlims_D_u
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
     , left_margin=6mm
@@ -253,7 +253,8 @@ plot!(prior_samples, :(θ[1]),
 plot!(samples_data, :(θ[1]), 
     subplot=4,
     legend=false, ylabel="", xlabel=L"P(\Delta_u)", 
-    ylims=xlims_D_u, xlims=(0, 2*45), 
+    #ylims=xlims_D_u, 
+    xlims=(0, 2*45), 
     seriestype=:smallest_intervals, intervals=intervals, marginalmode=false, 
     colors=colors, alpha=alpha, orientation=:horizontal
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14

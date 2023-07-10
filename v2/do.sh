@@ -8,21 +8,21 @@ mkdir -p CABCHSV
 JULIA='julia '
 #exit
 
-  #$JULIA bin/generatepseudodata.jl -s 42 -p Dirichlet &
-  #$JULIA bin/generatepseudodata.jl -s 42 -p Valence &
-  #$JULIA bin/generatepseudodata.jl -s 42 -p Bernstein &
+  $JULIA bin/generatepseudodata.jl -s 42 -p Dirichlet &
+  $JULIA bin/generatepseudodata.jl -s 42 -p Valence &
+  $JULIA bin/generatepseudodata.jl -s 42 -p Bernstein &
 
-  #$JULIA bin/generatepseudodata.jl -s 43 -p Dirichlet &
-  #$JULIA bin/generatepseudodata.jl -s 43 -p Valence &
-  #$JULIA bin/generatepseudodata.jl -s 43 -p Bernstein &
+  $JULIA bin/generatepseudodata.jl -s 43 -p Dirichlet &
+  $JULIA bin/generatepseudodata.jl -s 43 -p Valence &
+  $JULIA bin/generatepseudodata.jl -s 43 -p Bernstein &
 
-  #$JULIA bin/generatepseudodata.jl -s 44 -p Dirichlet &
-  #$JULIA bin/generatepseudodata.jl -s 44 -p Valence &
-  #$JULIA bin/generatepseudodata.jl -s 44 -p Bernstein &
+  $JULIA bin/generatepseudodata.jl -s 44 -p Dirichlet &
+  $JULIA bin/generatepseudodata.jl -s 44 -p Valence &
+  $JULIA bin/generatepseudodata.jl -s 44 -p Bernstein &
 
 
-#wait $(jobs -p)
-##exit
+wait $(jobs -p)
+#exit
 
  #$JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Bernstein-42 -n 300000 &
  #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 300000 &
@@ -35,8 +35,9 @@ JULIA='julia '
  #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 300000  --priorshift=1 &
  #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 300000  --priorshift=2 &
  #$JULIA bin/PDFfit.jl -s 45 -p  Valence -d simulation-Valence-42 -n 300000 &
-
-wait $(jobs -p)
+ #$JULIA bin/PDFfit.jl -s 45 -p  Valence -d simulation-Dirichlet-42 -n 300000 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Dirichlet-42 -n 300000 &
+#wait $(jobs -p)
 
         $JULIA bin/fig8.jl -s 47 -p  Dirichlet -d simulation-Dirichlet-42 -f fit-Dirichlet-0-45-simulation-Dirichlet-42  &
         $JULIA bin/fig567.jl -s 47 -p  Dirichlet -d simulation-Dirichlet-42 -f fit-Dirichlet-0-45-simulation-Dirichlet-42  &
