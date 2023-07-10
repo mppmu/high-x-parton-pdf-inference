@@ -114,22 +114,26 @@ iq0 = QCDNUM.iqfrmq(q0)
 QCDNUM.evolfg(itype, func_c, def, iq0)
 
 allx = Float64.([1.0e-3,2.0e-3,3.0e-3,1.0e-2,2.0e-2,1.0e-1,1.0])
-allq = Float64.([100.,200,300,400,500,1000])
-allalpha = Float64.([100.,200,300,400,500,1000])
+#allq = Float64.([100.,200,300,400,500,1000,5000,10000])
+allq = Float64.([100.,200,300,400,500,1000,5000,10000])
+allalpha = Float64.([100.,200,300,400,500,1000,5000,10000])
 for (i, qq) in enumerate(allq)
   allalpha[i] =QCDNUM.asfunc(qq*qq)[1]
 end
+    Ns = 50
 
-open("CABCHSV/CABCHSV.info", "w") do f
+open("CABCHSV2023nnlo/CABCHSV2023nnlo.info", "w") do f
   write(f,"
 SetDesc: \"CABCHSV PDF fixed 5-flavour fits\"
-SetIndex: 11082
+SetIndex: 83300
 Authors: Francesca Capel, Ritu Aggarwal, Michiel Botje, Allen Caldwell, Richard Hildebrandt, Oliver Schulz, Andrii Verbytskyi
 Reference: arXiv:2309.xxxx
 Format: lhagrid1
 DataVersion: 1
-NumMembers: 2
-Particle: 2212
+NumMembers: ")
+write(f,string(Ns+1))
+write(f,"\n")
+write(f,"Particle: 2212
 Flavors: [-5,-4, -3, -2, -1, 1, 2, 3, 4, 5, 21]
 OrderQCD: 2
 ForcePositive: 1
@@ -138,7 +142,7 @@ NumFlavors: 5
 XMin: 0.001
 XMax: 1
 QMin: 100
-QMax: 100000
+QMax: 30000
 MZ: 91.1876
 MUp: 0
 MDown: 0
@@ -150,10 +154,10 @@ AlphaS_MZ: 0.118
 AlphaS_OrderQCD: 2
 AlphaS_Type: ipol
 AlphaS_Qs: ")
-write(f,allq)
+write(f,string(allq))
 write(f,"\n")
 write(f,"AlphaS_Vals: ")
-write(f,allalpha)
+write(f,string(allalpha) )
 write(f,"\n")
 write(f,"AlphaS_Lambda4: 0.326
 AlphaS_Lambda5: 0.226
@@ -161,7 +165,7 @@ AlphaS_Lambda5: 0.226
 
 end
 
-    Ns = 50
+
     samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
     sub_samples_all = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=100)).result;
     samples_mode2 = mode(sub_samples_all);
@@ -187,7 +191,7 @@ end
       global pdf_params=s
       println(pdf_params)
       QCDNUM.evolfg(itype, func_c, def, iq0)
-      open(string("CABCHSV/CABCHSV_", lpad(string(NN),4,"0"),".dat"), "w") do f
+      open(string("CABCHSV2023nnlo/CABCHSV2023nnlo_", lpad(string(NN),4,"0"),".dat"), "w") do f
       if (NN==0)
         write(f,"PdfType: central\nFormat: lhagrid1\n---\n")
       else
@@ -206,6 +210,7 @@ end
           @printf(f, "%8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f %8.8f\n",pdf[1],pdf[2],pdf[3],pdf[4],pdf[5],pdf[6],pdf[7],pdf[8],pdf[9],pdf[10],pdf[11]) 
         end 
       end
+     write(f,"---\n")
     end
   end
 end
