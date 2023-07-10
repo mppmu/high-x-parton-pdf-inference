@@ -121,7 +121,7 @@ for q2r in 1:n_q2_bins
     push!(x_values, [mean(_) for _ in x_edges_all[bin_sel]])
 end
 
-Ns = 10000 # Number of samples from posterior
+Ns = 300000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 

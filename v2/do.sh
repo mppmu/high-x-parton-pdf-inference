@@ -8,35 +8,36 @@ mkdir -p CABCHSV
 JULIA='julia '
 #exit
 
-  #$JULIA bin/generatepseudodata.jl -s 42 -p Dirichlet &
-  #$JULIA bin/generatepseudodata.jl -s 42 -p Valence &
-  #$JULIA bin/generatepseudodata.jl -s 42 -p Bernstein &
+  $JULIA bin/generatepseudodata.jl -s 42 -p Dirichlet &
+  $JULIA bin/generatepseudodata.jl -s 42 -p Valence &
+  $JULIA bin/generatepseudodata.jl -s 42 -p Bernstein &
 
-  #$JULIA bin/generatepseudodata.jl -s 43 -p Dirichlet &
-  #$JULIA bin/generatepseudodata.jl -s 43 -p Valence &
-  #$JULIA bin/generatepseudodata.jl -s 43 -p Bernstein &
+  $JULIA bin/generatepseudodata.jl -s 43 -p Dirichlet &
+  $JULIA bin/generatepseudodata.jl -s 43 -p Valence &
+  $JULIA bin/generatepseudodata.jl -s 43 -p Bernstein &
 
-  #$JULIA bin/generatepseudodata.jl -s 44 -p Dirichlet &
-  #$JULIA bin/generatepseudodata.jl -s 44 -p Valence &
-  #$JULIA bin/generatepseudodata.jl -s 44 -p Bernstein &
+  $JULIA bin/generatepseudodata.jl -s 44 -p Dirichlet &
+  $JULIA bin/generatepseudodata.jl -s 44 -p Valence &
+  $JULIA bin/generatepseudodata.jl -s 44 -p Bernstein &
 
-
-#wait $(jobs -p)
-##exit
-
- #$JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Bernstein-42 -n 100000 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 100000 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 100000  --priorshift=1 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 100000  --priorshift=2 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 100000 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 100000  --priorshift=1 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 100000  --priorshift=2 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 100000 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 100000  --priorshift=1 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 100000  --priorshift=2 &
- #$JULIA bin/PDFfit.jl -s 45 -p  Valence -d simulation-Valence-42 -n 100000 &
 
 wait $(jobs -p)
+#exit
+
+ #$JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Bernstein-42 -n 300000 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 300000 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 300000  --priorshift=1 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 300000  --priorshift=2 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 300000 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 300000  --priorshift=1 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 300000  --priorshift=2 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 300000 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 300000  --priorshift=1 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 300000  --priorshift=2 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Valence -d simulation-Valence-42 -n 300000 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Valence -d simulation-Dirichlet-42 -n 300000 &
+ #$JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Dirichlet-42 -n 300000 &
+#wait $(jobs -p)
 
         $JULIA bin/fig8.jl -s 47 -p  Dirichlet -d simulation-Dirichlet-42 -f fit-Dirichlet-0-45-simulation-Dirichlet-42  &
         $JULIA bin/fig567.jl -s 47 -p  Dirichlet -d simulation-Dirichlet-42 -f fit-Dirichlet-0-45-simulation-Dirichlet-42  &
@@ -54,6 +55,12 @@ wait $(jobs -p)
 
        $JULIA bin/fig34bernstein.jl -s 47 -p  Bernstein -d simulation-Bernstein-42 -f fit-Bernstein-0-45-simulation-Bernstein-42 &
        $JULIA bin/fig34valence.jl   -s 47 -p  Valence -d simulation-Valence-42 -f fit-Valence-0-45-simulation-Valence-42  &
+
+
+       $JULIA bin/fig34dirichlet.jl -s 47 -p  Dirichlet -d simulation-Dirichlet-42 -f fit-Dirichlet-1-45-simulation-Dirichlet-43 --priorshift=1  &
+       $JULIA bin/fig34dirichlet.jl -s 47 -p  Dirichlet -d simulation-Dirichlet-42 -f fit-Dirichlet-2-45-simulation-Dirichlet-43 --priorshift=2 &
+
+
 
  
  wait $(jobs -p)

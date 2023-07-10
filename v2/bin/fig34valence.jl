@@ -94,7 +94,7 @@ splint_params = QCDNUM.SPLINTParams();
 quark_coeffs = QuarkCoefficients()
 
 
-Ns = 100000 # Number of samples from posterior
+Ns = 300000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -206,7 +206,7 @@ plot!(samples_data, (:(K_u), :(θ_tmp[1])),
 p = plot!([K_u_true],[θ_true[1]],
     color="red",subplot=3, seriestype=:scatter, label=" Truth", 
     lw=0, foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, 
-    legendfontsize=14, legend=:right)
+    legendfontsize=14, legend=:bottomright)
 
 
 
