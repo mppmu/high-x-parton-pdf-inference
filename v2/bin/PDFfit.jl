@@ -33,7 +33,7 @@ function parse_commandline()
         "--pseudodata", "-d"
             help = "Input pseudodata -- file in the pseudodata directory w/o the extension"
             arg_type = String
-            default = ""
+            default = "data"
     end
 
     return parse_args(s)
@@ -72,7 +72,19 @@ quark_coeffs = QuarkCoefficients();
 # initialise QCDNUM
 forward_model_init(qcdnum_params, splint_params)
 
-somepdf_params, sim_data = pd_read_sim(string("pseudodata/",parsed_args["pseudodata"],".h5"));
+
+sim_data = Dict{String,Any}()
+sim_data["nbins"] = nbins;
+sim_data["counts_obs_ep"]=get_data_events(0)
+sim_data["counts_obs_em"]=get_data_events(1)
+θ = [ 0.228, 0.104, 0.249, 0.249, 0.104, 0.052, 0.010, 0.005, 0.0005]
+θ_sum=sum(θ[1:9])
+θ=θ/θ_sum  
+somepdf_params = DirichletPDFParams(K_u=3.7, K_d=3.7, λ_g1=0.5, λ_g2=-0.5, K_g=5.0,λ_q=-0.5, K_q=6.0, θ=θ);
+
+if parsed_args["pseudodata"] != "data"
+  somepdf_params, sim_data = pd_read_sim(string("pseudodata/",parsed_args["pseudodata"],".h5"));
+end
 
 prior=get_priors(parsed_args)
 
