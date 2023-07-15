@@ -7,6 +7,7 @@ using StatsBase, LinearAlgebra
 using DelimitedFiles
 using ArgParse
 import HDF5
+ 
 include("priors.jl")
 
 
@@ -86,7 +87,7 @@ if parsed_args["pseudodata"] != "data"
   somepdf_params, sim_data = pd_read_sim(string("pseudodata/",parsed_args["pseudodata"],".h5"));
 end
 
-prior=get_priors(parsed_args)
+prior=bla.get_priors(parsed_args)
 
 # The `@critical` macro is used because `forward_model()` is currently not thread safe, so
 # this protects it from being run in parallel.

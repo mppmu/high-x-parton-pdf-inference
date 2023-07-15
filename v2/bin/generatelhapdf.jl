@@ -29,7 +29,7 @@ function parse_commandline()
         "--fitresults", "-f"
             help = "Input fitresults -- file in the pseudodata directory w/o the extension"
             arg_type = String
-            default = "fit-Dirichlet-0-45-simulation-Dirichlet-42"    
+            default = "fit-Dirichlet-0-42-data"    
             
             
     end

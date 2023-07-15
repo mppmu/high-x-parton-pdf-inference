@@ -1,3 +1,12 @@
+module bla
+using BAT, DensityInterface
+using PartonDensity
+using QCDNUM
+using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
+using StatsBase, LinearAlgebra
+using DelimitedFiles
+using ArgParse
+
 function get_priors( parsed_args::Dict{String,Any} )
 if parsed_args["parametrisation"] == "Dirichlet"
 if (parsed_args["priorshift"]==0)
@@ -132,5 +141,7 @@ prior = NamedTupleDist(
 end
 
 return prior
+
+end
 
 end
