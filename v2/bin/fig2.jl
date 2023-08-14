@@ -2,7 +2,7 @@
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
-using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
+using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using SpecialFunctions, Printf
 const sf = SpecialFunctions;
@@ -15,7 +15,7 @@ using Measures
 using ArgParse
 import HDF5
 include("priors.jl")
-
+#using bla
 
 
 function parse_commandline()
@@ -61,8 +61,8 @@ c4 = :grey
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
+#Plots.scalefontsizes()
+#Plots.scalefontsizes(1.2);
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -145,8 +145,8 @@ c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
 cmap = palette(color_scheme, n_q2_bins+2)
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
+#Plots.scalefontsizes()
+#Plots.scalefontsizes(1.2);
 alpha = 0.6
 prior_alpha = 0.2;
 
@@ -237,7 +237,7 @@ layout=l,
     xticks=(0:2:12,["","","","","","",""]),    
     yticks=(0:2:12,["","","","","","",""])  ,
     top_margin=-3mm,
-    bottom_margin=-3.5mm,
+    bottom_margin=-2.8mm,
     right_margin=-4mm,
     left_margin=-4mm,
     xtickfontsize=14,

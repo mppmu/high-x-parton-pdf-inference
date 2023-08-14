@@ -2,7 +2,7 @@
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
-using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
+using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using DelimitedFiles
 using ArgParse
@@ -87,7 +87,7 @@ if parsed_args["pseudodata"] != "data"
   somepdf_params, sim_data = pd_read_sim(string("pseudodata/",parsed_args["pseudodata"],".h5"));
 end
 
-prior=bla.get_priors(parsed_args)
+prior=get_priors(parsed_args)
 
 # The `@critical` macro is used because `forward_model()` is currently not thread safe, so
 # this protects it from being run in parallel.

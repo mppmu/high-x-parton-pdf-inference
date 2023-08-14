@@ -2,7 +2,7 @@
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
-using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
+using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using SpecialFunctions, Printf
 const sf = SpecialFunctions;
@@ -14,6 +14,8 @@ using Measures
 using ArgParse
 import HDF5
 include("priors.jl")
+#using bla
+
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -54,11 +56,14 @@ c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
+
+c2=colorant"#CCE5E5"
+c1=colorant"#93A0AB"
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
+#Plots.scalefontsizes()
+#Plots.scalefontsizes(1.2);
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -214,18 +219,18 @@ println(" p-value for ep fit: ",pvep," p-value for em fit: ",pvem," p-value for 
 
 
 
-p1=histogram(chisqep,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1 , grid=false)
+p1=histogram(chisqep,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1, linecolor=c1, grid=false)
 p1=plot!([chisqep_data],seriestype = :vline,lw=5,legend=:none, fontfamily=font_family 
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-        ,ylims=(0, 500), xlims=(50,260)
-        ,color=c3, grid=false,left_margin=14mm,bottom_margin=5.5mm
+        ,ylims=(0, 500), xlims=(65,260)
+        ,color=:red, grid=false,left_margin=14mm,bottom_margin=5.5mm
 )
-p2=histogram(chisqem,bins=50:2:250,legend=:false,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1 , grid=false)
+p2=histogram(chisqem,bins=50:2:250,legend=:false,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1, linecolor=c1, grid=false)
 
 p2=plot!([chisqem_data],seriestype = :vline,lw=5
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    ,ylims=(0, 500), xlims=(50,260)
-,color=c3, grid=false,left_margin=14mm,bottom_margin=5.5mm
+    ,ylims=(0, 500), xlims=(65,260)
+,color=:red, grid=false,left_margin=14mm,bottom_margin=5.5mm
 )
 annotate!(p1,220.0,350,text(L"$e^{+}p$",26))
 annotate!(p2,220.0,350,text(L"$e^{-}p$",26))
@@ -235,7 +240,7 @@ plot(p1,p2,layout=(2,1),#size=(800,400),
     #top_margin=-3mm,
     #bottom_margin=-3.5mm,
     #right_margin=-4mm,
-    #left_margin=-4mm
+    left_margin=1mm
 )
 
 filename = string("figures/fig8-chisq-pvalue-",parsed_args["fitresults"],"_v2.pdf")

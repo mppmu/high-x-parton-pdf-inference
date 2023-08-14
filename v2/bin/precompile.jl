@@ -1,4 +1,4 @@
-using Plots
+using Plots, Colors 
 #using Random
 using ArgParse
 using LaTeXStrings

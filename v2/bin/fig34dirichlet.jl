@@ -2,7 +2,7 @@
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
-using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
+using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using SpecialFunctions, Printf
 const sf = SpecialFunctions;
@@ -14,6 +14,8 @@ using Measures
 using ArgParse
 import HDF5
 include("priors.jl")
+#using bla
+
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -57,8 +59,8 @@ c4 = :grey
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
+#Plots.scalefontsizes()
+#Plots.scalefontsizes(1.2);
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -94,7 +96,7 @@ splint_params = QCDNUM.SPLINTParams();
 quark_coeffs = QuarkCoefficients()
 
 
-Ns = 300000 # Number of samples from posterior
+Ns = 10000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -109,9 +111,9 @@ c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
-#cmap = palette(color_scheme, n_q2_bins+2)
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
+
+#Plots.scalefontsizes()
+#Plots.scalefontsizes(1.2);
 alpha = 0.6
 prior_alpha = 0.2;
 
@@ -201,32 +203,14 @@ plot!(samples_data, (:(K_u), :(θ[1])),
     , left_margin=6mm
     , top_margin=0mm
     , bottom_margin=5mm
-
 )
-
-if parsed_args["priorshift"] == 0
-
 p = plot!([K_u_true],[θ_true[1]],
-    color="red",subplot=3, seriestype=:scatter, label=" Truth", 
-    lw=0, foreground_color_legend=:transparent, background_color_legend=:transparent,   lc=:red, markerstrokecolor=:red, 
-    legend=:right,
-    legendfontsize=14)
+    seriestype=:scatter, subplot = 3, color = "red"
+    #, label=" Truth", 
+    ,legend = :none,lw=0, 
+    #foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, legendfontsize=14
+    )
 
-#p = plot!([K_u_true],[θ_true[1]],
-#    color="red",subplot=3, seriestype=:scatter, label=" Truth", 
-#    lw=0, foreground_color_legend=:transparent, background_color_legend=:transparent,   lc=:red, markerstrokecolor=:transparent, 
-#    legend=:right,
-#    markersize=1.5,
-#    marker=:circle,
-#    legendfontsize=14)
-
-else
-p = plot!([K_u_true],[θ_true[1]],
-    color="red",subplot=3, seriestype=:scatter, label=" Truth", 
-    lw=0, foreground_color_legend=:transparent, background_color_legend=:transparent,   lc=:red, markerstrokecolor=:red, 
-    legend=:bottomright,
-    legendfontsize=14)
-end
 
 
 # K_u marginal
@@ -303,16 +287,23 @@ p = plot!(samples_data, (:(K_u), :(θ[1])),
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, colors=reverse(colors), 
     interval_labels=labels,
-    linewidth=0, alpha=alpha+0.2, legend=:bottomleft, foreground_color_legend=:transparent, background_color_legend=:transparent,
+    linewidth=0, alpha=alpha+0.2, legend=:bottomright, foreground_color_legend=:transparent, background_color_legend=:transparent,
     framestyle=:none, xlims=(0, 1.), ylims=(0, 0.1)
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=16
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=12
     , right_margin=1mm
     , left_margin=5mm
     , top_margin=0mm
-    , bottom_margin=5mm
+    , bottom_margin=-3mm
 )
+p=plot!([-100],[-100],
+    seriestype = :scatter, subplot = 2, color = "red"
+    ,label = " Truth", legendfontsize=12, lc=:red
+    #foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, legendfontsize=14
+    )
 
-filename = string("figures/fig3-",parsed_args["fitresults"], "_v2.pdf")
+p
+
+filename = string("figures/fig34-",parsed_args["fitresults"], "_v2.pdf")
 savefig(p, filename)
 
 end

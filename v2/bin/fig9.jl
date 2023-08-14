@@ -3,7 +3,7 @@
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
-using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
+using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using SpecialFunctions, Printf
 using Distributions
@@ -15,6 +15,9 @@ using Measures
 
 using ArgParse
 import HDF5
+include("priors.jl")
+#using bla
+
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -51,8 +54,8 @@ function main()
 Plots.gr(format="png")
 color_scheme = :viridis
 default(fontfamily = "Computer Modern")
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
+#Plots.scalefontsizes()
+#Plots.scalefontsizes(1.2);
 
 samples_sim = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result
 pdf_params_gen, sim_data = pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"))

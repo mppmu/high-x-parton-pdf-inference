@@ -2,7 +2,7 @@
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
-using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
+using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using SpecialFunctions, Printf
 const sf = SpecialFunctions;
@@ -14,6 +14,8 @@ using Measures
 using ArgParse
 import HDF5
 include("priors.jl")
+#using bla
+
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -57,8 +59,8 @@ c4 = :grey
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
+#Plots.scalefontsizes()
+#Plots.scalefontsizes(1.2);
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -94,7 +96,7 @@ splint_params = QCDNUM.SPLINTParams();
 quark_coeffs = QuarkCoefficients()
 
 
-Ns = 300000 # Number of samples from posterior
+Ns = 10000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -110,8 +112,8 @@ c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
 
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
+#Plots.scalefontsizes()
+#Plots.scalefontsizes(1.2);
 alpha = 0.6
 prior_alpha = 0.2;
 
@@ -206,8 +208,11 @@ plot!(samples_data, (:(initial_U), :(θ[1])),
     , ylims=(0.18,0.45)
 )
 plot!([initial_U_true[1]],[θ_true[1]],
-    seriestype = :scatter, subplot = 3, color = "red", label = " Truth", legend = :topleft,lw=0, 
-    foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, legendfontsize=14)
+    seriestype = :scatter, subplot = 3, color = "red"
+    #,label = " Truth", 
+    ,legend = :none,lw=0, 
+    #foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, legendfontsize=14
+    )
 
 
 
@@ -224,7 +229,8 @@ plot!(prior_samples, :initial_U,
     , bottom_margin=5mm
 )
 plot!(samples_data, :initial_U, 
-    legend=false, xlabel="", ylabel=L"P(A_3)", subplot=1, 
+    subplot=1, 
+    legend=false, xlabel="", ylabel=L"P(A_3)",
     xlims=xlims_initial_U, ylims=(0, 0.4), seriestype=:smallest_intervals, 
     marginalmode=false, intervals=intervals, colors=colors, alpha=alpha
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
@@ -253,7 +259,6 @@ plot!(prior_samples, :(θ[1]),
 plot!(samples_data, :(θ[1]), 
     subplot=4,
     legend=false, ylabel="", xlabel=L"P(\Delta_u)", 
-    #ylims=xlims_D_u, 
     xlims=(0, 2*45), 
     seriestype=:smallest_intervals, intervals=intervals, marginalmode=false, 
     colors=colors, alpha=alpha, orientation=:horizontal
@@ -283,22 +288,29 @@ plot!(prior_samples, (:(initial_U), :(θ[1])),
     , bottom_margin=5mm
     , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 )
-p = plot!(samples_data, (:(initial_U), :(θ[1])),
+plot!(samples_data, (:(initial_U), :(θ[1])),
     subplot=2,
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, colors=reverse(colors), 
     interval_labels=labels,
-    linewidth=0, alpha=alpha+0.2, legend=:bottomleft, foreground_color_legend=:transparent, background_color_legend=:transparent,
+    linewidth=0, alpha=alpha+0.2, legend=:bottomright, foreground_color_legend=:transparent, background_color_legend=:transparent,
     framestyle=:none, xlims=(0, 1.), ylims=(0, 0.1)
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=16
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=12
     , right_margin=1mm
     , left_margin=5mm
     , top_margin=0mm
-    , bottom_margin=5mm
+    , bottom_margin=-3mm
     , yticks=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 )
+p=plot!([-100],[-100],
+    seriestype = :scatter, subplot = 2, color = "red"
+    ,label = " Truth", legendfontsize=12, lc=:red
+    #foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, legendfontsize=14
+    )
 
-filename = string("figures/fig4-",parsed_args["fitresults"], "_v2.pdf")
+p
+
+filename = string("figures/fig34-",parsed_args["fitresults"], "_v2.pdf")
 savefig(p, filename)
 
 end
