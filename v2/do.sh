@@ -85,7 +85,6 @@ cp figures/fig5-momentum-corr-fit-Dirichlet-0-45-simulation-Dirichlet-42_v2.pdf 
 cp figures/'fig6-parton-xf(x)-fit-Dirichlet-0-45-simulation-Dirichlet-42_v2.pdf' figures2/fig6.pdf
 cp figures/fig7-fit-Dirichlet-0-45-simulation-Dirichlet-42_v2.pdf figures2/fig7.pdf
 cp figures/fig8-chisq-pvalue-fit-Dirichlet-0-45-simulation-Dirichlet-42_v2.pdf figures2/fig8.pdf
-cp figures/fig9-Data-GoF-fit-Dirichlet-0-45-simulation-Dirichlet-42.pdf figures2/fig9.pdf
 
 
   echo "OK, DONE!!!"
