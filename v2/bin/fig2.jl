@@ -16,7 +16,7 @@ using ArgParse
 import HDF5
 include("priors.jl")
 #using bla
-
+PWIDTH=1000
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -76,8 +76,7 @@ c3 = :grey
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-#Plots.scalefontsizes()
-#Plots.scalefontsizes(1.2);
+
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -163,8 +162,6 @@ sys_err_params = rand(rng, MvNormal(zeros(PartonDensity.nsyst), zeros(PartonDens
 
 
 cmap = palette(color_scheme, n_q2_bins+2)
-#Plots.scalefontsizes()
-#Plots.scalefontsizes(1.2);
 alpha = 0.6
 prior_alpha = 0.2;
 
@@ -251,7 +248,7 @@ l = @layout [
 ]
 
 
-p=plot(size=(1000,800),
+p=plot(size=(PWIDTH,PWIDTH),
 layout=l,
     colors=[c1, c2, c3],
     frame=:box,
@@ -316,12 +313,12 @@ plot!(samples_data1, :(Δ_g),subplot=4*NNN+5, xlabel="",ylabel="",colors=[c1, c2
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=4*NNN+6)
 
 
-plot!(samples_data1, (:(K_u), :(Δ_sea)),subplot=5*NNN+1, xlabel=L"K_u",ylabel=L"\Delta_{sea}",colors=[c1, c2, c3])
+plot!(samples_data1, (:(K_u), :(Δ_sea)),subplot=5*NNN+1, xlabel=L"K_u",ylabel=L"\Delta_mathrm{sea}",colors=[c1, c2, c3])
 plot!(samples_data1, (:(K_d), :(Δ_sea)),subplot=5*NNN+2, xlabel=L"K_d",ylabel="",colors=[c1, c2, c3])
 plot!(samples_data1, (:(K_q), :(Δ_sea)),subplot=5*NNN+3, xlabel=L"K_q",ylabel="",colors=[c1, c2, c3])
 plot!(samples_data1, (:(K_g), :(Δ_sea)),subplot=5*NNN+4, xlabel=L"K_g",ylabel="",colors=[c1, c2, c3])
 plot!(samples_data1, (:(Δ_g),:(Δ_sea)), subplot=5*NNN+5, xlabel=L"\Delta_g",ylabel="",colors=[c1, c2, c3])
-plot!(samples_data1, :(Δ_sea),subplot=5*NNN+6, xlabel=L"\Delta_{sea}",ylabel="",colors=[c1, c2, c3])
+plot!(samples_data1, :(Δ_sea),subplot=5*NNN+6, xlabel=L"\Delta_mathrm{sea}",ylabel="",colors=[c1, c2, c3])
 
 
 

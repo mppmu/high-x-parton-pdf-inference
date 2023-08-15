@@ -15,7 +15,7 @@ using ArgParse
 import HDF5
 include("priors.jl")
 #using bla
-
+PWIDTH=1000
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -40,6 +40,10 @@ function parse_commandline()
             help = "Input fitresults -- file in the pseudodata directory w/o the extension"
             arg_type = String
             default = ""
+        "--what", "-w"
+            help = "Type of the fig"
+            arg_type = String
+            default = ""
     end
 
     return parse_args(s)
@@ -59,8 +63,6 @@ c4 = :grey
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-#Plots.scalefontsizes()
-#Plots.scalefontsizes(1.2);
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -112,8 +114,6 @@ c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
 
-#Plots.scalefontsizes()
-#Plots.scalefontsizes(1.2);
 alpha = 0.6
 prior_alpha = 0.2;
 
@@ -121,10 +121,6 @@ prior_alpha = 0.2;
 prior=get_priors(parsed_args)
 prior_samples=bat_sample(prior).result;
 
-xlims_K_u = (2.0, 7.0) # (3.2, 4.4)
-xlims_D_u = (0., 0.5) # (0.29, 0.37)
-xlims_K_d = (2.0, 7.0) # (3.2, 4.4)
-xlims_D_d = (0., 0.5) # (0.29, 0.37)
 intervals = [0.68, 0.95]
 labels = [L"~~\mathrm{Posterior}~68~\%", L"~~\mathrm{Posterior}~95~\%"]
 prior_labels = [L"~~\mathrm{Prior}~68~\%", L"~~\mathrm{Prior}~95~\%"]
@@ -171,7 +167,135 @@ initial_U_true = [-8.];
 initial_D_true = [15.0]
 end
 
-plot(framestyle=:axes, size=(500, 400), fontfamily=font_family, 
+
+if parsed_args["parametrisation"] == "Bernstein"
+
+SD = bat_transform(v -> (A = v.initial_U, B = v.θ[1] ), samples_data).result
+SP = bat_transform(v -> (A = v.initial_U, B = v.θ[1] ), prior_samples).result
+
+A_true = initial_U_true
+B_true = θ_true[1]
+
+A_label=L"A_3"
+B_label=L"\Delta_u"
+PA_label=L"P(A_3)"
+PB_label=L"P(\Delta_u)"
+
+
+xlims_1=(-15, 5)
+ylims_1=(0, 0.4)
+yticks_1=(0.0:0.2:0.4,["0","0.2","0.4"])
+
+yticks_2=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+
+ylims_3=(0.18,0.45)
+xlims_3=(-15, 5)
+ylims_3=(0.18,0.45)
+yticks_3=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+
+ylims_4=(0.18,0.45)
+xlims_4=(0, 2*45)
+xticks_4=(0:40:80,["0","40","80"])
+yticks_4=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+end
+
+if parsed_args["parametrisation"] == "Valence"
+
+SD = bat_transform(v -> (A = v.K_u, B = v.θ_tmp[1] ), samples_data).result
+SP = bat_transform(v -> (A = v.K_u, B = v.θ_tmp[1] ), prior_samples).result
+
+A_true = K_u_true
+B_true = θ_true[1]
+
+A_label=L"K_u"
+B_label=L"\Delta_u"
+
+PA_label=L"P(K_u)"
+PB_label=L"P(\Delta_u)"
+
+
+xlims_1=(1.0, 6.0)
+ylims_1=(0, 4.0)
+yticks_1=(0.0:2:4,["0","2","4"])
+
+yticks_2=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+
+ylims_3=(0., 0.5)
+xlims_3=(1.0, 6.0)
+yticks_3=(0.0:0.2:0.4,["0","0.2","0.4"])
+
+ylims_4=(0., 0.5)
+xlims_4=(0, 25)
+xticks_4=(0:10:20,["0","10","20"])
+yticks_4=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+end
+
+
+if parsed_args["parametrisation"] == "Dirichlet"
+
+SD = bat_transform(v -> (A = v.K_u, B = v.θ[1] ), samples_data).result
+SP = bat_transform(v -> (A = v.K_u, B = v.θ[1] ), prior_samples).result
+
+A_true = K_u_true
+B_true = θ_true[1]
+
+A_label=L"K_u"
+B_label=L"\Delta_u"
+
+PA_label=L"P(K_u)"
+PB_label=L"P(\Delta_u)"
+
+
+xlims_1=(1.0, 6.0)
+ylims_1=(0, 4.0)
+yticks_1=(0.0:2.0:4.0,["0","2","4"])
+
+yticks_2=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+
+ylims_3=(0., 0.5)
+xlims_3=(1.0, 6.0)
+ylims_3=(0.0,0.5)
+yticks_3=(0.0:0.2:0.4,["0","0.2","0.4"])
+
+ylims_4=(0., 0.5)
+xlims_4=(0, 65)
+xticks_4=(0:20:60,["0","20","40","60"])
+yticks_4=(0.0:0.2:0.4,["0","0.2","0.4"])
+end
+
+if parsed_args["what"] == "d"
+
+SD = bat_transform(v -> (A = v.K_d, B = v.θ[2] ), samples_data).result
+SP = bat_transform(v -> (A = v.K_d, B = v.θ[2] ), prior_samples).result
+
+A_true = K_d_true
+B_true = θ_true[2]
+
+A_label=L"K_d"
+B_label=L"\Delta_d"
+
+PA_label=L"P(K_d)"
+PB_label=L"P(\Delta_d)"
+
+
+xlims_1=(1.0, 6.0)
+ylims_1=(0, 2.0)
+yticks_1=(0.0:1.0:2.0,["0","1","2"])
+
+yticks_2=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+
+ylims_3=(0., 0.5)
+xlims_3=(1.0, 6.0)
+yticks_3=(0.0:0.2:0.4,["0","0.2","0.4"])
+
+ylims_4=(0., 0.5)
+xlims_4=(0, 25)
+xticks_4=(0:10:20,["0","10","20"])
+yticks_4=(0.0:0.2:0.4,["0","0.2","0.4"])
+end
+
+
+plot(framestyle=:axes, size=(PWIDTH/2, PWIDTH/2), fontfamily=font_family, 
     layout=@layout([a b; c{0.55w, 0.6h} d]), grid=false
     , right_margin=1mm
     , left_margin=0mm
@@ -180,9 +304,9 @@ plot(framestyle=:axes, size=(500, 400), fontfamily=font_family,
 )
 
 # Joint posterior
-plot!(prior_samples, (:(K_u), :(θ_tmp[1])), 
-    subplot=3,
-    xlabel=L"K_u", ylabel=L"\Delta_u",
+plot!(SP, (:(A), :(B)),
+    subplot=3, 
+    xlabel=A_label, ylabel=B_label,
     seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha
@@ -190,31 +314,31 @@ plot!(prior_samples, (:(K_u), :(θ_tmp[1])),
     , right_margin=-2mm
     , left_margin=6mm
     , top_margin=0mm
-    , bottom_margin=5mm
+    , bottom_margin=3mm
+    , ylims=ylims_3
 )
-plot!(samples_data, (:(K_u), :(θ_tmp[1])), 
+plot!(SD, (:(A), :(B)), 
     subplot=3,     
-    xlabel=L"K_u", ylabel=L"\Delta_u",
+    xlabel=A_label, ylabel=B_label,
     seriestype=:smallest_intervals_contourf, smoothing=2, 
-    marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, alpha=alpha,
-    xlims=xlims_K_u, ylims=xlims_D_u
+    marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, alpha=alpha
+    , xlims=xlims_3
+    , ylims=ylims_3
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
     , left_margin=6mm
     , top_margin=0mm
-    , bottom_margin=5mm
+    , bottom_margin=3mm
+    , yticks=yticks_3
 )
-p = plot!([K_u_true],[θ_true[1]],
-    seriestype=:scatter, subplot = 3, color = "red"
-    #, label=" Truth", 
+plot!([A_true],[B_true],
+    seriestype = :scatter, subplot = 3, color = "red"
     ,legend = :none,lw=0, 
-    #foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, legendfontsize=14
     )
 
 
 
-# K_u marginal
-plot!(prior_samples, :K_u,
+plot!(SP, :A,
     subplot=1, 
     legend=false, marginalmode=false, 
     seriestype=:smallest_intervals, intervals=intervals, 
@@ -223,24 +347,26 @@ plot!(prior_samples, :K_u,
     , right_margin=-2mm
     , left_margin=6mm
     , top_margin=0mm
-    , bottom_margin=5mm
+    , bottom_margin=3mm
 )
-plot!(samples_data, :K_u,
+plot!(SD, :A, 
     subplot=1, 
-    legend=false, xlabel="", ylabel=L"P(K_u)",
-    xlims=xlims_K_u, ylims=(0, 4), seriestype=:smallest_intervals, 
-    marginalmode=false, intervals=intervals, colors=colors, alpha=alpha
+    legend=false, xlabel="", ylabel=PA_label
+    , xlims=xlims_1
+    , ylims=ylims_1
+    , seriestype=:smallest_intervals 
+    , marginalmode=false, intervals=intervals, colors=colors, alpha=alpha
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
     , left_margin=6mm
     , top_margin=0mm
-    , bottom_margin=5mm
-
+    , bottom_margin=3mm
+    , yticks=yticks_1
 )
-vline!([K_u_true], color="red", label=" Truth", lw=0.5)
+vline!([A_true], color="red", label=" Truth", lw=0.5)
 
 # Delta_u marginal
-plot!(prior_samples, :(θ_tmp[1]),
+plot!(SP, :(B),
     subplot=4,
     legend=false, marginalmode=false, 
     seriestype=:smallest_intervals, intervals=intervals,
@@ -250,27 +376,30 @@ plot!(prior_samples, :(θ_tmp[1]),
     , right_margin=1mm
     , left_margin=5mm
     , top_margin=0mm
-    , bottom_margin=5mm
+    , bottom_margin=3mm
+    , ylims=ylims_4
 )
-plot!(samples_data, :(θ_tmp[1]), 
+plot!(SD, :(B),
     subplot=4,
-    legend=false, ylabel="", xlabel=L"P(\Delta_u)", 
-    ylims=xlims_D_u, xlims=(0, 55), 
-    seriestype=:smallest_intervals, intervals=intervals, marginalmode=false, 
-    colors=colors, alpha=alpha, orientation=:horizontal
+    legend=false, ylabel="", xlabel=L"P(\Delta_u)"
+    , xlims=xlims_4
+    , ylims=ylims_4
+    , seriestype=:smallest_intervals, intervals=intervals, marginalmode=false 
+    , colors=colors, alpha=alpha, orientation=:horizontal
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , xticks=(0:20:40,["0","20","40"])
+    , xticks=xticks_4
+    , yticks=yticks_4
     , right_margin=1mm
     , left_margin=5mm
     , top_margin=0mm
-    , bottom_margin=5mm
+    , bottom_margin=3mm
 )
-hline!([θ_true[1]], color="red", label=" Truth", subplot=4, lw=0.5)
+hline!([B_true], color="red", label=" Truth", subplot=4, lw=0.5)
 
 # Legend
-plot!(prior_samples, (:(K_u), :(θ_tmp[1])), 
+plot!(SP, (:(A), :(B)), 
     subplot=2,
-    xlabel=L"K_u", ylabel=L"\Delta_u",
+    xlabel=A_label, ylabel=B_label,
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, interval_labels=prior_labels, 
     colors=reverse(prior_colors), linewidth=0, 
@@ -279,31 +408,33 @@ plot!(prior_samples, (:(K_u), :(θ_tmp[1])),
     , right_margin=1mm
     , left_margin=5mm
     , top_margin=0mm
-    , bottom_margin=5mm
-
+    , bottom_margin=3mm
+    , yticks=yticks_2
 )
-p = plot!(samples_data, (:(K_u), :(θ_tmp[1])),
+plot!(SD, (:(A), :(B)),
     subplot=2,
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, colors=reverse(colors), 
     interval_labels=labels,
     linewidth=0, alpha=alpha+0.2, legend=:bottomright, foreground_color_legend=:transparent, background_color_legend=:transparent,
-    framestyle=:none, xlims=(0, 1.), ylims=(0, 0.1)
+    framestyle=:none
+    , xlims=(0, 1.)
+    , ylims=(0, 0.1)
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=12
     , right_margin=1mm
     , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=-3mm
+    , yticks=yticks_2
 )
 p=plot!([-100],[-100],
     seriestype = :scatter, subplot = 2, color = "red"
     ,label = " Truth", legendfontsize=12, lc=:red
-    #foreground_color_legend=:transparent, background_color_legend=:transparent,  lc=:red, markerstrokecolor=:red, legendfontsize=14
     )
 
 p
 
-filename = string("figures/fig34-",parsed_args["fitresults"], "_v2.pdf")
+filename = string("figures/fig34",parsed_args["what"],"-",parsed_args["fitresults"], "_v2.pdf")
 savefig(p, filename)
 
 end

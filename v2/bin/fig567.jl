@@ -15,7 +15,7 @@ using ArgParse
 import HDF5
 include("priors.jl")
 #using bla
-
+PWIDTH=1000
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -59,8 +59,6 @@ c4 = :grey
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-#Plots.scalefontsizes()
-#Plots.scalefontsizes(1.2);
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -172,8 +170,6 @@ c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
 cmap = palette(color_scheme, n_q2_bins+2)
-#Plots.scalefontsizes()
-#Plots.scalefontsizes(1.2);
 alpha = 0.6
 prior_alpha = 0.2;
 
@@ -243,7 +239,7 @@ bins = 60
 comb_prior_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_sea = sum(v.θ[5:9])), prior_samples).result
 comb_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_sea = sum(v.θ[5:9])), samples_data).result;
 
-plot(framestyle=:axes, size=(700, 600), fontfamily=font_family,  layout=@layout([a b; c d]), grid=false)
+plot(framestyle=:axes, size=(PWIDTH, PWIDTH), fontfamily=font_family,  layout=@layout([a b; c d]), grid=false)
 plot!(samples_data, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylabel=L"\Delta_{d}",
     seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
@@ -408,7 +404,7 @@ end
 
     x_grid = range(0.05, 1.0, length=95)
 
-plot(framestyle=:axes, size=(600, 500), fontfamily=font_family, 
+plot(framestyle=:axes, size=(PWIDTH,PWIDTH), fontfamily=font_family, 
     layout=@layout([a b; c d]), grid=false
 
     , right_margin=0mm
@@ -459,7 +455,7 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_
      , ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.00,1.0)
     , foreground_color_legend=false
     , right_margin=0mm
-    , left_margin=7mm
+    , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=-1mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
@@ -556,7 +552,7 @@ end
      , ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.0,1.0)
     , foreground_color_legend=false
     , right_margin=-2mm
-    , left_margin=7mm
+    , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
@@ -625,8 +621,8 @@ savefig(filename)
 
 
 
-plot(framestyle=:axes, size=(1200, 500), fontfamily=font_family, 
-    leftmargin=5Plots.mm, bottommargin=5Plots.mm, rightmargin=7Plots.mm,
+plot(framestyle=:axes, size=(PWIDTH,PWIDTH/2), fontfamily=font_family, 
+    leftmargin=3Plots.mm, bottommargin=5Plots.mm, rightmargin=7Plots.mm,
     layout=@layout([a b c{0.16w}]),
     xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18
    , grid=false

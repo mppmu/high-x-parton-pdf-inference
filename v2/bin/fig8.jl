@@ -15,7 +15,7 @@ using ArgParse
 import HDF5
 include("priors.jl")
 #using bla
-
+PWIDTH=1000
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -62,8 +62,6 @@ c1=colorant"#93A0AB"
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-#Plots.scalefontsizes()
-#Plots.scalefontsizes(1.2);
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -236,11 +234,11 @@ annotate!(p1,220.0,350,text(L"$e^{+}p$",26))
 annotate!(p2,220.0,350,text(L"$e^{-}p$",26))
 #plot(p1,p2,layout=(2,1))
 
-plot(p1,p2,layout=(2,1),#size=(800,400),
+plot(p1,p2,layout=(2,1),size=(PWIDTH/2,PWIDTH/2),
     #top_margin=-3mm,
-    #bottom_margin=-3.5mm,
+    bottom_margin=-3mm,
     #right_margin=-4mm,
-    left_margin=1mm
+    left_margin=5mm
 )
 
 filename = string("figures/fig8-chisq-pvalue-",parsed_args["fitresults"],"_v2.pdf")
