@@ -37,7 +37,7 @@ end
 
 if (parsed_args["priorshift"]==1)
 prior = NamedTupleDist(
-    θ = Dirichlet([40, 10, 10, 10, 5, 2.5, 1.5, 1.5, 0.5]),
+    θ = Dirichlet([30, 10, 10, 10, 5, 2.5, 1.5, 1.5, 0.5]),
     K_u = Truncated(Normal(4.5, 0.5), 0.5, 7.),
     K_d = Truncated(Normal(3.5, 0.5), 0.5, 7.),
     λ_g1 = Uniform(0., 1.),
