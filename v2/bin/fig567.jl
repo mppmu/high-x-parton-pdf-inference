@@ -118,7 +118,7 @@ end
 
 
 
-Ns = 10000 # Number of samples from posterior
+Ns = 100000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -622,7 +622,7 @@ savefig(filename)
 
 
 plot(framestyle=:axes, size=(PWIDTH,PWIDTH/2), fontfamily=font_family, 
-    leftmargin=3Plots.mm, bottommargin=5Plots.mm, rightmargin=7Plots.mm,
+    leftmargin=3Plots.mm, bottommargin=5Plots.mm, rightmargin=9Plots.mm,
     layout=@layout([a b c{0.16w}]),
     xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18
    , grid=false

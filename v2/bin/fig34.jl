@@ -98,7 +98,7 @@ splint_params = QCDNUM.SPLINTParams();
 quark_coeffs = QuarkCoefficients()
 
 
-Ns = 10000 # Number of samples from posterior
+Ns = 100000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -182,14 +182,14 @@ PA_label=L"P(A_3)"
 PB_label=L"P(\Delta_u)"
 
 
-xlims_1=(-15, 5)
+xlims_1=(-12, 5)
 ylims_1=(0, 0.4)
 yticks_1=(0.0:0.2:0.4,["0","0.2","0.4"])
 
 yticks_2=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 
 ylims_3=(0.18,0.45)
-xlims_3=(-15, 5)
+xlims_3=(-12, 5)
 ylims_3=(0.18,0.45)
 yticks_3=(0.2:0.1:0.4,["0.2","0.3","0.4"])
 

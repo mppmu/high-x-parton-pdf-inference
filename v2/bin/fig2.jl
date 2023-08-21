@@ -69,8 +69,8 @@ c5 = :grey
 #c2=colorant"#CCE5E5"
 #c1=colorant"#93A0AB"
 
-c1 = :teal
-c2 = :midnightblue
+c2 = :teal
+c1 = :midnightblue
 c3 = :grey
 
 color_scheme = :viridis
@@ -140,7 +140,7 @@ for q2r in 1:n_q2_bins
     push!(x_values, [mean(_) for _ in x_edges_all[bin_sel]])
 end
 
-Ns = 10000 # Number of samples from posterior
+Ns = 100000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -283,7 +283,7 @@ plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=5)
 
 
 
-plot!(samples_data, (:(K_u), :(K_d)),subplot=NNN+1, xlabel="",ylabel=L"K_d",colors=[c1, c2, c3])
+plot!(samples_data, (:(K_u), :(K_d)),subplot=NNN+1, xlabel="",ylabel=L"K_d",colors=[c1, c2, c3],markerstrokewidth = 0)
 plot!(samples_data, :(K_d),subplot=NNN+2, xlabel="",ylabel="",colors=[c1, c2, c3])
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=NNN+3)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=NNN+4)
@@ -313,12 +313,12 @@ plot!(samples_data1, :(Δ_g),subplot=4*NNN+5, xlabel="",ylabel="",colors=[c1, c2
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=4*NNN+6)
 
 
-plot!(samples_data1, (:(K_u), :(Δ_sea)),subplot=5*NNN+1, xlabel=L"K_u",ylabel=L"\Delta_mathrm{sea}",colors=[c1, c2, c3])
+plot!(samples_data1, (:(K_u), :(Δ_sea)),subplot=5*NNN+1, xlabel=L"K_u",ylabel=L"\Delta_{\mathrm{sea}}",colors=[c1, c2, c3])
 plot!(samples_data1, (:(K_d), :(Δ_sea)),subplot=5*NNN+2, xlabel=L"K_d",ylabel="",colors=[c1, c2, c3])
 plot!(samples_data1, (:(K_q), :(Δ_sea)),subplot=5*NNN+3, xlabel=L"K_q",ylabel="",colors=[c1, c2, c3])
 plot!(samples_data1, (:(K_g), :(Δ_sea)),subplot=5*NNN+4, xlabel=L"K_g",ylabel="",colors=[c1, c2, c3])
 plot!(samples_data1, (:(Δ_g),:(Δ_sea)), subplot=5*NNN+5, xlabel=L"\Delta_g",ylabel="",colors=[c1, c2, c3])
-plot!(samples_data1, :(Δ_sea),subplot=5*NNN+6, xlabel=L"\Delta_mathrm{sea}",ylabel="",colors=[c1, c2, c3])
+plot!(samples_data1, :(Δ_sea),subplot=5*NNN+6, xlabel=L"\Delta_{\mathrm{sea}}",ylabel="",colors=[c1, c2, c3])
 
 
 
