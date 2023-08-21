@@ -24,19 +24,19 @@ JULIA='julia '
 wait $(jobs -p)
 #exit
 
- $JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Bernstein-42 -n 250000                 > logs/1.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 250000                 > logs/2.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 250000  --priorshift=1 > logs/3.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 250000  --priorshift=2 > logs/4.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 250000                 > logs/5.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 250000  --priorshift=1 > logs/6.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 250000  --priorshift=2 > logs/7.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 250000                 > logs/8.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 250000  --priorshift=1 > logs/9.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 250000  --priorshift=2 > logs/10.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Valence -d simulation-Valence-42 -n 250000                     > logs/11.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Valence -d simulation-Dirichlet-42 -n 250000                   > logs/12.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Dirichlet-42 -n 250000                 > logs/13.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Bernstein-42 -n 250000 -c 4                 &> logs/1.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 250000 -c 4                 &> logs/2.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 250000 -c 4  --priorshift=1 &> logs/3.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 250000 -c 4  --priorshift=2 &> logs/4.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 250000 -c 4                 &> logs/5.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 250000 -c 4  --priorshift=1 &> logs/6.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-43 -n 250000 -c 4  --priorshift=2 &> logs/7.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 250000 -c 4                 &> logs/8.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 250000 -c 4  --priorshift=1 &> logs/9.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-44 -n 250000 -c 4  --priorshift=2 &> logs/10.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Valence   -d simulation-Valence-42   -n 250000 -c 4                 &> logs/11.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Valence   -d simulation-Dirichlet-42 -n 250000 -c 4                 &> logs/12.log&
+ $JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Dirichlet-42 -n 250000 -c 4                 &> logs/13.log&
 wait $(jobs -p)
 
         $JULIA bin/fig8.jl -s 47 -p  Dirichlet -d simulation-Dirichlet-42 -f fit-Dirichlet-0-45-simulation-Dirichlet-42  &

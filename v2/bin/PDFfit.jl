@@ -23,6 +23,11 @@ function parse_commandline()
             help = "Seed"
             arg_type = Int
             default = 42
+        "--nchains", "-c"
+            help = "Chains"
+            arg_type = Int
+            default = 2
+
         "--nsteps", "-n"
             help = "Number of steps"
             arg_type = Int
@@ -156,7 +161,7 @@ posterior = PosteriorDensity(likelihood, prior);
 mcalg = MetropolisHastings(proposal=BAT.MvTDistProposal(10.0))
 convergence = BrooksGelmanConvergence(threshold=1.3);
 burnin = MCMCMultiCycleBurnin(max_ncycles=50);
-samples = bat_sample(posterior, MCMCSampling(mcalg=mcalg, nsteps=parsed_args["nsteps"], nchains=2)).result;
+samples = bat_sample(posterior, MCMCSampling(mcalg=mcalg, nsteps=parsed_args["nsteps"], nchains=parsed_args["nchains"])).result;
 # Let's save the result for further analysis
 bat_write(string("fitresults/fit-",parsed_args["parametrisation"],"-",parsed_args["priorshift"],"-",seedtxt,"-",parsed_args["pseudodata"],".h5"), samples)
 end 
