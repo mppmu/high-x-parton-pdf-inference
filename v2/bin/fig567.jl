@@ -622,8 +622,8 @@ savefig(filename)
 
 
 plot(framestyle=:axes, size=(PWIDTH,PWIDTH/2), fontfamily=font_family, 
-    leftmargin=3Plots.mm, bottommargin=5Plots.mm, rightmargin=9Plots.mm,
-    layout=@layout([a b c{0.16w}]),
+    leftmargin=3Plots.mm, bottommargin=5Plots.mm, rightmargin=9mm,
+    layout=@layout([a b c{0.20w}]),
     xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18
    , grid=false
 )
@@ -636,13 +636,17 @@ plot!(xlim=(5e-2, 1), ylim=(0, 900), xlabel="\$x\$", ylabel="Counts", xscale=:lo
     legendfontsize=10, thickness_scaling=1, 
     xticks=([0.1, 10^-0.5, 1.0],[L"$10^{-1}$",L"$10^{-0.5}$",L"$1$"]),
     subplot=1
-    ,left_margin=17mm,bottom_margin=8mm
+    ,left_margin=13mm
+    ,right_margin=1mm
+    ,bottom_margin=8mm
     )
 plot!(xlim=(5e-2, 1), ylim=(0, 900), xlabel="\$x\$", ylabel="", xscale=:log, 
     grid=false, legend=false, 
     xticks=([0.1, 10^-0.5, 1.0],[L"$10^{-1}$",L"$10^{-0.5}$",L"$1$"]),
     subplot=2
-    ,left_margin=17mm,bottom_margin=8mm
+    ,left_margin=6mm
+    ,right_margin=8mm
+    ,bottom_margin=8mm
     )
 
 for sp in [4, 5]
@@ -691,7 +695,7 @@ end
 
 plot!(legend=:left, foreground_color_legend=nothing, framestyle=:none,
     subplot=3, xlim=(1,2), ylim=(0, 900), legendfontsize=14, thickness_scaling=1,
-    left_margin=-10Plots.mm)
+    left_margin=-12mm, right_margin=3mm)
 annotate!(1.4, 980*0.9, text("\$Q^2\$ [GeV\$^2\$]", 14, font_family), subplot=3)
 annotate!(0.13, 600*0.9, text(L"$e^{-}$", 22, font_family), subplot=1)
 p = annotate!(0.13, 600*0.9, text(L"$e^{+}$", 22, font_family), subplot=2)

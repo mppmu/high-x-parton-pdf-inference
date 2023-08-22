@@ -98,7 +98,7 @@ splint_params = QCDNUM.SPLINTParams();
 quark_coeffs = QuarkCoefficients()
 
 
-Ns = 100000 # Number of samples from posterior
+Ns = 300000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -227,7 +227,7 @@ yticks_3=(0.0:0.2:0.4,["0","0.2","0.4"])
 ylims_4=(0., 0.5)
 xlims_4=(0, 25)
 xticks_4=(0:10:20,["0","10","20"])
-yticks_4=(0.2:0.1:0.4,["0.2","0.3","0.4"])
+yticks_4=(0.0:0.2:0.4,["0","0.2","0.4"])
 end
 
 
@@ -338,7 +338,7 @@ plot!([A_true],[B_true],
 
 
 
-plot!(SP, :A,
+plot!(SP, :A, bins=100,
     subplot=1, 
     legend=false, marginalmode=false, 
     seriestype=:smallest_intervals, intervals=intervals, 
@@ -349,7 +349,7 @@ plot!(SP, :A,
     , top_margin=0mm
     , bottom_margin=3mm
 )
-plot!(SD, :A, 
+plot!(SD, :A,  bins=100,
     subplot=1, 
     legend=false, xlabel="", ylabel=PA_label
     , xlims=xlims_1
@@ -366,7 +366,7 @@ plot!(SD, :A,
 vline!([A_true], color="red", label=" Truth", lw=0.5)
 
 # Delta_u marginal
-plot!(SP, :(B),
+plot!(SP, :(B), bins=100,
     subplot=4,
     legend=false, marginalmode=false, 
     seriestype=:smallest_intervals, intervals=intervals,
@@ -379,7 +379,7 @@ plot!(SP, :(B),
     , bottom_margin=3mm
     , ylims=ylims_4
 )
-plot!(SD, :(B),
+plot!(SD, :(B), bins=100,
     subplot=4,
     legend=false, ylabel="", xlabel=L"P(\Delta_u)"
     , xlims=xlims_4
