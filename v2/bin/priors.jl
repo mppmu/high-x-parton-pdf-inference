@@ -1,11 +1,12 @@
-module bla
+#module bla
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
-using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
+using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using DelimitedFiles
 using ArgParse
+export get_priors
 
 function get_priors( parsed_args::Dict{String,Any} )
 if parsed_args["parametrisation"] == "Dirichlet"
@@ -14,13 +15,13 @@ if (parsed_args["priorshift"]==0)
 
 prior = NamedTupleDist(
     θ = Dirichlet([20, 10, 20, 20, 5, 2.5, 1.5, 1.5, 0.5]),
-    K_u = Truncated(Normal(3.5, 0.5), 2., 5.),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
+    K_u = Truncated(Normal(3.5, 0.5), 1.0, 6.5),
+    K_d = Truncated(Normal(3.5, 0.5), 1.0, 6.5),
     λ_g1 = Uniform(0., 1.),
     λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
+    K_g =  Truncated(Normal(4., 1.5), 1.0, 8.5),
     λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
+    K_q = Truncated(Normal(4., 1.5), 1.0, 9.5),
     Beta1 =  Truncated(Normal(0, 1), -5, 5),
     Beta2 =  Truncated(Normal(0, 1), -5, 5),
     beta0_1=  Truncated(Normal(0, 1), -5, 5), 
@@ -36,14 +37,14 @@ end
 
 if (parsed_args["priorshift"]==1)
 prior = NamedTupleDist(
-    θ = Dirichlet([40, 10, 10, 10, 5, 2.5, 1.5, 1.5, 0.5]),
-    K_u = Truncated(Normal(4.5, 0.5), 2, 5),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
+    θ = Dirichlet([30, 10, 10, 10, 5, 2.5, 1.5, 1.5, 0.5]),
+    K_u = Truncated(Normal(4.5, 0.5), 1.0, 6.5),
+    K_d = Truncated(Normal(3.5, 0.5), 1.0, 6.5),
     λ_g1 = Uniform(0., 1.),
     λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
+    K_g =  Truncated(Normal(4., 1.5), 1.0, 8.5),
     λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
+    K_q = Truncated(Normal(4., 1.5), 1.0, 9.5),
     Beta1 =  Truncated(Normal(0, 1), -5, 5),
     Beta2 =  Truncated(Normal(0, 1), -5, 5),
     beta0_1=  Truncated(Normal(0, 1), -5, 5), 
@@ -58,14 +59,14 @@ prior = NamedTupleDist(
 elseif (parsed_args["priorshift"]==2)
   #  println("seting prior from Shifted Prior set ",seedtxt)
 prior = NamedTupleDist(
-        θ = Dirichlet([20, 10, 30, 30, 5, 2.5, 1.5, 1.5, 0.5]),
-        K_u = Truncated(Normal(2.5, 0.5), 2, 5),
-    K_d = Truncated(Normal(3.5, 0.5), 2., 5.),
+    θ = Dirichlet([20, 10, 30, 30, 5, 2.5, 1.5, 1.5, 0.5]),
+    K_u = Truncated(Normal(2.5, 0.5), 1.0, 6.5),
+    K_d = Truncated(Normal(3.5, 0.5), 1.0, 6.5),
     λ_g1 = Uniform(0., 1.),
     λ_g2 = Uniform(-1.0, -0.1),
-    K_g =  Truncated(Normal(4., 1.5), 2., 7.),
+    K_g =  Truncated(Normal(4., 1.5),  1.0, 8.5),
     λ_q = Uniform(-1.0, -0.1),
-    K_q = Truncated(Normal(4., 1.5), 3., 10.),
+    K_q = Truncated(Normal(4., 1.5), 1.0, 9.5),
     Beta1 =  Truncated(Normal(0, 1), -5, 5),
     Beta2 =  Truncated(Normal(0, 1), -5, 5),
     beta0_1=  Truncated(Normal(0, 1), -5, 5), 
@@ -119,7 +120,8 @@ if parsed_args["parametrisation"] == "Bernstein"
 
 prior = NamedTupleDist(
     θ = Dirichlet([28.0, 12.5, 20.0, 20.0, 10.0, 1.4, 0.2, 10.e-5, 0.3]),
-    initial_U = [Uniform(-10., 1.)],
+#    initial_U = [Uniform(-10., 1.)],
+    initial_U = [Truncated(Normal(-5, 3), -12, 5)],
     initial_D = [Uniform(10., 30.)],
     λ_g1 = Uniform(1., 2.0),
     λ_g2 = Uniform(-0.5, -0.3),
@@ -144,4 +146,4 @@ return prior
 
 end
 
-end
+#end

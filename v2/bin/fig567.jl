@@ -2,7 +2,7 @@
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
-using Plots, Random, Distributions, ValueShapes, ParallelProcessingTools
+using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using SpecialFunctions, Printf
 const sf = SpecialFunctions;
@@ -14,6 +14,8 @@ using Measures
 using ArgParse
 import HDF5
 include("priors.jl")
+#using bla
+PWIDTH=1000
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -57,8 +59,6 @@ c4 = :grey
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
 # Results
 seed=parsed_args["seed"]
 println(seed)
@@ -118,7 +118,7 @@ end
 
 
 
-Ns = 10000 # Number of samples from posterior
+Ns = 100000 # Number of samples from posterior
 rn = MersenneTwister(seed);
 sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
@@ -170,8 +170,6 @@ c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
 cmap = palette(color_scheme, n_q2_bins+2)
-Plots.scalefontsizes()
-Plots.scalefontsizes(1.2);
 alpha = 0.6
 prior_alpha = 0.2;
 
@@ -241,7 +239,7 @@ bins = 60
 comb_prior_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_sea = sum(v.θ[5:9])), prior_samples).result
 comb_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_sea = sum(v.θ[5:9])), samples_data).result;
 
-plot(framestyle=:axes, size=(700, 600), fontfamily=font_family,  layout=@layout([a b; c d]), grid=false)
+plot(framestyle=:axes, size=(PWIDTH, PWIDTH), fontfamily=font_family,  layout=@layout([a b; c d]), grid=false)
 plot!(samples_data, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylabel=L"\Delta_{d}",
     seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
@@ -249,7 +247,7 @@ plot!(samples_data, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylabe
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     ,ylims=(0,0.32),yticks=(0:0.1:0.3,["0","0.1","0.2","0.3"])
     ,xlims=(0.1,0.42),xticks=(0.1:0.1:0.4,["0.1","0.2","0.3","0.4"])
-    , right_margin=-2mm
+    , right_margin=2mm
     , left_margin=8mm
     , top_margin=0mm
     , bottom_margin=5mm
@@ -275,7 +273,7 @@ plot!(comb_samples, (:(Δ_u), :(Δ_g)),subplot=2,xlabel=L"\Delta_{u}", ylabel=L"
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     ,ylims=(0.25,0.72),yticks=(0.3:0.1:0.72,["0.3","0.4","0.5","0.6","0.7"])
         ,xlims=(0.1,0.42),xticks=(0.1:0.1:0.4,["0.1","0.2","0.3","0.4"])
-        , right_margin=-2mm
+        , right_margin=2mm
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
@@ -330,7 +328,7 @@ plot!(comb_samples, (:(Δ_g), :(Δ_sea)),subplot=4, xlabel=L"\Delta_{g}", ylabel
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
      ,ylims=(0,0.32),yticks=(0:0.1:0.3,["0","0.1","0.2","0.3"])
     ,xlims=(0.25,0.72),xticks=(0.3:0.1:0.72,["0.3","0.4","0.5","0.6","0.7"])
-    , right_margin=-2mm
+    , right_margin=2mm
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
@@ -349,7 +347,7 @@ plot!([Δ_g_true],[Δ_sea_true], color="red",subplot=4,seriestype=:scatter, labe
 
 filename = string("figures/fig5-momentum-corr-", parsed_args["fitresults"], "_v2.pdf")
 savefig(filename)
-
+################################################################################################
 function x_uv_x(x::Real, λ_u::Real, K_u::Real)
     A_u = 2 / sf.beta(λ_u, K_u + 1)
     return A_u * x^λ_u * (1 - x)^K_u
@@ -386,7 +384,7 @@ function wrap_xdval(p::NamedTuple, x::Real)
 end
 
 function wrap_xg(p::NamedTuple, x::Real)
-    scale = 0.1
+    scale = 1.0
     pdf_p = DirichletPDFParams(K_u=p.K_u, K_d=p.K_d, λ_g1=p.λ_g1, K_q=p.K_q,λ_g2=p.λ_g2, K_g=p.K_g, λ_q=p.λ_q, θ=p.θ)
     return PartonDensity.x_g_x(x, pdf_p.λ_g1, pdf_p.λ_g2, pdf_p.K_g, pdf_p.K_q, pdf_p.θ[3], pdf_p.θ[4]) * scale
 end
@@ -406,7 +404,7 @@ end
 
     x_grid = range(0.05, 1.0, length=95)
 
-plot(framestyle=:axes, size=(600, 500), fontfamily=font_family, 
+plot(framestyle=:axes, size=(PWIDTH,PWIDTH), fontfamily=font_family, 
     layout=@layout([a b; c d]), grid=false
 
     , right_margin=0mm
@@ -421,7 +419,7 @@ plot(framestyle=:axes, size=(600, 500), fontfamily=font_family,
 p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid],  lw=3, c=:red, 
     subplot=1
     , label=false
-     , ylims=(0, 0.65), xlims=(0.00,1.0)
+     , ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.00,1.0)
     , foreground_color_legend=false
     , right_margin=0mm
     , left_margin=0mm
@@ -429,7 +427,7 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid],  lw=3, c=:re
     , bottom_margin=-1mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
-        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
+        , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
     
 )
 
@@ -445,7 +443,7 @@ for s in eachindex(sub_samples)
                                       θ=Vector(sub_samples.v.θ[s]))
     λ_u= pdf_params_s.θ[1]*(1+pdf_params_s.K_u)/(2-pdf_params_s.θ[1])
 
-    plot!(x_grid, [x_uv_x(x, λ_u, pdf_params_s.K_u) for x in x_grid],lw=0.5,alpha=0.3,label=:none, subplot=1)
+    plot!(x_grid, [x_uv_x(x, λ_u, pdf_params_s.K_u) for x in x_grid],lw=0.5,alpha=0.3,label=:none, subplot=1, ylims=(0.00001, 65.0),yscale=:log10)
 
 end
 
@@ -454,15 +452,15 @@ end
 
 p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_v \; \mathrm{true}", lw=3, c=:red, 
     subplot=1
-     , ylims=(0, 0.65), xlims=(0.00,1.0)
+     , ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.00,1.0)
     , foreground_color_legend=false
     , right_margin=0mm
-    , left_margin=7mm
+    , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=-1mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
-        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"])
+        , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"])
 )
 
 #
@@ -471,7 +469,7 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_
 p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid],   lw=3, c=:red,
     subplot=2
         , label=false
-    , ylims=(0, 0.65), xlims=(0.00,1.0)
+    , ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.00,1.0)
     , foreground_color_legend=false
     , right_margin=1mm
     , left_margin=0mm
@@ -479,7 +477,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid],   lw=3, c=:r
     , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
-        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
+        , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
 
 
@@ -495,7 +493,7 @@ for s in eachindex(sub_samples)
     
         λ_d= pdf_params_s.θ[2]*(1+pdf_params_s.K_d)/(1-pdf_params_s.θ[2])
 
-    plot!(x_grid, [x_dv_x(x, λ_d, pdf_params_s.K_d) for x in x_grid],ylims=(0, 0.65),lw=0.5,alpha=0.3,label=:none, subplot=2)
+    plot!(x_grid, [x_dv_x(x, λ_d, pdf_params_s.K_d) for x in x_grid],ylims=(0.00001, 65.0),yscale=:log10,lw=0.5,alpha=0.3,label=:none, subplot=2)
 
 end
 
@@ -503,7 +501,7 @@ end
 
 p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_v \; \mathrm{true}",  lw=3, c=:red,
     subplot=2
-    , ylims=(0, 0.65), xlims=(0.00,1.0)
+    , ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.00,1.0)
     , foreground_color_legend=false
     , right_margin=1mm
     , left_margin=0mm
@@ -511,17 +509,17 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
     , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
-        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
+        , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
 
 #
 
 
-    p = plot!(x_grid, [0.1*x_g_x(x, pdf_params.λ_g1, pdf_params.λ_g2, pdf_params.K_g, pdf_params.K_q, pdf_params.θ[3], pdf_params.θ[4])
+    p = plot!(x_grid, [x_g_x(x, pdf_params.λ_g1, pdf_params.λ_g2, pdf_params.K_g, pdf_params.K_q, pdf_params.θ[3], pdf_params.θ[4])
                        for x in x_grid],   lw=3, c=:red,
     subplot=3
         , label=false
-     , ylims=(0, 0.65), xlims=(0.0,1.0)
+     , ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.0,1.0)
     , foreground_color_legend=false
     , right_margin=-2mm
     , left_margin=0mm
@@ -529,7 +527,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
     , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
-        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
+        , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
 
 
@@ -542,24 +540,24 @@ for s in eachindex(sub_samples)
                                       λ_q=sub_samples.v.λ_q[s], 
                                       θ=Vector(sub_samples.v.θ[s]))
 
-    p = plot!(x_grid, [0.1*x_g_x(x, pdf_params_s.λ_g1, pdf_params_s.λ_g2, pdf_params_s.K_g, pdf_params_s.K_q, pdf_params_s.θ[3], pdf_params_s.θ[4])
-                       for x in x_grid], ylims=(0, 0.65),lw=0.5,alpha=0.3,label=:none,subplot=3)
+    p = plot!(x_grid, [x_g_x(x, pdf_params_s.λ_g1, pdf_params_s.λ_g2, pdf_params_s.K_g, pdf_params_s.K_q, pdf_params_s.θ[3], pdf_params_s.θ[4])
+                       for x in x_grid], ylims=(0.00001, 65.0),yscale=:log10,lw=0.5,alpha=0.3,label=:none,subplot=3)
 end
 
-    p = plot!(xlabel=L"x", ylabel=L"xg/10", subplot=3)
+    p = plot!(xlabel=L"x", ylabel=L"xg", subplot=3)
 
-    p = plot!(x_grid, [0.1*x_g_x(x, pdf_params.λ_g1, pdf_params.λ_g2, pdf_params.K_g, pdf_params.K_q, pdf_params.θ[3], pdf_params.θ[4])
-                       for x in x_grid], label=L"~xg/10 \; \mathrm{true}",  lw=3, c=:red,
+    p = plot!(x_grid, [x_g_x(x, pdf_params.λ_g1, pdf_params.λ_g2, pdf_params.K_g, pdf_params.K_q, pdf_params.θ[3], pdf_params.θ[4])
+                       for x in x_grid], label=L"~xg \; \mathrm{true}",  lw=3, c=:red,
     subplot=3
-     , ylims=(0, 0.65), xlims=(0.0,1.0)
+     , ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.0,1.0)
     , foreground_color_legend=false
     , right_margin=-2mm
-    , left_margin=7mm
+    , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
-        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
+        , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
 
 
@@ -567,7 +565,7 @@ end
 
 #
     p = plot!(x_grid, [x_q_x(x, pdf_params.λ_q, pdf_params.K_q, pdf_params.θ[5]) for x in x_grid],
-    ylims=(0, 0.65), xlims=(0.0,1.0),   lw=3, c=:red,
+    ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.0,1.0),   lw=3, c=:red,
     subplot=4
     , label=false
     , foreground_color_legend=false
@@ -577,7 +575,7 @@ end
     , bottom_margin=5mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
-        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
+        , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
 
 
@@ -593,7 +591,7 @@ for s in eachindex(sub_samples)
                                       θ=Vector(sub_samples.v.θ[s]))
 
 
-        p = plot!(x_grid, [x_q_x(x, pdf_params_s.λ_q, pdf_params_s.K_q, pdf_params_s.θ[5]) for x in x_grid],ylims=(0, 0.65), lw=0.5,alpha=0.3,label=:none,subplot=4)
+        p = plot!(x_grid, [x_q_x(x, pdf_params_s.λ_q, pdf_params_s.K_q, pdf_params_s.θ[5]) for x in x_grid],ylims=(0.00001, 65.0),yscale=:log10, lw=0.5,alpha=0.3,label=:none,subplot=4)
 
 end
 
@@ -601,7 +599,7 @@ end
 
 
     p = plot!(x_grid, [x_q_x(x, pdf_params.λ_q, pdf_params.K_q, pdf_params.θ[5]) for x in x_grid],
-    ylims=(0, 0.65), xlims=(0.0,1.0), label=L"~x\bar{u} \; \mathrm{true}",  lw=3, c=:red,
+    ylims=(0.00001, 65.0),yscale=:log10, xlims=(0.0,1.0), label=L"~x\bar{u} \; \mathrm{true}",  lw=3, c=:red,
     subplot=4
 
     , foreground_color_legend=false
@@ -611,7 +609,7 @@ end
     , bottom_margin=-1mm
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
-        , yticks=(0.0:0.2:0.6,["0","0.2","0.4","0.6"]) 
+        , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
 
 filename = string("figures/fig6-parton-xf(x)-", parsed_args["fitresults"], "_v2.pdf")
@@ -623,9 +621,9 @@ savefig(filename)
 
 
 
-plot(framestyle=:axes, size=(1200, 500), fontfamily=font_family, 
-    leftmargin=6Plots.mm, bottommargin=5Plots.mm, rightmargin=5Plots.mm,
-    layout=@layout([a b c{0.15w}]),
+plot(framestyle=:axes, size=(PWIDTH,PWIDTH/2), fontfamily=font_family, 
+    leftmargin=3Plots.mm, bottommargin=5Plots.mm, rightmargin=9mm,
+    layout=@layout([a b c{0.20w}]),
     xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18
    , grid=false
 )
@@ -638,13 +636,17 @@ plot!(xlim=(5e-2, 1), ylim=(0, 900), xlabel="\$x\$", ylabel="Counts", xscale=:lo
     legendfontsize=10, thickness_scaling=1, 
     xticks=([0.1, 10^-0.5, 1.0],[L"$10^{-1}$",L"$10^{-0.5}$",L"$1$"]),
     subplot=1
-    ,left_margin=17mm,bottom_margin=8mm
+    ,left_margin=13mm
+    ,right_margin=1mm
+    ,bottom_margin=8mm
     )
 plot!(xlim=(5e-2, 1), ylim=(0, 900), xlabel="\$x\$", ylabel="", xscale=:log, 
     grid=false, legend=false, 
     xticks=([0.1, 10^-0.5, 1.0],[L"$10^{-1}$",L"$10^{-0.5}$",L"$1$"]),
     subplot=2
-    ,left_margin=17mm,bottom_margin=8mm
+    ,left_margin=6mm
+    ,right_margin=8mm
+    ,bottom_margin=8mm
     )
 
 for sp in [4, 5]
@@ -693,7 +695,7 @@ end
 
 plot!(legend=:left, foreground_color_legend=nothing, framestyle=:none,
     subplot=3, xlim=(1,2), ylim=(0, 900), legendfontsize=14, thickness_scaling=1,
-    left_margin=-10Plots.mm)
+    left_margin=-12mm, right_margin=3mm)
 annotate!(1.4, 980*0.9, text("\$Q^2\$ [GeV\$^2\$]", 14, font_family), subplot=3)
 annotate!(0.13, 600*0.9, text(L"$e^{-}$", 22, font_family), subplot=1)
 p = annotate!(0.13, 600*0.9, text(L"$e^{+}$", 22, font_family), subplot=2)
