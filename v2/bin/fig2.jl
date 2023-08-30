@@ -54,28 +54,22 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
-c1 = :teal
-c2 = :royalblue4
-c3 = :midnightblue
-c4 = :grey
-
-c1 = :teal
-c2 = :royalblue4
-c3 = :midnightblue
-c4 = :grey
-
-c5 = :grey
 
 #c2=colorant"#CCE5E5"
 #c1=colorant"#93A0AB"
 
-c2 = :teal
+
 c1 = :midnightblue
+c2 = :teal
 c3 = :grey
+c4 = :grey
+c5 = :grey
 
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
+
+alpha_posterior = 0.4;
 
 # Results
 seed=parsed_args["seed"]
@@ -274,7 +268,7 @@ layout=l,
     fontfamily=font_family,
     grid=false
 )
-plot!(samples_data, :(K_u),subplot=1, xlabel="",ylabel=L"K_u",colors=[c1, c2, c3], bins=100)
+plot!(samples_data, :(K_u),subplot=1, xlabel="",ylabel=L"K_u",colors=[c1, c2, c3],alpha=alpha_posterior, bins=100)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=2)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=3)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=4)
@@ -283,42 +277,42 @@ plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=5)
 
 
 
-plot!(samples_data, (:(K_u), :(K_d)),subplot=NNN+1, xlabel="",ylabel=L"K_d",colors=[c1, c2, c3],markerstrokewidth = 0, marginalmode=false)
-plot!(samples_data, :(K_d),subplot=NNN+2, xlabel="",ylabel="",colors=[c1, c2, c3], bins=100)
+plot!(samples_data, (:(K_u), :(K_d)),subplot=NNN+1, xlabel="",ylabel=L"K_d",fillcolors=[c1, c2, c3],alpha=alpha_posterior,markerstrokewidth = 0, marginalmode=false)
+plot!(samples_data, :(K_d),subplot=NNN+2, xlabel="",ylabel="",colors=[c1, c2, c3],alpha=alpha_posterior, bins=100)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=NNN+3)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=NNN+4)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=NNN+5)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=NNN+6)
 
-plot!(samples_data, (:(K_u), :(K_q)),subplot=2*NNN+1, xlabel="",ylabel=L"K_q",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data, (:(K_d), :(K_q)),subplot=2*NNN+2, xlabel="",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data, :(K_q),subplot=2*NNN+3, xlabel="",ylabel="",colors=[c1, c2, c3], bins=100)
+plot!(samples_data, (:(K_u), :(K_q)),subplot=2*NNN+1, xlabel="",ylabel=L"K_q",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data, (:(K_d), :(K_q)),subplot=2*NNN+2, xlabel="",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data, :(K_q),subplot=2*NNN+3, xlabel="",ylabel="",colors=[c1, c2, c3],alpha=alpha_posterior, bins=100)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=2*NNN+4)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=2*NNN+5)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=2*NNN+6)
 
-plot!(samples_data, (:(K_u), :(K_g)),subplot=3*NNN+1, xlabel="",ylabel=L"K_g",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data, (:(K_d), :(K_g)),subplot=3*NNN+2, xlabel="",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data, (:(K_q), :(K_g)),subplot=3*NNN+3, xlabel="",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data, :(K_g),subplot=3*NNN+4, xlabel="",ylabel="",colors=[c1, c2, c3], bins=100)
+plot!(samples_data, (:(K_u), :(K_g)),subplot=3*NNN+1, xlabel="",ylabel=L"K_g",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data, (:(K_d), :(K_g)),subplot=3*NNN+2, xlabel="",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data, (:(K_q), :(K_g)),subplot=3*NNN+3, xlabel="",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data, :(K_g),subplot=3*NNN+4, xlabel="",ylabel="",colors=[c1, c2, c3],alpha=alpha_posterior, bins=100)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=3*NNN+5)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=3*NNN+6)
 
 
-plot!(samples_data1, (:(K_u), :(Δ_g)),subplot=4*NNN+1, xlabel="",ylabel=L"\Delta_g",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data1, (:(K_d), :(Δ_g)),subplot=4*NNN+2, xlabel="",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data1, (:(K_q), :(Δ_g)),subplot=4*NNN+3, xlabel="",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data1, (:(K_g), :(Δ_g)),subplot=4*NNN+4, xlabel="",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data1, :(Δ_g),subplot=4*NNN+5, xlabel="",ylabel="",colors=[c1, c2, c3], bins=100)
+plot!(samples_data1, (:(K_u), :(Δ_g)),subplot=4*NNN+1, xlabel="",ylabel=L"\Delta_g",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data1, (:(K_d), :(Δ_g)),subplot=4*NNN+2, xlabel="",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data1, (:(K_q), :(Δ_g)),subplot=4*NNN+3, xlabel="",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data1, (:(K_g), :(Δ_g)),subplot=4*NNN+4, xlabel="",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data1, :(Δ_g),subplot=4*NNN+5, xlabel="",ylabel="",colors=[c1, c2, c3],alpha=alpha_posterior, bins=100)
 plot!(legend=false,grid=false,foreground_color_subplot=:white,subplot=4*NNN+6)
 
 
-plot!(samples_data1, (:(K_u), :(Δ_sea)),subplot=5*NNN+1, xlabel=L"K_u",ylabel=L"\Delta_{\mathrm{sea}}",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data1, (:(K_d), :(Δ_sea)),subplot=5*NNN+2, xlabel=L"K_d",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data1, (:(K_q), :(Δ_sea)),subplot=5*NNN+3, xlabel=L"K_q",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data1, (:(K_g), :(Δ_sea)),subplot=5*NNN+4, xlabel=L"K_g",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data1, (:(Δ_g),:(Δ_sea)), subplot=5*NNN+5, xlabel=L"\Delta_g",ylabel="",colors=[c1, c2, c3], marginalmode=false)
-plot!(samples_data1, :(Δ_sea),subplot=5*NNN+6, xlabel=L"\Delta_{\mathrm{sea}}",ylabel="",colors=[c1, c2, c3], bins=100)
+plot!(samples_data1, (:(K_u), :(Δ_sea)),subplot=5*NNN+1, xlabel=L"K_u",ylabel=L"\Delta_{\mathrm{sea}}",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data1, (:(K_d), :(Δ_sea)),subplot=5*NNN+2, xlabel=L"K_d",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data1, (:(K_q), :(Δ_sea)),subplot=5*NNN+3, xlabel=L"K_q",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data1, (:(K_g), :(Δ_sea)),subplot=5*NNN+4, xlabel=L"K_g",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data1, (:(Δ_g),:(Δ_sea)), subplot=5*NNN+5, xlabel=L"\Delta_g",ylabel="",fillcolors=[c1, c2, c3],alpha=alpha_posterior, marginalmode=false)
+plot!(samples_data1, :(Δ_sea),subplot=5*NNN+6, xlabel=L"\Delta_{\mathrm{sea}}",ylabel="",colors=[c1, c2, c3],alpha=alpha_posterior, bins=100)
 
 
 
@@ -429,9 +423,9 @@ plot!(legend=false,label="xx",
 )
 #rectangle(w, h, x, y) = Shape(x .+ [0.0,w,w,0.0], y .+ [0.0,0.0,h,h])
 #plot!(rectangle(0.05,0.05,0.5,0.5),subplot=4)
-plot!(Shape([0.00,0.00,0.2,0.2],[0.0,0.2,0.2,0.0]),subplot=NNN-1,fillcolor=c3)
-plot!(Shape([0.00,0.00,0.2,0.2],[0.4,0.6,0.6,0.4]),subplot=2*NNN-1,fillcolor=c2)
-plot!(Shape([0.00,0.00,0.2,0.2],[1.0,0.8,0.8,1.0]),subplot=3*NNN-1,fillcolor=c1)
+plot!(Shape([0.00,0.00,0.2,0.2],[0.0,0.2,0.2,0.0]),subplot=NNN-1,fillcolor=c3,alpha=alpha_posterior)
+plot!(Shape([0.00,0.00,0.2,0.2],[0.4,0.6,0.6,0.4]),subplot=2*NNN-1,fillcolor=c2,alpha=alpha_posterior)
+plot!(Shape([0.00,0.00,0.2,0.2],[1.0,0.8,0.8,1.0]),subplot=3*NNN-1,fillcolor=c1,alpha=alpha_posterior)
 annotate!(p[NNN],0.0,0.10,text(L"~~\mathrm{Posterior}~99~\%",18))
 annotate!(p[2*NNN],0.0,0.50,text(L"~~\mathrm{Posterior}~95~\%",18))
 annotate!(p[3*NNN],0.0,0.90,text(L"~~\mathrm{Posterior}~68~\%",18))
