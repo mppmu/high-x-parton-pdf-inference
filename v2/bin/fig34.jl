@@ -56,10 +56,7 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
-c1 = :teal
-c2 = :royalblue4
-c3 = :midnightblue
-c4 = :grey
+
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
@@ -113,9 +110,10 @@ c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
+prior_alpha = 0.4;
+colors = [c3, c1]
+prior_colors = [:grey40, :grey50]
 
-alpha = 0.6
-prior_alpha = 0.2;
 
 # Get some prior samples for plotting
 prior=get_priors(parsed_args)
@@ -124,8 +122,6 @@ prior_samples=bat_sample(prior).result;
 intervals = [0.68, 0.95]
 labels = [L"~~\mathrm{Posterior}~68~\%", L"~~\mathrm{Posterior}~95~\%"]
 prior_labels = [L"~~\mathrm{Prior}~68~\%", L"~~\mathrm{Prior}~95~\%"]
-colors = [c3, c1]
-prior_colors = [:grey40, :grey50]
 
 
 if parsed_args["parametrisation"] == "Dirichlet"
@@ -308,8 +304,10 @@ plot!(SP, (:(A), :(B)),
     subplot=3, 
     xlabel=A_label, ylabel=B_label,
     seriestype=:smallest_intervals_contourf, smoothing=4, 
-    marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
-    alpha=prior_alpha
+    marginalmode=false, intervals=intervals
+    , fillcolors=reverse(prior_colors)
+    , linewidth=0
+    , alpha=prior_alpha
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
     , left_margin=6mm
@@ -321,7 +319,10 @@ plot!(SD, (:(A), :(B)),
     subplot=3,     
     xlabel=A_label, ylabel=B_label,
     seriestype=:smallest_intervals_contourf, smoothing=2, 
-    marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, alpha=alpha
+    marginalmode=false, intervals=intervals
+    , fillcolors=reverse(colors)
+    , linewidth=0
+    , alpha=prior_alpha
     , xlims=xlims_3
     , ylims=ylims_3
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
@@ -341,8 +342,10 @@ plot!([A_true],[B_true],
 plot!(SP, :A, bins=100,
     subplot=1, 
     legend=false, marginalmode=false, 
-    seriestype=:smallest_intervals, intervals=intervals, 
-    colors=prior_colors,alpha=prior_alpha
+    seriestype=:smallest_intervals, intervals=intervals
+    , fillcolors=reverse(prior_colors)
+    , colors=prior_colors
+    , alpha=prior_alpha
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
     , left_margin=6mm
@@ -355,7 +358,8 @@ plot!(SD, :A,  bins=100,
     , xlims=xlims_1
     , ylims=ylims_1
     , seriestype=:smallest_intervals 
-    , marginalmode=false, intervals=intervals, colors=colors, alpha=alpha
+    , marginalmode=false, intervals=intervals, colors=colors
+    , alpha=prior_alpha
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=-2mm
     , left_margin=6mm
@@ -369,9 +373,11 @@ vline!([A_true], color="red", label=" Truth", lw=0.5)
 plot!(SP, :(B), bins=100,
     subplot=4,
     legend=false, marginalmode=false, 
-    seriestype=:smallest_intervals, intervals=intervals,
-    colors=prior_colors, alpha=prior_alpha, 
-    orientation=:horizontal
+    seriestype=:smallest_intervals, intervals=intervals
+   # , fillcolors=reverse(prior_colors)
+    , colors=prior_colors
+    , orientation=:horizontal
+    , alpha=prior_alpha
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=1mm
     , left_margin=5mm
@@ -385,7 +391,8 @@ plot!(SD, :(B), bins=100,
     , xlims=xlims_4
     , ylims=ylims_4
     , seriestype=:smallest_intervals, intervals=intervals, marginalmode=false 
-    , colors=colors, alpha=alpha, orientation=:horizontal
+    , colors=colors,  orientation=:horizontal
+    , alpha=prior_alpha
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , xticks=xticks_4
     , yticks=yticks_4
@@ -401,9 +408,10 @@ plot!(SP, (:(A), :(B)),
     subplot=2,
     xlabel=A_label, ylabel=B_label,
     seriestype=:smallest_intervals,
-    marginalmode=false, intervals=intervals, interval_labels=prior_labels, 
-    colors=reverse(prior_colors), linewidth=0, 
-    alpha=prior_alpha+0.2
+    marginalmode=false, intervals=intervals, interval_labels=prior_labels
+    , fillcolors=reverse(prior_colors)
+    , colors=reverse(prior_colors), linewidth=0
+    , alpha=prior_alpha
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
     , right_margin=1mm
     , left_margin=5mm
@@ -416,7 +424,9 @@ plot!(SD, (:(A), :(B)),
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, colors=reverse(colors), 
     interval_labels=labels,
-    linewidth=0, alpha=alpha+0.2, legend=:bottomright, foreground_color_legend=:transparent, background_color_legend=:transparent,
+    linewidth=0
+    , alpha=prior_alpha
+    , legend=:bottomright, foreground_color_legend=:transparent, background_color_legend=:transparent,
     framestyle=:none
     , xlims=(0, 1.)
     , ylims=(0, 0.1)

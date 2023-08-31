@@ -164,14 +164,17 @@ for s in eachindex(sub_samples)
 end
 
 color_scheme = :viridis
+cmap = palette(color_scheme, n_q2_bins+2)
 
 c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
-cmap = palette(color_scheme, n_q2_bins+2)
-alpha = 0.6
 prior_alpha = 0.2;
+alpha_xf=0.3;
+colors = [c3, c1]
+prior_colors = [:grey40, :grey50]
+
 
 # Get some prior samples for plotting
 prior=get_priors(parsed_args)
@@ -184,9 +187,6 @@ xlims_D_d = (0., 0.5) # (0.29, 0.37)
 intervals = [0.68, 0.95]
 labels = [L"~~\mathrm{Posterior}~68~\%", L"~~\mathrm{Posterior}~95~\%"]
 prior_labels = [L"~~\mathrm{Prior}~68~\%", L"~~\mathrm{Prior}~95~\%"]
-colors = [c3, c1]
-prior_colors = [:grey40, :grey50]
-
 
 if parsed_args["parametrisation"] == "Dirichlet"
 #weights = [30.0, 15.0, 12.0, 6.0, 3.6, 0.85, 0.85, 0.85, 0.85]
@@ -227,10 +227,6 @@ initial_U_true = [-8.];
 initial_D_true = [15.0]
 end
 
-prior_color = :grey40
-prior_alpha = 0.2
-posterior_color = c2
-posterior_alpha = 0.7
 bins = 60
 
 # Combine results for Δ_sea and Δ_g
@@ -443,7 +439,9 @@ for s in eachindex(sub_samples)
                                       θ=Vector(sub_samples.v.θ[s]))
     λ_u= pdf_params_s.θ[1]*(1+pdf_params_s.K_u)/(2-pdf_params_s.θ[1])
 
-    plot!(x_grid, [x_uv_x(x, λ_u, pdf_params_s.K_u) for x in x_grid],lw=0.5,alpha=0.3,label=:none, subplot=1, ylims=(0.00001, 65.0),yscale=:log10)
+    plot!(x_grid, [x_uv_x(x, λ_u, pdf_params_s.K_u) for x in x_grid],lw=0.5
+    ,alpha=alpha_xf
+    ,label=:none, subplot=1, ylims=(0.00001, 65.0),yscale=:log10)
 
 end
 
@@ -493,7 +491,9 @@ for s in eachindex(sub_samples)
     
         λ_d= pdf_params_s.θ[2]*(1+pdf_params_s.K_d)/(1-pdf_params_s.θ[2])
 
-    plot!(x_grid, [x_dv_x(x, λ_d, pdf_params_s.K_d) for x in x_grid],ylims=(0.00001, 65.0),yscale=:log10,lw=0.5,alpha=0.3,label=:none, subplot=2)
+    plot!(x_grid, [x_dv_x(x, λ_d, pdf_params_s.K_d) for x in x_grid],ylims=(0.00001, 65.0),yscale=:log10,lw=0.5
+    ,alpha=alpha_xf
+    ,label=:none, subplot=2)
 
 end
 
@@ -541,7 +541,9 @@ for s in eachindex(sub_samples)
                                       θ=Vector(sub_samples.v.θ[s]))
 
     p = plot!(x_grid, [x_g_x(x, pdf_params_s.λ_g1, pdf_params_s.λ_g2, pdf_params_s.K_g, pdf_params_s.K_q, pdf_params_s.θ[3], pdf_params_s.θ[4])
-                       for x in x_grid], ylims=(0.00001, 65.0),yscale=:log10,lw=0.5,alpha=0.3,label=:none,subplot=3)
+                       for x in x_grid], ylims=(0.00001, 65.0),yscale=:log10,lw=0.5
+                       ,alpha=alpha_xf
+                       ,label=:none,subplot=3)
 end
 
     p = plot!(xlabel=L"x", ylabel=L"xg", subplot=3)
@@ -591,7 +593,9 @@ for s in eachindex(sub_samples)
                                       θ=Vector(sub_samples.v.θ[s]))
 
 
-        p = plot!(x_grid, [x_q_x(x, pdf_params_s.λ_q, pdf_params_s.K_q, pdf_params_s.θ[5]) for x in x_grid],ylims=(0.00001, 65.0),yscale=:log10, lw=0.5,alpha=0.3,label=:none,subplot=4)
+        p = plot!(x_grid, [x_q_x(x, pdf_params_s.λ_q, pdf_params_s.K_q, pdf_params_s.θ[5]) for x in x_grid],ylims=(0.00001, 65.0),yscale=:log10, lw=0.5
+        ,alpha=alpha_xf
+        ,label=:none,subplot=4)
 
 end
 
