@@ -374,7 +374,7 @@ plot!(SP, :(B), bins=100,
     subplot=4,
     legend=false, marginalmode=false, 
     seriestype=:smallest_intervals, intervals=intervals
-    , fillcolors=reverse(prior_colors)
+   # , fillcolors=reverse(prior_colors)
     , colors=prior_colors
     , orientation=:horizontal
     , alpha=prior_alpha
