@@ -255,8 +255,7 @@ plot!(prior_samples, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylab
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14   
     
 )
-plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, 
-foreground_color_legend=false,   lc=:red, markerstrokecolor=:red, legendfontsize=14)
+plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,   lc=:red, markerstrokecolor=:red, legendfontsize=14)
 
 ##############################################3
 comb_prior_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_u = v.θ[1]), prior_samples).result
@@ -701,8 +700,8 @@ plot!(legend=:left, foreground_color_legend=nothing, framestyle=:none,
     subplot=3, xlim=(1,2), ylim=(0, 900), legendfontsize=14, thickness_scaling=1,
     left_margin=-12mm, right_margin=3mm)
 annotate!(1.4, 980*0.9, text("\$Q^2\$ [GeV\$^2\$]", 14, font_family), subplot=3)
-annotate!(0.13, 600*0.9, text(L"$e^{-}$", 22, font_family), subplot=1)
-p = annotate!(0.13, 600*0.9, text(L"$e^{+}$", 22, font_family), subplot=2)
+annotate!(0.13, 600*0.9, text(L"$e^{-}p$", 22, font_family), subplot=1)
+p = annotate!(0.13, 600*0.9, text(L"$e^{+}p$", 22, font_family), subplot=2)
 p
 
 savefig( string("figures/fig7-",parsed_args["fitresults"],"_v2.pdf"))
