@@ -2,7 +2,7 @@
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
-using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTools
+using Random, Distributions, ValueShapes, ParallelProcessingTools
 using StatsBase, LinearAlgebra
 using Printf
 using ArgParse
@@ -99,6 +99,10 @@ nfin = 0
 x = 1.0e-3
 q = 1.0e3
 pdf = Array{Float64}(undef, 13)
+
+g = QCDNUM.load_params(string("fitresults/", parsed_args["fitresults"], ".h5"))
+
+
 
 QCDNUM.qcinit(-6, " ")
 nx = QCDNUM.gxmake(xmin, iwt, ng, nxin, iosp)

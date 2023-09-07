@@ -6,6 +6,7 @@ using Plots, Colors , Random, Distributions, ValueShapes, ParallelProcessingTool
 using StatsBase, LinearAlgebra
 
 using ArgParse
+include("../data/ZEUS_I1787035/ZEUS_I1787035.jl")
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -19,6 +20,15 @@ function parse_commandline()
             help = "Parametrisation -- Dirichlet or Valence"
             arg_type = String
             default = "Dirichlet"
+        "--dataset", "-d"
+            help = "Dataset ID to generate the data"
+            arg_type = String
+            default = "ZEUS_I1787035"
+        "--lumifactor", "-f"
+            help = "Lumi factor for the Dataset"
+            arg_type = Float64
+            default = 1.0
+
     end
 
     return parse_args(s)
@@ -94,10 +104,14 @@ qcdnum_params = QCDNUM.EvolutionParams(order=2, α_S=0.118, q0=100.0, grid_param
     
 splint_params = QCDNUM.SPLINTParams();
 quark_coeffs = QuarkCoefficients();
+
+
+#include(string("data/")+parsed_args["dataset"])
+MD_LOCAL =  scale_lumi(MD_ZEUS_I1787035, parsed_args["lumifactor"])
+
+
 forward_model_init(qcdnum_params, splint_params)
-
-
-counts_pred_ep, counts_pred_em = forward_model(pdf_params, qcdnum_params,splint_params, quark_coeffs);
+counts_pred_ep, counts_pred_em = forward_model(pdf_params, qcdnum_params,splint_params, quark_coeffs,MD_LOCAL);
     
 nbins = size(counts_pred_ep)[1]
 counts_obs_ep = zeros(UInt64, nbins)
@@ -113,7 +127,7 @@ sim_data["nbins"] = nbins;
 sim_data["counts_obs_ep"] = counts_obs_ep;
 sim_data["counts_obs_em"] = counts_obs_em;
 
-pd_write_sim(string("pseudodata/simulation-",parsed_args["parametrisation"],"-",seedtxt,".h5"), pdf_params, sim_data)
+pd_write_sim(string("pseudodata/simulation-",parsed_args["parametrisation"],"-",seedtxt,".h5"), pdf_params, sim_data, MD_LOCAL)
 end
 
 main()
