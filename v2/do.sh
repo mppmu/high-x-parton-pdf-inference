@@ -7,8 +7,13 @@ mkdir -p CABCHSV
 
 JULIA='julia '
 #exit
+ $JULIA bin/generatepseudodata.jl -s 42 -p Dirichlet -f 0.1
 
-  $JULIA bin/generatepseudodata.jl -s 42 -p Dirichlet &
+$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 25000 -c 4              
+
+exit
+
+#  $JULIA bin/generatepseudodata.jl -s 42 -p Dirichlet &
 #  $JULIA bin/generatepseudodata.jl -s 42 -p Valence &
 #  $JULIA bin/generatepseudodata.jl -s 42 -p Bernstein &
 
