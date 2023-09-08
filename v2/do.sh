@@ -5,11 +5,15 @@ set -x
 
 mkdir -p CABCHSV
 
-JULIA='julia '
-#exit
- $JULIA bin/generatepseudodata.jl -s 42 -p Dirichlet -f 0.1
 
-$JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 25000 -c 4              
+
+JULIA='julia '
+SCRIPTPATH= $JULIA -e 'using PartonDensity; print(string(dirname(pathof(PartonDensity)),"/../utils/"))'
+echo $SCRIPTPATH
+#exit
+ $JULIA $SCRIPTPATH/generatepseudodata.jl -s 42 -p Dirichlet -f 0.1
+
+$JULIA $SCRIPTPATH/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 250 -c 4              
 
 exit
 
@@ -32,7 +36,7 @@ wait $(jobs -p)
  #$JULIA bin/PDFfit.jl -s 45 -p  Bernstein -d simulation-Bernstein-42 -n 250000 -c 4               
 
  #  &> logs/1.log&
- $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 250000 -c 4              
+ $JULIA bin/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42 -n 250 -c 4              
  #   &> logs/2.log&
 exit 
 
