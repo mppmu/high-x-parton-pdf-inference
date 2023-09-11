@@ -8,7 +8,7 @@ mkdir -p CABCHSV
 
 
 JULIA='julia '
-SCRIPTPATH= $JULIA -e 'using PartonDensity; print(string(dirname(pathof(PartonDensity)),"/../utils/"))'
+SCRIPTPATH=$($JULIA -e 'using PartonDensity; print(string(dirname(pathof(PartonDensity)),"/../utils/"))')
 echo $SCRIPTPATH
 #exit
  $JULIA $SCRIPTPATH/generatepseudodata.jl -s 42 -p Dirichlet -f 0.1
