@@ -13,7 +13,10 @@ using Statistics
 using Measures
 using ArgParse
 import HDF5
-include("priors.jl")
+PDROOT=string(dirname(pathof(PartonDensity)),"/../utils/")
+include(string(PDROOT,"priors.jl"))
+include(string(dirname(pathof(PartonDensity)),"/../data/ZEUS_I1787035/ZEUS_I1787035.jl"))
+nsyst=8
 #using bla
 PWIDTH=1000
 function parse_commandline()
@@ -56,6 +59,7 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
+context = get_batcontext()
 
 color_scheme = :viridis
 font_family = "Computer Modern"
@@ -66,7 +70,7 @@ println(seed)
 seedtxt=string(seed)
 
 #Sim data!!!
-pdf_params, sim_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"))
+pdf_params, sim_data, meta_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
 
 #Fit results!!!
 samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
@@ -96,8 +100,7 @@ quark_coeffs = QuarkCoefficients()
 
 
 Ns = 300000 # Number of samples from posterior
-rn = MersenneTwister(seed);
-sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
+sub_samples = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=Ns),context).result;
 
 forward_model_init(qcdnum_params, splint_params)
 
