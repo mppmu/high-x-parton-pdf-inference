@@ -13,7 +13,26 @@ using Statistics
 using Measures
 using ArgParse
 import HDF5
-include("priors.jl")
+PDROOT=string(dirname(pathof(PartonDensity)),"/../utils/")
+include(string(PDROOT,"priors.jl"))
+include(string(dirname(pathof(PartonDensity)),"/../data/ZEUS_I1787035/ZEUS_I1787035.jl"))
+"""
+    get_bin_info(n, quiet)
+Get the bin egdes of the ZEUS 
+detector space for a given 
+bin number, `n`.
+"""
+function get_bin_info(n::Integer; quiet::Bool = false)
+
+    if n < 1 || n > 153
+        @error "Bin number n should be [1, 153]"
+    end
+    if !quiet
+        @info "ZEUS detector bin" n m_BinQ2low[n] m_BinQ2high[n] m_Binxlow[n] m_Binxhigh[n]
+    end
+    return ([m_BinQ2low[n], m_BinQ2high[n]], [m_Binxlow[n], m_Binxhigh[n]])
+end
+nsyst=8
 #using bla
 PWIDTH=1000
 function parse_commandline()
@@ -52,6 +71,7 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
+context = get_batcontext()
 c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
@@ -68,7 +88,7 @@ println(seed)
 seedtxt=string(seed)
 
 #Sim data!!!
-pdf_params, sim_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"))
+pdf_params, sim_data, meta_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
 
 #Fit results!!!
 samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
@@ -131,7 +151,7 @@ chisqem = zeros( length(sub_samples))
 
 
 rng = MersenneTwister(seed);
-sys_err_params = rand(rng, MvNormal(zeros(PartonDensity.nsyst), zeros(PartonDensity.nsyst)))
+sys_err_params = rand(rng, MvNormal(zeros(nsyst), zeros(nsyst)))
 
 for s in eachindex(sub_samples)
 
@@ -185,7 +205,7 @@ for j in 1:nbins
             prob_ep_data[j] = pdf(Poisson(pred), counts_obs_ep_data[j])/pdf(Poisson(pred), best)
             chisqep_data+=(counts_obs_ep_data[j]-pred)^2/pred
             if ( (counts_obs_ep_data[j]-pred)^2/pred>4) 
-                get_bin_info(j) 
+#                get_bin_info(j) 
                 println(j," positron ",pred," ",counts_obs_ep_data[j]," ",(counts_obs_ep_data[j]-pred)^2/pred)
             end
             pred=counts_pred_em_data[j]
@@ -193,7 +213,7 @@ for j in 1:nbins
             prob_em_data[j] = pdf(Poisson(pred), counts_obs_em_data[j])/pdf(Poisson(pred), best)
             chisqem_data+=(counts_obs_em_data[j]-pred)^2/pred
             if ( (counts_obs_em_data[j]-pred)^2/pred>4) 
-                get_bin_info(j) 
+#                get_bin_info(j) 
                 println(j," electron ",pred," ",counts_obs_em_data[j]," ",(counts_obs_em_data[j]-pred)^2/pred)
             end 
 end

@@ -13,7 +13,27 @@ using Statistics
 using Measures
 using ArgParse
 import HDF5
-include("priors.jl")
+PDROOT=string(dirname(pathof(PartonDensity)),"/../utils/")
+include(string(PDROOT,"priors.jl"))
+include(string(dirname(pathof(PartonDensity)),"/../data/ZEUS_I1787035/ZEUS_I1787035.jl"))
+nsyst=8
+"""
+    get_bin_info(n, quiet)
+Get the bin egdes of the ZEUS 
+detector space for a given 
+bin number, `n`.
+"""
+function get_bin_info(n::Integer; quiet::Bool = false)
+
+    if n < 1 || n > 153
+        @error "Bin number n should be [1, 153]"
+    end
+    if !quiet
+        @info "ZEUS detector bin" n m_BinQ2low[n] m_BinQ2high[n] m_Binxlow[n] m_Binxhigh[n]
+    end
+    return ([m_BinQ2low[n], m_BinQ2high[n]], [m_Binxlow[n], m_Binxhigh[n]])
+end
+
 #using bla
 PWIDTH=1000
 function parse_commandline()
@@ -52,6 +72,7 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
+context = get_batcontext()
 c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
@@ -65,7 +86,7 @@ println(seed)
 seedtxt=string(seed)
 
 #Sim data!!!
-pdf_params, sim_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"))
+pdf_params, sim_data, meta_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
 
 #Fit results!!!
 samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
@@ -119,8 +140,7 @@ end
 
 
 Ns = 100000 # Number of samples from posterior
-rn = MersenneTwister(seed);
-sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
+sub_samples = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=Ns),context).result;
 
 forward_model_init(qcdnum_params, splint_params)
 
@@ -131,7 +151,7 @@ chisqem = zeros( length(sub_samples))
 
 
 rng = MersenneTwister(seed);
-sys_err_params = rand(rng, MvNormal(zeros(PartonDensity.nsyst), zeros(PartonDensity.nsyst)))
+sys_err_params = rand(rng, MvNormal(zeros(nsyst), zeros(nsyst)))
 
 for s in eachindex(sub_samples)
 
@@ -145,7 +165,7 @@ for s in eachindex(sub_samples)
     counts_ep_pred_s, counts_em_pred_s = forward_model(pdf_params_s,    
                                                               qcdnum_params, 
                                                               splint_params,
-                                                              quark_coeffs, 
+                                                              quark_coeffs, meta_data,
                                                               sys_err_params)
     
     for j in 1:nbins
@@ -255,8 +275,7 @@ plot!(prior_samples, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylab
 , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14   
     
 )
-plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, 
-foreground_color_legend=false,   lc=:red, markerstrokecolor=:red, legendfontsize=14)
+plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,   lc=:red, markerstrokecolor=:red, legendfontsize=14)
 
 ##############################################3
 comb_prior_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_u = v.θ[1]), prior_samples).result
@@ -428,7 +447,7 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid],  lw=3, c=:re
 )
 
 Ns = 100 # Number of samples from posterior
-sub_samples = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
+sub_samples = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=Ns),context).result;
 for s in eachindex(sub_samples)
 
     pdf_params_s = DirichletPDFParams(K_u=sub_samples.v.K_u[s], K_d=sub_samples.v.K_d[s], K_q=sub_samples.v.K_q[s],
@@ -701,8 +720,8 @@ plot!(legend=:left, foreground_color_legend=nothing, framestyle=:none,
     subplot=3, xlim=(1,2), ylim=(0, 900), legendfontsize=14, thickness_scaling=1,
     left_margin=-12mm, right_margin=3mm)
 annotate!(1.4, 980*0.9, text("\$Q^2\$ [GeV\$^2\$]", 14, font_family), subplot=3)
-annotate!(0.13, 600*0.9, text(L"$e^{-}$", 22, font_family), subplot=1)
-p = annotate!(0.13, 600*0.9, text(L"$e^{+}$", 22, font_family), subplot=2)
+annotate!(0.13, 600*0.9, text(L"$e^{-}p$", 22, font_family), subplot=1)
+p = annotate!(0.13, 600*0.9, text(L"$e^{+}p$", 22, font_family), subplot=2)
 p
 
 savefig( string("figures/fig7-",parsed_args["fitresults"],"_v2.pdf"))

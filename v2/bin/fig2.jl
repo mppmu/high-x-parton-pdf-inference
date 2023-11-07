@@ -1,4 +1,4 @@
-#!/usr/bin/julia
+
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
@@ -14,7 +14,27 @@ using Measures
 
 using ArgParse
 import HDF5
-include("priors.jl")
+#PDROOT=string(dirname(pathof(PartonDensity)),"/../utils/")
+include(string(dirname(pathof(PartonDensity)),"/../utils/","priors.jl"))
+include(string(dirname(pathof(PartonDensity)),"/../data/ZEUS_I1787035/ZEUS_I1787035.jl"))
+"""
+    get_bin_info(n, quiet)
+Get the bin egdes of the ZEUS 
+detector space for a given 
+bin number, `n`.
+"""
+function get_bin_info(n::Integer; quiet::Bool = false)
+
+    if n < 1 || n > 153
+        @error "Bin number n should be [1, 153]"
+    end
+    if !quiet
+        @info "ZEUS detector bin" n m_BinQ2low[n] m_BinQ2high[n] m_Binxlow[n] m_Binxhigh[n]
+    end
+    return ([m_BinQ2low[n], m_BinQ2high[n]], [m_Binxlow[n], m_Binxhigh[n]])
+end
+nsyst=8
+
 #using bla
 PWIDTH=1000
 
@@ -54,7 +74,7 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
-
+context = get_batcontext()
 #c2=colorant"#CCE5E5"
 #c1=colorant"#93A0AB"
 
@@ -77,7 +97,7 @@ println(seed)
 seedtxt=string(seed)
 
 #Sim data!!!
-pdf_params, sim_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"))
+pdf_params, sim_data,meta_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
 
 #Fit results!!!
 samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
@@ -135,8 +155,7 @@ for q2r in 1:n_q2_bins
 end
 
 Ns = 300000 # Number of samples from posterior
-rn = MersenneTwister(seed);
-sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
+sub_samples = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=Ns),context).result;
 
 forward_model_init(qcdnum_params, splint_params)
 
@@ -147,7 +166,7 @@ chisqem = zeros( length(sub_samples))
 
 
 rng = MersenneTwister(seed);
-sys_err_params = rand(rng, MvNormal(zeros(PartonDensity.nsyst), zeros(PartonDensity.nsyst)))
+sys_err_params = rand(rng, MvNormal(zeros(nsyst), zeros(nsyst)))
 
 
 
@@ -423,9 +442,9 @@ plot!(legend=false,label="xx",
 )
 #rectangle(w, h, x, y) = Shape(x .+ [0.0,w,w,0.0], y .+ [0.0,0.0,h,h])
 #plot!(rectangle(0.05,0.05,0.5,0.5),subplot=4)
-plot!(Shape([0.00,0.00,0.2,0.2],[0.0,0.2,0.2,0.0]),subplot=NNN-1,fillcolor=c3,alpha=alpha_posterior)
-plot!(Shape([0.00,0.00,0.2,0.2],[0.4,0.6,0.6,0.4]),subplot=2*NNN-1,fillcolor=c2,alpha=alpha_posterior)
-plot!(Shape([0.00,0.00,0.2,0.2],[1.0,0.8,0.8,1.0]),subplot=3*NNN-1,fillcolor=c1,alpha=alpha_posterior)
+plot!(Shape([0.00,0.00,0.2,0.2],[0.0,0.2,0.2,0.0]),subplot=NNN-1,fillcolor=c3,alpha=alpha_posterior+0.1)
+plot!(Shape([0.00,0.00,0.2,0.2],[0.4,0.6,0.6,0.4]),subplot=2*NNN-1,fillcolor=c2,alpha=alpha_posterior+0.1)
+plot!(Shape([0.00,0.00,0.2,0.2],[1.0,0.8,0.8,1.0]),subplot=3*NNN-1,fillcolor=c1,alpha=alpha_posterior+0.1)
 annotate!(p[NNN],0.0,0.10,text(L"~~\mathrm{Posterior}~99~\%",18))
 annotate!(p[2*NNN],0.0,0.50,text(L"~~\mathrm{Posterior}~95~\%",18))
 annotate!(p[3*NNN],0.0,0.90,text(L"~~\mathrm{Posterior}~68~\%",18))

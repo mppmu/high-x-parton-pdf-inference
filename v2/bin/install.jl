@@ -26,3 +26,4 @@ Pkg.add("HypothesisTests");
 Pkg.add("Statistics");
 Pkg.add("Measures");
 Pkg.add("ArgParse");
+Pkg.add("ArgCheck");
