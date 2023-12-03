@@ -1,9 +1,12 @@
 Bootstrap: docker
 From: fedora:39
 %post
-    dnf -y update
+    dnf -y update && dnf -y install dnf5
     dnf5 -y install julia python gcc-c++ gcc-gfortran && dnf5 -y clean all 
-&& julia  -e 'import Pkg;     \
+    export LC_ALL=C
+    export JULIA_PKGDIR=/opt/julia
+    export JULIA_DEPOT_PATH=/opt/julia    
+julia  -e 'import Pkg;     \
 Pkg.add("SpecialFunctions");                           \
 Pkg.add(url="https://github.com/bat/BAT.jl.git");      \
 Pkg.add(url="https://github.com/cescalara/PartonDensity.jl.git",rev="Dec");     \
@@ -43,7 +46,7 @@ Pkg.add("ArgParse");'
 %environment
     export LC_ALL=C
     export JULIA_PKGDIR=/opt/julia
-    export JULIA_DEPOT_PATH=/opt/julia    
+    export JULIA_DEPOT_PATH=/tmp    
 
 %runscript
     date
