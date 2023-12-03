@@ -12,27 +12,11 @@ using HypothesisTests
 using Statistics
 using Measures
 using ArgParse
+using Distributions
 import HDF5
-PDROOT=string(dirname(pathof(PartonDensity)),"/../utils/")
-include(string(PDROOT,"priors.jl"))
+include(string(dirname(pathof(PartonDensity)),"/../utils/priors.jl"))
 include(string(dirname(pathof(PartonDensity)),"/../data/ZEUS_I1787035/ZEUS_I1787035.jl"))
-"""
-    get_bin_info(n, quiet)
-Get the bin egdes of the ZEUS 
-detector space for a given 
-bin number, `n`.
-"""
-function get_bin_info(n::Integer; quiet::Bool = false)
 
-    if n < 1 || n > 153
-        @error "Bin number n should be [1, 153]"
-    end
-    if !quiet
-        @info "ZEUS detector bin" n m_BinQ2low[n] m_BinQ2high[n] m_Binxlow[n] m_Binxhigh[n]
-    end
-    return ([m_BinQ2low[n], m_BinQ2high[n]], [m_Binxlow[n], m_Binxhigh[n]])
-end
-nsyst=8
 #using bla
 PWIDTH=1000
 function parse_commandline()
@@ -71,14 +55,13 @@ function main()
         println("  $arg  =>  $val")
     end
 gr(fmt=:png);
-context = get_batcontext()
 c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
 
-c2=colorant"#CCE5E5"
-c1=colorant"#93A0AB"
+#c2=colorant"#CCE5E5"
+#c1=colorant"#93A0AB"
 color_scheme = :viridis
 font_family = "Computer Modern"
 default(fontfamily = "Computer Modern")
@@ -88,7 +71,7 @@ println(seed)
 seedtxt=string(seed)
 
 #Sim data!!!
-pdf_params, sim_data, meta_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
+pdf_params, sim_data, MD_TEMP=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
 
 #Fit results!!!
 samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
@@ -119,7 +102,10 @@ quark_coeffs = QuarkCoefficients()
 q2_edges_all = Any[]
 x_edges_all = Any[]
 for i in 1:nbins
-    (q2_edges, x_edges) = get_bin_info(i, quiet=true);
+    #(q2_edges, x_edges) = get_bin_info(i, quiet=true);
+    
+    #(q2_edges, x_edges) = ([BinQ2low[n], BinQ2high[n]], [Binxlow[n], Binxhigh[n]])
+    (q2_edges, x_edges) = ([MD_TEMP.m_q2bins_M_begin[i], MD_TEMP.m_q2bins_M_end[i]], [MD_TEMP.m_xbins_M_begin[i], MD_TEMP.m_xbins_M_end[i]])
     push!(q2_edges_all, q2_edges)
     push!(x_edges_all, x_edges)
 end
@@ -140,7 +126,7 @@ end
 
 Ns = 10000 # Number of samples from posterior
 rn = MersenneTwister(seed);
-sub_samples = BAT.bat_sample(rn, samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
+sub_samples = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=Ns)).result;
 
 forward_model_init(qcdnum_params, splint_params)
 
@@ -148,9 +134,11 @@ counts_em_sampled = zeros(UInt64, (length(sub_samples), nbins))
 counts_ep_sampled = zeros(UInt64, (length(sub_samples), nbins))
 chisqep = zeros( length(sub_samples))
 chisqem = zeros( length(sub_samples))
+chisq = zeros( length(sub_samples))
 
 
 rng = MersenneTwister(seed);
+nsyst=8
 sys_err_params = rand(rng, MvNormal(zeros(nsyst), zeros(nsyst)))
 
 for s in eachindex(sub_samples)
@@ -161,7 +149,7 @@ for s in eachindex(sub_samples)
                                       K_g=sub_samples.v.K_g[s], 
                                       λ_q=sub_samples.v.λ_q[s], 
                                       θ=Vector(sub_samples.v.θ[s]))
-    counts_ep_pred_s, counts_em_pred_s = forward_model(pdf_params_s,qcdnum_params, splint_params, quark_coeffs, sys_err_params)
+    counts_ep_pred_s, counts_em_pred_s = forward_model(pdf_params_s,qcdnum_params, splint_params, quark_coeffs,MD_TEMP, sys_err_params)
     for j in 1:nbins
         counts_ep_pred_s[j] *= 1 + 0.018 * sub_samples.v.Beta1[s]
         counts_em_pred_s[j] *= 1 + 0.018 * sub_samples.v.Beta2[s]
@@ -170,7 +158,7 @@ for s in eachindex(sub_samples)
         chisqep[s]+=(counts_ep_pred_s[j]-counts_ep_sampled[s, j])^2/counts_ep_pred_s[j]
         chisqem[s]+=(counts_em_pred_s[j]-counts_em_sampled[s, j])^2/counts_em_pred_s[j]
     end
-    
+    chisq[s]=chisqep[s]+chisqem[s];
 end
 
 #
@@ -186,7 +174,7 @@ println(pdf_params)
 sys_err_params =[
     mode_pars_data.beta0_1,mode_pars_data.beta0_2,mode_pars_data.beta0_3,mode_pars_data.beta0_4,
     mode_pars_data.beta0_5,mode_pars_data.beta0_6,mode_pars_data.beta0_7,mode_pars_data.beta0_8]
-    counts_pred_ep_data, counts_pred_em_data = forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs, sys_err_params)
+    counts_pred_ep_data, counts_pred_em_data = forward_model(pdf_params, qcdnum_params, splint_params, quark_coeffs,MD_TEMP, sys_err_params)
 
 for i in 1:nbins     
     counts_pred_ep_data[i] =counts_pred_ep_data[i]*(1+0.018*mode_pars_data.Beta1)
@@ -205,7 +193,7 @@ for j in 1:nbins
             prob_ep_data[j] = pdf(Poisson(pred), counts_obs_ep_data[j])/pdf(Poisson(pred), best)
             chisqep_data+=(counts_obs_ep_data[j]-pred)^2/pred
             if ( (counts_obs_ep_data[j]-pred)^2/pred>4) 
-#                get_bin_info(j) 
+                #get_bin_info(j) 
                 println(j," positron ",pred," ",counts_obs_ep_data[j]," ",(counts_obs_ep_data[j]-pred)^2/pred)
             end
             pred=counts_pred_em_data[j]
@@ -213,7 +201,7 @@ for j in 1:nbins
             prob_em_data[j] = pdf(Poisson(pred), counts_obs_em_data[j])/pdf(Poisson(pred), best)
             chisqem_data+=(counts_obs_em_data[j]-pred)^2/pred
             if ( (counts_obs_em_data[j]-pred)^2/pred>4) 
-#                get_bin_info(j) 
+                #get_bin_info(j) 
                 println(j," electron ",pred," ",counts_obs_em_data[j]," ",(counts_obs_em_data[j]-pred)^2/pred)
             end 
 end
@@ -254,7 +242,45 @@ annotate!(p1,220.0,350,text(L"$e^{+}p$",26))
 annotate!(p2,220.0,350,text(L"$e^{-}p$",26))
 #plot(p1,p2,layout=(2,1))
 
-plot(p1,p2,layout=(2,1),size=(PWIDTH/2,PWIDTH/2),
+
+#chisq = [chisqem; chisqep]
+
+
+#xx=histogram(2*length(sub_samples)*Chisq(2*nbins-10),bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1, linecolor=c1, grid=false)
+
+p3=histogram(chisq,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1, linecolor=c1, grid=false, label = L"\chi^2_P data" )
+p3=plot!(fontfamily=font_family, 
+  label = L"\chi^2(ndof)",
+  legend=:topright, 
+  foreground_color_legend=:transparent, 
+  background_color_legend=:transparent,
+ xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+        ,ylims=(0, 450), xlims=(2*65,2*265)
+        ,color=:red, grid=false,left_margin=14mm,bottom_margin=5.5mm
+)
+
+#annotate!(p3,2*220.0,350,text(L"$e^{\pm}p$",26))
+
+
+
+
+
+c1 = :midnightblue
+c2 = :teal
+c3 = :grey
+c4 = :grey
+c5 = :grey
+#:K_u, :K_d, :λ_g1, :λ_g2, :K_g, :λ_q, :K_q,
+FITPARAMS=10
+#plot(p1,p2,layout=(2,1),size=(PWIDTH/2,PWIDTH/2),
+#plot(p3,2*length(sub_samples)*Chisq(2*nbins-10), size=(PWIDTH/2,PWIDTH/2),
+
+CC(x) = 2*length(sub_samples)*pdf(Chisq(2*nbins-FITPARAMS),x)
+p3=plot!(CC, label = L"\chi^2(ndof)",lw=2,linecolor=:red)
+
+println(length(sub_samples))
+println(2*nbins-10)
+plot(p3, size=(PWIDTH/2,PWIDTH/2),
     #top_margin=-3mm,
     bottom_margin=-3mm,
     #right_margin=-4mm,
