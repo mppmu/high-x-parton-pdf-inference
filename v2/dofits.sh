@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 mkdir -p CABCHSV fitresults pseudodata
-
+module load singularity
 export LC_ALL=C
 export JULIA_PKGDIR=$(pwd)/J
 export JULIA_DEPOT_PATH=$(pwd)/J

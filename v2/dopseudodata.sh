@@ -1,5 +1,6 @@
 #!/bin/bash
 set -x
+module load singularity
 mkdir -p CABCHSV fitresults pseudodata
 
 export LC_ALL=C
