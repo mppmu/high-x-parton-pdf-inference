@@ -24,4 +24,4 @@ module load apptainer
 set -x
 mkdir -p CABCHSV fitresults pseudodata
 
-srun  singularity exec -B $(pwd):$(pwd) MPP-julia-fedora39-x86_64-v1.sif $JULIA  "$@"
+srun  singularity exec -B $(pwd):$(pwd) --env JULIA_DEPOT_PATH=$(pwd):/opt/julia docker://ghcr.io/andriish/high-x-parton-pdf-inference:latest $JULIA  "$@"
