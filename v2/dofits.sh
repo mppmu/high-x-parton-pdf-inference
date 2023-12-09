@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-mkdir -p CABCHSV fitresults pseudodata
+mkdir -p CABCHSV fitresults pseudodata fitlogs
 module load singularity
 export LC_ALL=C
 export JULIA_PKGDIR=$(pwd)/J
