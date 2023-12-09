@@ -1,7 +1,7 @@
 #!/bin/bash -l
 # Standard output and error:
-#SBATCH -o ./job.out.%j
-#SBATCH -e ./job.err.%j
+#SBATCH -o ./fitlogs/job.out.%j
+#SBATCH -e ./fitlogs/job.err.%j
 # Initial working directory:
 #SBATCH -D ./
 # Job Name:
@@ -15,7 +15,7 @@
 #SBATCH --mail-user=userid@example.mpg.de
 #
 # Wall clock limit (max. is 24 hours):
-#SBATCH --time=12:00:00
+#SBATCH --time=24:00:00
 #SBATCH --mem=8000MB
 
 module purge
