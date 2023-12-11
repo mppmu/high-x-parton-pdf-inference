@@ -20,6 +20,8 @@
 
 module purge
 module load apptainer
+export SINGULARITY_TMPDIR=$(pwd)/tmp
+export SINGULARITY_CACHEDIR=$(pwd)/tmp
 
 set -x
 mkdir -p CABCHSV fitresults pseudodata
