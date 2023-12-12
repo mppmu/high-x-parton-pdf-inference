@@ -15,6 +15,7 @@
 #SBATCH --mail-user=userid@example.mpg.de
 #
 # Wall clock limit (max. is 24 hours):
+#SBATCH -p standard
 #SBATCH --time=24:00:00
 #SBATCH --mem=8000MB
 
