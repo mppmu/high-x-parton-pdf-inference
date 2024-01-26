@@ -36,6 +36,8 @@ mkdir -p figures
        $JULIA bin/fig34.jl -w u -s 47 -p  Dirichlet -d simulation-Dirichlet-44 -f fit-Dirichlet-1-45-simulation-Dirichlet-44 --priorshift=1 &
        $JULIA bin/fig34.jl -w d -s 47 -p  Dirichlet -d simulation-Dirichlet-44 -f fit-Dirichlet-1-45-simulation-Dirichlet-44 --priorshift=1  &
 
+       $JULIA bin/fig34.jl -w u -s 47 -p  Dirichlet -d simulation-Dirichlet-44 -f fit-Dirichlet-2-45-simulation-Dirichlet-44 --priorshift=2 &
+       $JULIA bin/fig34.jl -w d -s 47 -p  Dirichlet -d simulation-Dirichlet-44 -f fit-Dirichlet-2-45-simulation-Dirichlet-44 --priorshift=2  &
 
 
        $JULIA bin/fig34.jl -w u -s 47 -p  Dirichlet -d simulation-Dirichlet-42001 -f fit-Dirichlet-0-45-simulation-Dirichlet-42001  &
