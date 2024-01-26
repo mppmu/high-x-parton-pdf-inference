@@ -28,12 +28,12 @@ jobs:
     - name: Build the high-x-parton-pdf-inference Docker image on the change of Dockerfile
       if: steps.changed-docker-files.outputs.any_changed == 'true' 
       run: |
-         docker build . --tag ghcr.io/andriish/high-x-parton-pdf-inference:latest
-         docker run ghcr.io/andriish/high-x-parton-pdf-inference:latest
-         docker push ghcr.io/andriish/high-x-parton-pdf-inference
+         docker build . --tag ghcr.io/mppmu/high-x-parton-pdf-inference:latest
+         docker run ghcr.io/mppmu/high-x-parton-pdf-inference:latest
+         docker push ghcr.io/mppmu/high-x-parton-pdf-inference
     - name: Build the high-x-parton-pdf-inference Docker image on schedule
       if: ${{ github.event_name == 'schedule' }}
       run: |
-         docker build . --tag ghcr.io/andriish/high-x-parton-pdf-inference:latest
-         docker run ghcr.io/andriish/high-x-parton-pdf-inference:latest
-         docker push ghcr.io/andriish/high-x-parton-pdf-inference
+         docker build . --tag ghcr.io/mppmu/high-x-parton-pdf-inference:latest
+         docker run ghcr.io/mppmu/high-x-parton-pdf-inference:latest
+         docker push ghcr.io/mppmu/high-x-parton-pdf-inference
