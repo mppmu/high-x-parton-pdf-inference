@@ -27,4 +27,4 @@ export SINGULARITY_CACHEDIR=$(pwd)/tmp
 set -x
 mkdir -p CABCHSV fitresults pseudodata
 
-srun  singularity exec -B $(pwd):$(pwd) --env JULIA_DEPOT_PATH=$(pwd)/J:/opt/julia docker://ghcr.io/andriish/high-x-parton-pdf-inference:latest $JULIA  "$@"
+srun  singularity exec -B $(pwd):$(pwd) --env JULIA_DEPOT_PATH=$(pwd)/J:/opt/julia docker://ghcr.io/mppmu/high-x-parton-pdf-inference:latest $JULIA  "$@"
