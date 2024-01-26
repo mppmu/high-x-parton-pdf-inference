@@ -301,8 +301,8 @@ plot!(legend=:left, foreground_color_legend=nothing, framestyle=:none,
     subplot=3, xlim=(1,2), ylim=(0, 900), legendfontsize=14, thickness_scaling=1,
     left_margin=-12mm, right_margin=3mm)
 annotate!(1.4, 980*0.9, text("\$Q^2\$ [GeV\$^2\$]", 14, font_family), subplot=3)
-annotate!(0.13, 600*0.9, text(L"$e^{-}$", 22, font_family), subplot=1)
-p = annotate!(0.13, 600*0.9, text(L"$e^{+}$", 22, font_family), subplot=2)
+annotate!(0.14, 600*0.9, text(L"$e^{-}$", 22, font_family), subplot=1)
+p = annotate!(0.14, 600*0.9, text(L"$e^{+}$", 22, font_family), subplot=2)
 p
 
 savefig( string("figures/fig7-",parsed_args["fitresults"],"_v2.pdf"))

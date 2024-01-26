@@ -239,7 +239,7 @@ plot!(samples_data, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylabe
     seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
     alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     ,ylims=(0,0.32),yticks=(0:0.1:0.3,["0","0.1","0.2","0.3"])
     ,xlims=(0.1,0.42),xticks=(0.1:0.1:0.4,["0.1","0.2","0.3","0.4"])
     , right_margin=2mm
@@ -251,7 +251,7 @@ plot!(prior_samples, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylab
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14   
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14   
     
 )
 plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, 
@@ -265,7 +265,7 @@ plot!(comb_samples, (:(Δ_u), :(Δ_g)),subplot=2,xlabel=L"\Delta_{u}", ylabel=L"
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     ,ylims=(0.25,0.72),yticks=(0.3:0.1:0.72,["0.3","0.4","0.5","0.6","0.7"])
         ,xlims=(0.1,0.42),xticks=(0.1:0.1:0.4,["0.1","0.2","0.3","0.4"])
         , right_margin=2mm
@@ -278,7 +278,7 @@ plot!(comb_prior_samples, (:(Δ_u), :(Δ_g)), subplot=2,xlabel=L"\Delta_{u}", yl
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 )
 θ_g_true=θ_true[3]+θ_true[4]
 plot!([θ_true[1]],[θ_g_true], subplot=2,color="red",seriestype=:scatter, label=:none, lw=1, markerstrokecolor=:red)
@@ -293,7 +293,7 @@ plot!(comb_samples, (:(Δ_u), :(Δ_sea)),subplot=3,xlabel=L"\Delta_{u}", ylabel=
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     ,ylims=(0,0.32),yticks=(0:0.1:0.3,["0","0.1","0.2","0.3"])
         ,xlims=(0.1,0.42),xticks=(0.1:0.1:0.4,["0.1","0.2","0.3","0.4"]) 
         , right_margin=-2mm
@@ -305,7 +305,7 @@ plot!(comb_prior_samples, (:(Δ_u), :(Δ_sea)), subplot=3,xlabel=L"\Delta_{u}", 
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 )
 θ_sea_true=sum(θ_true[5:9])
 plot!([θ_true[1]],[θ_sea_true], subplot=3,color="red",seriestype=:scatter, label=:none, lw=2, markerstrokecolor=:red)
@@ -320,7 +320,7 @@ plot!(comb_samples, (:(Δ_g), :(Δ_sea)),subplot=4, xlabel=L"\Delta_{g}", ylabel
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
      ,ylims=(0,0.32),yticks=(0:0.1:0.3,["0","0.1","0.2","0.3"])
     ,xlims=(0.25,0.72),xticks=(0.3:0.1:0.72,["0.3","0.4","0.5","0.6","0.7"])
     , right_margin=2mm
@@ -333,7 +333,7 @@ plot!(comb_prior_samples, (:(Δ_g), :(Δ_sea)),subplot=4,xlabel=L"\Delta_{g}", y
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 )
 Δ_sea_true = sum(θ_true[5:9])
 Δ_g_true = sum(θ_true[3:4])
@@ -420,7 +420,7 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid],  lw=3, c=:re
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
     
@@ -455,7 +455,7 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_
     , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=-1mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"])
 )
@@ -472,7 +472,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid],   lw=3, c=:r
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -492,6 +492,7 @@ for s in eachindex(sub_samples)
 
     plot!(x_grid, [x_dv_x(x, λ_d, pdf_params_s.K_d) for x in x_grid],ylims=(0.00001, 65.0),yscale=:log10,lw=0.5
     ,alpha=alpha_xf
+        ,color=:gray
     ,label=:none, subplot=2)
 
 end
@@ -506,7 +507,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -524,7 +525,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -556,7 +557,7 @@ end
     , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -574,7 +575,7 @@ end
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -610,7 +611,7 @@ end
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )

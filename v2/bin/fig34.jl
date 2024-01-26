@@ -112,7 +112,7 @@ c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
-prior_alpha = 0.4;
+prior_alpha = 0.2;
 colors = [c3, c1]
 prior_colors = [:grey40, :grey50]
 
@@ -316,7 +316,7 @@ plot!(SP, (:(A), :(B)),
     , fillcolors=reverse(prior_colors)
     , linewidth=0
     , alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     , right_margin=2mm
     , left_margin=6mm
     , top_margin=0mm
@@ -333,7 +333,7 @@ plot!(SD, (:(A), :(B)),
     , alpha=prior_alpha
     , xlims=xlims_3
     , ylims=ylims_3
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     , right_margin=2mm
     , left_margin=6mm
     , top_margin=0mm
@@ -342,7 +342,9 @@ plot!(SD, (:(A), :(B)),
 )
 p=plot!([A_true],[B_true],
     seriestype = :scatter, subplot = 1, color = "red"
-    ,legend = :none,lw=0, 
+    ,legend = :none,lw=1
+    ,markershape=:cross, markerstrokewidth=3 
+    ,markersize=60
     )
 
 
@@ -354,7 +356,7 @@ p=plot!([A_true],[B_true],
 #    , fillcolors=reverse(prior_colors)
 #    , colors=prior_colors
 #    , alpha=prior_alpha
-#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 #    , right_margin=-2mm
 #    , left_margin=6mm
 #    , top_margin=0mm
@@ -368,7 +370,7 @@ p=plot!([A_true],[B_true],
 #    , seriestype=:smallest_intervals 
 #    , marginalmode=false, intervals=intervals, colors=colors
 #    , alpha=prior_alpha
-#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 #    , right_margin=-2mm
 #    , left_margin=6mm
 #    , top_margin=0mm
@@ -386,7 +388,7 @@ p=plot!([A_true],[B_true],
 #    , colors=prior_colors
 #    , orientation=:horizontal
 #    , alpha=prior_alpha
-#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 #    , right_margin=1mm
 #    , left_margin=5mm
 #    , top_margin=0mm
@@ -401,7 +403,7 @@ p=plot!([A_true],[B_true],
 #    , seriestype=:smallest_intervals, intervals=intervals, marginalmode=false 
 #    , colors=colors,  orientation=:horizontal
 #    , alpha=prior_alpha
-#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 #    , xticks=xticks_4
 #    , yticks=yticks_4
 #    , right_margin=1mm
@@ -433,7 +435,7 @@ plot!(SP, (:(A), :(B)),
     , fillcolors=reverse(prior_colors)
     , colors=reverse(prior_colors), linewidth=0
     , alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     , right_margin=2mm
     , left_margin=5mm
     , top_margin=0mm
@@ -462,7 +464,10 @@ plot!(SD, (:(A), :(B)),
 )
 p=plot!([-100],[-100],
     seriestype = :scatter, subplot = 1, color = "red"
-    ,label = " Truth", legendfontsize=12, lc=:red
+    ,label = :none
+    ,legendfontsize=12, lc=:red, lw=1
+    ,markershape=:cross, markerstrokewidth=3 
+    ,markersize=60
     )
 end
 p

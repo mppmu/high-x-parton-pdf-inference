@@ -227,14 +227,14 @@ println(" p-value for ep fit: ",pvep," p-value for em fit: ",pvem," p-value for 
 
 p1=histogram(chisqep,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1, linecolor=c1, grid=false)
 p1=plot!([chisqep_data],seriestype = :vline,lw=5,legend=:none, fontfamily=font_family 
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16,legendfontsize=14
         ,ylims=(0, 500), xlims=(65,260)
         ,color=:red, grid=false,left_margin=14mm,bottom_margin=5.5mm
 )
 p2=histogram(chisqem,bins=50:2:250,legend=:false,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1, linecolor=c1, grid=false)
 
 p2=plot!([chisqem_data],seriestype = :vline,lw=5
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16,legendfontsize=14
     ,ylims=(0, 500), xlims=(65,260)
 ,color=:red, grid=false,left_margin=14mm,bottom_margin=5.5mm
 )
@@ -248,18 +248,22 @@ annotate!(p2,220.0,350,text(L"$e^{-}p$",26))
 
 #xx=histogram(2*length(sub_samples)*Chisq(2*nbins-10),bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1, linecolor=c1, grid=false)
 
-p3=histogram(chisq,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1, linecolor=c1, grid=false, label = L"\chi^2_P data" )
+p3=histogram(chisq,bins=100,xlabel=L"\chi^2_P", ylabel="Entries", fontfamily=font_family,color=c1, linecolor=c1, grid=false, label = L"\chi^2_P data"
+,alpha=0.2
+ )
 p3=plot!(fontfamily=font_family, 
   label = L"\chi^2(ndof)",
   legend=:topright, 
   foreground_color_legend=:transparent, 
   background_color_legend=:transparent,
- xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-        ,ylims=(0, 450), xlims=(2*65,2*265)
+ xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16,legendfontsize=14
+        ,ylims=(0, 400), xlims=(2*65,2*265)
         ,color=:red, grid=false,left_margin=14mm,bottom_margin=5.5mm
+,alpha=0.2
 )
 
 #annotate!(p3,2*220.0,350,text(L"$e^{\pm}p$",26))
+
 
 
 
@@ -274,15 +278,16 @@ c5 = :grey
 FITPARAMS=10
 #plot(p1,p2,layout=(2,1),size=(PWIDTH/2,PWIDTH/2),
 #plot(p3,2*length(sub_samples)*Chisq(2*nbins-10), size=(PWIDTH/2,PWIDTH/2),
-
-CC(x) = 2*length(sub_samples)*pdf(Chisq(2*nbins-FITPARAMS),x)
+XXX=2*nbins-FITPARAMS
+XXX=306
+CC(x) = 2*length(sub_samples)*pdf(Chisq(XXX),x)
 p3=plot!(CC, label = L"\chi^2(ndof)",lw=2,linecolor=:red)
 
 println(length(sub_samples))
 println(2*nbins-10)
 plot(p3, size=(PWIDTH/2,PWIDTH/2),
     #top_margin=-3mm,
-    bottom_margin=-3mm,
+    bottom_margin=5mm,
     #right_margin=-4mm,
     left_margin=5mm
 )

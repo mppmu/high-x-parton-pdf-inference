@@ -16,7 +16,7 @@ echo $SCRIPTPATH
 
 JULIA="sbatch $(pwd)/doslurm.sh julia --compiled-modules=no "
 
-SCRIPTPATH=/raven/$SCRIPTPATH
+#SCRIPTPATH=/raven/$SCRIPTPATH
 
  $JULIA $SCRIPTPATH/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42001 -n 200000 -c 4
  $JULIA $SCRIPTPATH/PDFfit.jl -s 45 -p  Dirichlet -d simulation-Dirichlet-42005 -n 200000 -c 4

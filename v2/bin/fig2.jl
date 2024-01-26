@@ -334,7 +334,7 @@ for i in 1:NNN
 plot!(p[0+i],ylims=(0.0,10.5))
 plot!(p[1*NNN+i],ylims=(1.5,6.5))
 plot!(p[2*NNN+i],ylims=(1.0,9.0))
-plot!(p[3*NNN+i],ylims=(1.0,9.0))
+plot!(p[3*NNN+i],ylims=(1.0,8.5))
 plot!(p[4*NNN+i],ylims=(0.33,0.65))
 plot!(p[5*NNN+i],ylims=(0.05,0.35))
 end
