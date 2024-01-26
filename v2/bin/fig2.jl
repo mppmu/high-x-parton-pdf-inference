@@ -1,4 +1,4 @@
-
+#!/usr/bin/julia
 using BAT, DensityInterface
 using PartonDensity
 using QCDNUM
@@ -14,29 +14,11 @@ using Measures
 
 using ArgParse
 import HDF5
-#PDROOT=string(dirname(pathof(PartonDensity)),"/../utils/")
-include(string(dirname(pathof(PartonDensity)),"/../utils/","priors.jl"))
-include(string(dirname(pathof(PartonDensity)),"/../data/ZEUS_I1787035/ZEUS_I1787035.jl"))
-"""
-    get_bin_info(n, quiet)
-Get the bin egdes of the ZEUS 
-detector space for a given 
-bin number, `n`.
-"""
-function get_bin_info(n::Integer; quiet::Bool = false)
-
-    if n < 1 || n > 153
-        @error "Bin number n should be [1, 153]"
-    end
-    if !quiet
-        @info "ZEUS detector bin" n m_BinQ2low[n] m_BinQ2high[n] m_Binxlow[n] m_Binxhigh[n]
-    end
-    return ([m_BinQ2low[n], m_BinQ2high[n]], [m_Binxlow[n], m_Binxhigh[n]])
-end
-nsyst=8
-
 #using bla
 PWIDTH=1000
+include(string(dirname(pathof(PartonDensity)),"/../utils/priors.jl"))
+include(string(dirname(pathof(PartonDensity)),"/../data/ZEUS_I1787035/ZEUS_I1787035.jl"))
+nsyst=8
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -97,7 +79,7 @@ println(seed)
 seedtxt=string(seed)
 
 #Sim data!!!
-pdf_params, sim_data,meta_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
+pdf_params, sim_data, MD_TEMP=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
 
 #Fit results!!!
 samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
@@ -135,7 +117,10 @@ quark_coeffs = QuarkCoefficients()
 q2_edges_all = Any[]
 x_edges_all = Any[]
 for i in 1:nbins
-    (q2_edges, x_edges) = get_bin_info(i, quiet=true);
+    #(q2_edges, x_edges) = get_bin_info(i, quiet=true);
+    
+    #(q2_edges, x_edges) = ([BinQ2low[n], BinQ2high[n]], [Binxlow[n], Binxhigh[n]])
+    (q2_edges, x_edges) = ([MD_TEMP.m_q2bins_M_begin[i], MD_TEMP.m_q2bins_M_end[i]], [MD_TEMP.m_xbins_M_begin[i], MD_TEMP.m_xbins_M_end[i]])
     push!(q2_edges_all, q2_edges)
     push!(x_edges_all, x_edges)
 end
@@ -349,7 +334,7 @@ for i in 1:NNN
 plot!(p[0+i],ylims=(0.0,10.5))
 plot!(p[1*NNN+i],ylims=(1.5,6.5))
 plot!(p[2*NNN+i],ylims=(1.0,9.0))
-plot!(p[3*NNN+i],ylims=(1.0,9.0))
+plot!(p[3*NNN+i],ylims=(1.0,8.5))
 plot!(p[4*NNN+i],ylims=(0.33,0.65))
 plot!(p[5*NNN+i],ylims=(0.05,0.35))
 end

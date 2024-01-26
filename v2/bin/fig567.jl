@@ -13,26 +13,8 @@ using Statistics
 using Measures
 using ArgParse
 import HDF5
-PDROOT=string(dirname(pathof(PartonDensity)),"/../utils/")
-include(string(PDROOT,"priors.jl"))
+include(string(dirname(pathof(PartonDensity)),"/../utils/priors.jl"))
 include(string(dirname(pathof(PartonDensity)),"/../data/ZEUS_I1787035/ZEUS_I1787035.jl"))
-nsyst=8
-"""
-    get_bin_info(n, quiet)
-Get the bin egdes of the ZEUS 
-detector space for a given 
-bin number, `n`.
-"""
-function get_bin_info(n::Integer; quiet::Bool = false)
-
-    if n < 1 || n > 153
-        @error "Bin number n should be [1, 153]"
-    end
-    if !quiet
-        @info "ZEUS detector bin" n m_BinQ2low[n] m_BinQ2high[n] m_Binxlow[n] m_Binxhigh[n]
-    end
-    return ([m_BinQ2low[n], m_BinQ2high[n]], [m_Binxlow[n], m_Binxhigh[n]])
-end
 
 #using bla
 PWIDTH=1000
@@ -86,7 +68,7 @@ println(seed)
 seedtxt=string(seed)
 
 #Sim data!!!
-pdf_params, sim_data, meta_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
+pdf_params, sim_data, MD_TEMP=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
 
 #Fit results!!!
 samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
@@ -116,8 +98,16 @@ quark_coeffs = QuarkCoefficients()
 
 q2_edges_all = Any[]
 x_edges_all = Any[]
+
+m_BinQ2low = [650,   650,   650,   650,   650,   650,   650,   650,   800,   800,   800,   800,   800,   800,   800,   800,   800,   950,   950,   950,   950,   950,   950,   950,   950,   950,   1100,   1100,   1100,   1100,   1100,   1100,   1100,   1100,   1100,   1300,   1300,   1300,   1300,   1300,   1300,   1300,   1300,   1300,   1500,   1500,   1500,   1500,   1500,   1500,   1500,   1500,   1500,   1500,   1800,   1800,   1800,   1800,   1800,   1800,   1800,   1800,   1800,   1800,   2100,   2100,   2100,   2100,   2100,   2100,   2100,   2100,   2100,   2100,   2100,   2400,   2400,   2400,   2400,   2400,   2400,   2400,   2400,   2400,   2400,   2800,   2800,   2800,   2800,   2800,   2800,   2800,   2800,   2800,   2800,   3200,   3200,   3200,   3200,   3200,   3200,   3200,   3200,   3200,   3200,   3800,   3800,   3800,   3800,   3800,   3800,   3800,   3800,   3800,   3800,   3800,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   11000,   11000]
+m_BinQ2high = [800,   800,   800,   800,   800,   800,   800,   800,   950,   950,   950,   950,   950,   950,   950,   950,   950,   1100,   1100,   1100,   1100,   1100,   1100,   1100,   1100,   1100,   1300,   1300,   1300,   1300,   1300,   1300,   1300,   1300,   1300,   1500,   1500,   1500,   1500,   1500,   1500,   1500,   1500,   1500,   1800,   1800,   1800,   1800,   1800,   1800,   1800,   1800,   1800,   1800,   2100,   2100,   2100,   2100,   2100,   2100,   2100,   2100,   2100,   2100,   2400,   2400,   2400,   2400,   2400,   2400,   2400,   2400,   2400,   2400,   2400,   2800,   2800,   2800,   2800,   2800,   2800,   2800,   2800,   2800,   2800,   3200,   3200,   3200,   3200,   3200,   3200,   3200,   3200,   3200,   3200,   3800,   3800,   3800,   3800,   3800,   3800,   3800,   3800,   3800,   3800,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   4500,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   8000,   11000,   11000,   11000,   11000,   11000,   11000,   11000,   11000,   11000,   11000,   11000,   20000,   20000 ]
+m_Binxlow=[0.054,   0.07,   0.088,   0.11,   0.14,   0.17,   0.21,   0.26,   0.044,   0.059,   0.076,   0.096,   0.12,   0.15,   0.19,   0.23,   0.28,   0.044,   0.059,   0.076,   0.096,   0.12,   0.15,   0.18,   0.22,   0.32,   0.048,   0.063,   0.08,   0.1,   0.13,   0.16,   0.2,   0.24,   0.34,   0.054,   0.07,   0.088,   0.11,   0.14,   0.17,   0.21,   0.25,   0.36,   0.044,   0.059,   0.076,   0.096,   0.12,   0.15,   0.19,   0.23,   0.28,   0.39,   0.054,   0.07,   0.088,   0.11,   0.14,   0.17,   0.21,   0.26,   0.31,   0.43,   0.048,   0.063,   0.08,   0.1,   0.13,   0.16,   0.2,   0.24,   0.29,   0.34,   0.46,   0.076,   0.096,   0.12,   0.15,   0.18,   0.22,   0.27,   0.32,   0.38,   0.5,   0.088,   0.11,   0.14,   0.17,   0.21,   0.25,   0.3,   0.36,   0.42,   0.54,   0.1,   0.13,   0.16,   0.2,   0.24,   0.29,   0.34,   0.4,   0.46,   0.58,   0.096,   0.12,   0.15,   0.19,   0.23,   0.28,   0.33,   0.39,   0.45,   0.51,   0.63,   0.096,   0.12,   0.15,   0.18,   0.22,   0.27,   0.32,   0.38,   0.44,   0.5,   0.56,   0.69,   0.1,   0.13,   0.16,   0.2,   0.24,   0.29,   0.35,   0.41,   0.47,   0.53,   0.59,   0.73,   0.15,   0.19,   0.23,   0.28,   0.33,   0.39,   0.45,   0.51,   0.57,   0.64,   0.78,   0.256,   0.6]
+m_Binxhigh=[0.07,   0.088,   0.11,   0.14,   0.17,   0.21,   0.26,   1,   0.059,   0.076,   0.096,   0.12,   0.15,   0.19,   0.23,   0.28,   1,   0.059,   0.076,   0.096,   0.12,   0.15,   0.18,   0.22,   0.32,   1,   0.063,   0.08,   0.1,   0.13,   0.16,   0.2,   0.24,   0.34,   1,   0.07,   0.088,   0.11,   0.14,   0.17,   0.21,   0.25,   0.36,   1,   0.059,   0.076,   0.096,   0.12,   0.15,   0.19,   0.23,   0.28,   0.39,   1,   0.07,   0.088,   0.11,   0.14,   0.17,   0.21,   0.26,   0.31,   0.43,   1,   0.063,   0.08,   0.1,   0.13,   0.16,   0.2,   0.24,   0.29,   0.34,   0.46,   1,   0.096,   0.12,   0.15,   0.18,   0.22,   0.27,   0.32,   0.38,   0.5,   1,   0.11,   0.14,   0.17,   0.21,   0.25,   0.3,   0.36,   0.42,   0.54,   1,   0.13,   0.16,   0.2,   0.24,   0.29,   0.34,   0.4,   0.46,   0.58,   1,   0.12,   0.15,   0.19,   0.23,   0.28,   0.33,   0.39,   0.45,   0.51,   0.63,   1,   0.12,   0.15,   0.18,   0.22,   0.27,   0.32,   0.38,   0.44,   0.5,   0.56,   0.69,   1,   0.13,   0.16,   0.2,   0.24,   0.29,   0.35,   0.41,   0.47,   0.53,   0.59,   0.73,   1,   0.19,   0.23,   0.28,   0.33,   0.39,   0.45,   0.51,   0.57,   0.64,   0.78,   1,   0.6,   1]
+
+
 for i in 1:nbins
-    (q2_edges, x_edges) = get_bin_info(i, quiet=true);
+    #(q2_edges, x_edges) = ([MD_TEMP.m_q2bins_M_begin[i], MD_TEMP.m_q2bins_M_end[i]], [MD_TEMP.m_xbins_M_begin[i], MD_TEMP.m_xbins_M_end[i]])
+    (q2_edges, x_edges) = ([m_BinQ2low[i], m_BinQ2high[i]], [m_Binxlow[i], m_Binxhigh[i]])
     push!(q2_edges_all, q2_edges)
     push!(x_edges_all, x_edges)
 end
@@ -139,7 +129,7 @@ end
 
 
 
-Ns = 100000 # Number of samples from posterior
+Ns = 1000 # Number of samples from posterior
 sub_samples = BAT.bat_sample(samples_data, BAT.OrderedResampling(nsamples=Ns),context).result;
 
 forward_model_init(qcdnum_params, splint_params)
@@ -151,7 +141,8 @@ chisqem = zeros( length(sub_samples))
 
 
 rng = MersenneTwister(seed);
-sys_err_params = rand(rng, MvNormal(zeros(nsyst), zeros(nsyst)))
+nsyst=8
+sys_err_params = rand(MvNormal(zeros(nsyst), zeros(nsyst)))
 
 for s in eachindex(sub_samples)
 
@@ -162,11 +153,7 @@ for s in eachindex(sub_samples)
                                       λ_q=sub_samples.v.λ_q[s], 
                                       θ=Vector(sub_samples.v.θ[s]))
         
-    counts_ep_pred_s, counts_em_pred_s = forward_model(pdf_params_s,    
-                                                              qcdnum_params, 
-                                                              splint_params,
-                                                              quark_coeffs, meta_data,
-                                                              sys_err_params)
+    counts_ep_pred_s, counts_em_pred_s = forward_model(pdf_params_s,    qcdnum_params, splint_params,quark_coeffs, MD_TEMP, sys_err_params)
     
     for j in 1:nbins
         
@@ -260,7 +247,7 @@ plot!(samples_data, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylabe
     seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
     alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     ,ylims=(0,0.32),yticks=(0:0.1:0.3,["0","0.1","0.2","0.3"])
     ,xlims=(0.1,0.42),xticks=(0.1:0.1:0.4,["0.1","0.2","0.3","0.4"])
     , right_margin=2mm
@@ -272,10 +259,15 @@ plot!(prior_samples, (:(θ[1]), :(θ[2])), subplot=1, xlabel=L"\Delta_{u}", ylab
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14   
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14   
     
 )
-plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,   lc=:red, markerstrokecolor=:red, legendfontsize=14)
+plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, 
+,legend=:false
+foreground_color_legend=false,   lc=:red, markerstrokecolor=:red, legendfontsize=14
+
+
+)
 
 ##############################################3
 comb_prior_samples = bat_transform(v -> (Δ_g = v.θ[3] + v.θ[4], Δ_u = v.θ[1]), prior_samples).result
@@ -285,7 +277,7 @@ plot!(comb_samples, (:(Δ_u), :(Δ_g)),subplot=2,xlabel=L"\Delta_{u}", ylabel=L"
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     ,ylims=(0.25,0.72),yticks=(0.3:0.1:0.72,["0.3","0.4","0.5","0.6","0.7"])
         ,xlims=(0.1,0.42),xticks=(0.1:0.1:0.4,["0.1","0.2","0.3","0.4"])
         , right_margin=2mm
@@ -298,7 +290,7 @@ plot!(comb_prior_samples, (:(Δ_u), :(Δ_g)), subplot=2,xlabel=L"\Delta_{u}", yl
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 )
 θ_g_true=θ_true[3]+θ_true[4]
 plot!([θ_true[1]],[θ_g_true], subplot=2,color="red",seriestype=:scatter, label=:none, lw=1, markerstrokecolor=:red)
@@ -313,7 +305,7 @@ plot!(comb_samples, (:(Δ_u), :(Δ_sea)),subplot=3,xlabel=L"\Delta_{u}", ylabel=
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     ,ylims=(0,0.32),yticks=(0:0.1:0.3,["0","0.1","0.2","0.3"])
         ,xlims=(0.1,0.42),xticks=(0.1:0.1:0.4,["0.1","0.2","0.3","0.4"]) 
         , right_margin=-2mm
@@ -325,7 +317,7 @@ plot!(comb_prior_samples, (:(Δ_u), :(Δ_sea)), subplot=3,xlabel=L"\Delta_{u}", 
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 )
 θ_sea_true=sum(θ_true[5:9])
 plot!([θ_true[1]],[θ_sea_true], subplot=3,color="red",seriestype=:scatter, label=:none, lw=2, markerstrokecolor=:red)
@@ -340,7 +332,7 @@ plot!(comb_samples, (:(Δ_g), :(Δ_sea)),subplot=4, xlabel=L"\Delta_{g}", ylabel
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
      ,ylims=(0,0.32),yticks=(0:0.1:0.3,["0","0.1","0.2","0.3"])
     ,xlims=(0.25,0.72),xticks=(0.3:0.1:0.72,["0.3","0.4","0.5","0.6","0.7"])
     , right_margin=2mm
@@ -353,7 +345,7 @@ plot!(comb_prior_samples, (:(Δ_g), :(Δ_sea)),subplot=4,xlabel=L"\Delta_{g}", y
    seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals, fillcolors=reverse(prior_colors), linewidth=0, 
     alpha=prior_alpha
-, xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+, xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
 )
 Δ_sea_true = sum(θ_true[5:9])
 Δ_g_true = sum(θ_true[3:4])
@@ -440,7 +432,7 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid],  lw=3, c=:re
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
     
@@ -475,7 +467,7 @@ p = plot!(x_grid, [x_uv_x(x, λ_u_true, K_u_true) for x in x_grid], label=L"~xu_
     , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=-1mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"])
 )
@@ -492,7 +484,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid],   lw=3, c=:r
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -512,6 +504,7 @@ for s in eachindex(sub_samples)
 
     plot!(x_grid, [x_dv_x(x, λ_d, pdf_params_s.K_d) for x in x_grid],ylims=(0.00001, 65.0),yscale=:log10,lw=0.5
     ,alpha=alpha_xf
+        ,color=:gray
     ,label=:none, subplot=2)
 
 end
@@ -526,7 +519,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -544,7 +537,7 @@ p = plot!(x_grid, [x_dv_x(x, λ_d_true, K_d_true) for x in x_grid], label=L"~xd_
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -576,7 +569,7 @@ end
     , left_margin=5mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
         , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -594,7 +587,7 @@ end
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=5mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -630,7 +623,7 @@ end
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=-1mm
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     , xticks=(0.0:0.2:1.0,["0","0.2","0.4","0.6","0.8","1"]) 
         , yticks=([0.0001,0.001,0.01,0.1,1,10],[L"10^{-4}",L"10^{-3}",L"10^{-2}","0.1","1","10"]) 
 )
@@ -720,8 +713,8 @@ plot!(legend=:left, foreground_color_legend=nothing, framestyle=:none,
     subplot=3, xlim=(1,2), ylim=(0, 900), legendfontsize=14, thickness_scaling=1,
     left_margin=-12mm, right_margin=3mm)
 annotate!(1.4, 980*0.9, text("\$Q^2\$ [GeV\$^2\$]", 14, font_family), subplot=3)
-annotate!(0.13, 600*0.9, text(L"$e^{-}p$", 22, font_family), subplot=1)
-p = annotate!(0.13, 600*0.9, text(L"$e^{+}p$", 22, font_family), subplot=2)
+annotate!(0.14, 600*0.9, text(L"$e^{-}p$", 22, font_family), subplot=1)
+p = annotate!(0.14, 600*0.9, text(L"$e^{+}p$", 22, font_family), subplot=2)
 p
 
 savefig( string("figures/fig7-",parsed_args["fitresults"],"_v2.pdf"))

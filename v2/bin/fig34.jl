@@ -13,12 +13,11 @@ using Statistics
 using Measures
 using ArgParse
 import HDF5
-PDROOT=string(dirname(pathof(PartonDensity)),"/../utils/")
-include(string(PDROOT,"priors.jl"))
+include(string(dirname(pathof(PartonDensity)),"/../utils/priors.jl"))
 include(string(dirname(pathof(PartonDensity)),"/../data/ZEUS_I1787035/ZEUS_I1787035.jl"))
 nsyst=8
 #using bla
-PWIDTH=1000
+
 function parse_commandline()
     s = ArgParseSettings()
 
@@ -70,7 +69,7 @@ println(seed)
 seedtxt=string(seed)
 
 #Sim data!!!
-pdf_params, sim_data, meta_data=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
+pdf_params, sim_data, MD_TEMP=pd_read_sim(string("pseudodata/", parsed_args["pseudodata"], ".h5"),MD_G)
 
 #Fit results!!!
 samples_data = bat_read(string("fitresults/", parsed_args["fitresults"], ".h5")).result;
@@ -113,7 +112,7 @@ c1 = :teal
 c2 = :royalblue4
 c3 = :midnightblue
 c4 = :grey
-prior_alpha = 0.4;
+prior_alpha = 0.2;
 colors = [c3, c1]
 prior_colors = [:grey40, :grey50]
 
@@ -182,10 +181,6 @@ PB_label=L"P(\Delta_u)"
 
 
 xlims_1=(-12, 5)
-xticks_1=(-10:4:4,["","","",""])
-xticks_3=(-10:4:4,["-10","-6","-2","2"])
-
-
 ylims_1=(0, 0.4)
 yticks_1=(0.0:0.2:0.4,["0","0.2","0.4"])
 
@@ -200,7 +195,6 @@ ylims_4=(0.18,0.45)
 xlims_4=(0, 2*45)
 xticks_4=(0:40:80,["0","40","80"])
 yticks_4=(0.2:0.1:0.4,["0.2","0.3","0.4"])
-yticks_4=(0.2:0.1:0.4,["","",""])
 end
 
 if parsed_args["parametrisation"] == "Valence"
@@ -220,11 +214,6 @@ PB_label=L"P(\Delta_u)"
 
 xlims_1=(1.0, 6.0)
 ylims_1=(0, 4.0)
-
-xticks_1=(1:2:5,["","",""])
-xticks_3=(1:2:5,["1","3","5"])
-
-
 yticks_1=(0.0:2:4,["0","2","4"])
 
 yticks_2=(0.2:0.1:0.4,["0.2","0.3","0.4"])
@@ -237,7 +226,6 @@ ylims_4=(0., 0.5)
 xlims_4=(0, 25)
 xticks_4=(0:10:20,["0","10","20"])
 yticks_4=(0.0:0.2:0.4,["0","0.2","0.4"])
-yticks_4=(0.0:0.2:0.4,["","",""])
 end
 
 
@@ -257,10 +245,6 @@ PB_label=L"P(\Delta_u)"
 
 
 xlims_1=(1.0, 6.0)
-xticks_1=(1:2:5,["","",""])
-xticks_3=(1:2:5,["1","3","5"])
-
-
 ylims_1=(0, 4.0)
 yticks_1=(0.0:2.0:4.0,["0","2","4"])
 
@@ -275,8 +259,6 @@ ylims_4=(0., 0.5)
 xlims_4=(0, 65)
 xticks_4=(0:20:60,["0","20","40","60"])
 yticks_4=(0.0:0.2:0.4,["0","0.2","0.4"])
-
-yticks_4=(0.0:0.2:0.4,["","",""])
 end
 
 if parsed_args["what"] == "d"
@@ -295,10 +277,6 @@ PB_label=L"P(\Delta_d)"
 
 
 xlims_1=(1.0, 6.0)
-xticks_1=(1:2:5,["","",""])
-xticks_3=(1:2:5,["1","3","5"])
-
-
 ylims_1=(0, 2.0)
 yticks_1=(0.0:1.0:2.0,["0","1","2"])
 
@@ -312,39 +290,41 @@ ylims_4=(0., 0.5)
 xlims_4=(0, 25)
 xticks_4=(0:10:20,["0","10","20"])
 yticks_4=(0.0:0.2:0.4,["0","0.2","0.4"])
-
-yticks_4=(0.0:0.2:0.4,["","",""])
 end
 
 
 
 
-plot(framestyle=:axes, size=(PWIDTH/2, PWIDTH/2), fontfamily=font_family, 
-    layout=@layout([a{0.67w, 0.32h} b{0.32w, 0.32h}; c{0.67w, 0.68h} d{0.32w, 0.68h}]), grid=false
-    , right_margin=0mm
+# Joint posterior
+if (parsed_args["what"] == "d") || (parsed_args["what"] == "u")
+
+PWIDTH=1000
+plot(framestyle=:axes, size=(PWIDTH/2, PWIDTH/2)
+   , fontfamily=font_family 
+    #layout=@layout([a b; c{0.55w, 0.6h} d])
+    , grid=false
+    , right_margin=1mm
     , left_margin=0mm
     , top_margin=0mm
     , bottom_margin=0mm
 )
-
-# Joint posterior
 plot!(SP, (:(A), :(B)),
-    subplot=3, 
+    subplot=1, 
     xlabel=A_label, ylabel=B_label,
     seriestype=:smallest_intervals_contourf, smoothing=4, 
     marginalmode=false, intervals=intervals
     , fillcolors=reverse(prior_colors)
     , linewidth=0
     , alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , right_margin=-12mm
-    , left_margin=1mm
-    , top_margin=-2mm
-    , bottom_margin=0mm
-    , ylims=ylims_3, xticks=xticks_3
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
+    , right_margin=2mm
+    , left_margin=6mm
+    , top_margin=0mm
+    , bottom_margin=3mm
+    , ylims=ylims_3
 )
 plot!(SD, (:(A), :(B)), 
-    subplot=3,     
+    subplot=1,     
     xlabel=A_label, ylabel=B_label,
     seriestype=:smallest_intervals_contourf, smoothing=2, 
     marginalmode=false, intervals=intervals
@@ -352,127 +332,144 @@ plot!(SD, (:(A), :(B)),
     , linewidth=0
     , alpha=prior_alpha
     , xlims=xlims_3
-    , ylims=ylims_3, xticks=xticks_3
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , right_margin=-12mm
-    , left_margin=1mm
-    , top_margin=-2mm
-    , bottom_margin=0mm
+    , ylims=ylims_3
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
+    , right_margin=2mm
+    , left_margin=6mm
+    , top_margin=0mm
+    , bottom_margin=3mm
     , yticks=yticks_3
 )
-#color="red",seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=12
-
-plot!([A_true],[B_true],
-    seriestype = :scatter, subplot = 3, color = "red"
-    ,legend = :none,lw=0, 
-    markerstrokecolor=:red,
+p=plot!([A_true],[B_true],
+    seriestype = :scatter, subplot = 1, color = "red"
+    ,legend = :none,lw=1
+    ,markershape=:cross, markerstrokewidth=3 
+    ,markersize=60
     )
 
 
 
-plot!(SP, :A, bins=100,
-    subplot=1, 
-    legend=false, marginalmode=false, 
-    seriestype=:smallest_intervals, intervals=intervals
-    , fillcolors=reverse(prior_colors)
-    , colors=prior_colors
-    , alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , right_margin=-12mm
-    , left_margin=1mm
-    , top_margin=0mm
-    , bottom_margin=-16mm
-    , yticks=yticks_1, xticks=xticks_1
-)
-plot!(SD, :A,  bins=100,
-    subplot=1, 
-    legend=false, xlabel="", ylabel=PA_label
-    , xlims=xlims_1
-    , ylims=ylims_1
-    , seriestype=:smallest_intervals 
-    , marginalmode=false, intervals=intervals, colors=colors
-    , alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , right_margin=-12mm
-    , left_margin=1mm
-    , top_margin=0mm
-    , bottom_margin=-16mm
-    , yticks=yticks_1, xticks=xticks_1
-)
-vline!([A_true], color="red", label=" Truth", lw=0.5)
+#plot!(SP, :A, bins=100,
+#    subplot=1, 
+#    legend=false, marginalmode=false, 
+#    seriestype=:smallest_intervals, intervals=intervals
+#    , fillcolors=reverse(prior_colors)
+#    , colors=prior_colors
+#    , alpha=prior_alpha
+#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
+#    , right_margin=-2mm
+#    , left_margin=6mm
+#    , top_margin=0mm
+#    , bottom_margin=3mm
+#)
+#plot!(SD, :A,  bins=100,
+#    subplot=1, 
+#    legend=false, xlabel="", ylabel=PA_label
+#    , xlims=xlims_1
+#    , ylims=ylims_1
+#    , seriestype=:smallest_intervals 
+#    , marginalmode=false, intervals=intervals, colors=colors
+#    , alpha=prior_alpha
+#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
+#    , right_margin=-2mm
+#    , left_margin=6mm
+#    , top_margin=0mm
+#    , bottom_margin=3mm
+#    , yticks=yticks_1
+#)
+#vline!([A_true], color="red", label=" Truth", lw=0.5)
 
-# Delta_u marginal
-plot!(SP, :(B), bins=100,
-    subplot=4,
-    legend=false, marginalmode=false, 
-    seriestype=:smallest_intervals, intervals=intervals
-   # , fillcolors=reverse(prior_colors)
-    , colors=prior_colors
-    , orientation=:horizontal
-    , alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , right_margin=2mm
-    , left_margin=-1mm
-    , top_margin=0mm
-    , bottom_margin=0mm
-    , ylims=ylims_4
-)
-plot!(SD, :(B), bins=100,
-    subplot=4,
-    legend=false, ylabel="", xlabel=L"P(\Delta_u)"
-    , xlims=xlims_4
-    , ylims=ylims_4
-    , seriestype=:smallest_intervals, intervals=intervals, marginalmode=false 
-    , colors=colors,  orientation=:horizontal
-    , alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
-    , xticks=xticks_4
-    , yticks=yticks_4
-    , right_margin=2mm
-    , left_margin=-1mm
-    , top_margin=0mm
-    , bottom_margin=0mm
-)
-hline!([B_true], color="red", label=" Truth", subplot=4, lw=0.5)
-
+## Delta_u marginal
+#plot!(SP, :(B), bins=100,
+#    subplot=4,
+#    legend=false, marginalmode=false, 
+#    seriestype=:smallest_intervals, intervals=intervals
+#   # , fillcolors=reverse(prior_colors)
+#    , colors=prior_colors
+#    , orientation=:horizontal
+#    , alpha=prior_alpha
+#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
+#    , right_margin=1mm
+#    , left_margin=5mm
+#    , top_margin=0mm
+#    , bottom_margin=3mm
+#    , ylims=ylims_4
+#)
+#plot!(SD, :(B), bins=100,
+#    subplot=4,
+#    legend=false, ylabel="", xlabel=L"P(\Delta_u)"
+#    , xlims=xlims_4
+#    , ylims=ylims_4
+#    , seriestype=:smallest_intervals, intervals=intervals, marginalmode=false 
+#    , colors=colors,  orientation=:horizontal
+#    , alpha=prior_alpha
+#    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
+#    , xticks=xticks_4
+#    , yticks=yticks_4
+#    , right_margin=1mm
+#    , left_margin=5mm
+#    , top_margin=0mm
+#    , bottom_margin=3mm
+#)
+#hline!([B_true], color="red", label=" Truth", subplot=4, lw=0.5)
+end
 # Legend
+if parsed_args["what"] == "x"
+
+PWIDTH=500
+plot(framestyle=:axes, size=(PWIDTH/2, PWIDTH/2)
+   , fontfamily=font_family 
+   # , layout=@layout [[a1{0.3w, 0.3h} a2{0.4w, 0.3h} a3{0.3w, 0.3h}] [ b1{0.3w, 0.4h} b2{0.4w, 0.4h} b3{0.3w, 0.4h}] [ c1{0.3w, 0.3h} c2{0.4w, 0.3h} c3{0.3w, 0.3h}]]
+    , grid=false
+    , right_margin=1mm
+    , left_margin=0mm
+    , top_margin=0mm
+    , bottom_margin=0mm
+)
+
 plot!(SP, (:(A), :(B)), 
-    subplot=2,
+    subplot=1,
     xlabel=A_label, ylabel=B_label,
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, interval_labels=prior_labels
-  #  , fillcolors=reverse(prior_colors)
+    , fillcolors=reverse(prior_colors)
     , colors=reverse(prior_colors), linewidth=0
-   # , alpha=prior_alpha
-    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=14
+    , alpha=prior_alpha
+    , xtickfontsize=14,ytickfontsize=14,yguidefontsize=18,xguidefontsize=18,legendfontsize=14
     , right_margin=2mm
-    , left_margin=6mm
-    , top_margin=-8mm
-    , bottom_margin=-5mm
+    , left_margin=5mm
+    , top_margin=0mm
+    , bottom_margin=3mm
     , yticks=yticks_2
 )
 plot!(SD, (:(A), :(B)),
-    subplot=2,
+    subplot=1,
     seriestype=:smallest_intervals,
     marginalmode=false, intervals=intervals, colors=reverse(colors), 
     interval_labels=labels,
     linewidth=0
-  #  , alpha=prior_alpha
-    , legend=:bottomright, foreground_color_legend=:transparent, background_color_legend=:transparent,
+    , alpha=prior_alpha
+    #, legend=:bottomright
+    , legend=:top
+    , foreground_color_legend=:transparent, background_color_legend=:transparent,
     framestyle=:none
     , xlims=(0, 1.)
     , ylims=(0, 0.1)
     , xtickfontsize=14,ytickfontsize=14,yguidefontsize=16,xguidefontsize=16, legendfontsize=12
     , right_margin=2mm
-    , left_margin=6mm
-    , top_margin=-8mm
-    , bottom_margin=-5mm
+    , left_margin=5mm
+    , top_margin=0mm
+    , bottom_margin=-3mm
     , yticks=yticks_2
 )
-#plot!([θ_true[1]],[θ_true[2]], subplot=1, color="red",seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=14)
-
-p=plot!([-100],[-100],          subplot=2, color="red",seriestype=:scatter, label=" Truth", lw=0, foreground_color_legend=false,  lc=:red, markerstrokecolor=:red, legendfontsize=12 )
-
+p=plot!([-100],[-100],
+    seriestype = :scatter, subplot = 1, color = "red"
+    ,label = :none
+    ,legendfontsize=12, lc=:red, lw=1
+    ,markershape=:cross, markerstrokewidth=3 
+    ,markersize=60
+    )
+end
 p
 
 filename = string("figures/fig34",parsed_args["what"],"-",parsed_args["fitresults"], "_v2.pdf")
